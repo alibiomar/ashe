@@ -19,8 +19,10 @@ export default function ContactForm() {
 
   const onSubmit = async (values) => {
     const mailText = `Name: ${values.name}\nEmail: ${values.email}\nMessage: ${values.message}`;
-
+  
     try {
+      console.log('Sending email with data:', { email: values.email, subject: 'New Contact Us Form', text: mailText });
+  
       const response = await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -30,12 +32,17 @@ export default function ContactForm() {
           text: mailText,
         }),
       });
-
+  
       const data = await response.json();
-      data.messageId 
-        ? toast.success('Message sent successfully!')
-        : toast.error('Failed to send message.');
+      console.log('API response:', data);
+  
+      if (response.ok) {
+        toast.success('Message sent successfully!');
+      } else {
+        toast.error('Failed to send message.');
+      }
     } catch (error) {
+      console.error('Error:', error);
       toast.error('An error occurred while sending your message.');
     }
   };

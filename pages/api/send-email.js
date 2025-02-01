@@ -1,12 +1,10 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const nodemailer = require('nodemailer');
-require('dotenv').config();
+import nodemailer from 'nodemailer';
 
-const app = express();
-app.use(bodyParser.json());
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-app.post('/api/send-email', async (req, res) => {
   const { email, subject, text } = req.body;
 
   // Validate required fields
@@ -43,10 +41,4 @@ app.post('/api/send-email', async (req, res) => {
     console.error('Error sending email:', error);
     res.status(500).json({ error: 'Failed to send email', details: error.message });
   }
-});
-
-// Start the server
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+}
