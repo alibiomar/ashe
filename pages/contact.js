@@ -143,13 +143,13 @@ export default function ContactForm() {
                 )}
               </div>
             ))}
-            <button
-              type="submit"
-              className={`w-full py-4 bg-black text-white font-bold text-lg
-                uppercase tracking-wide hover:bg-gray-800 transition-colors
-                duration-200 rounded-none`}
-            >
-              Send Message
+                <button
+                  type="submit"
+                  className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none "
+                  disabled={loading}
+                >
+                                    {loading ? <div className="loading"></div> : 'Send Message'}
+
             </button>
           </form>
         </div>
