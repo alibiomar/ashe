@@ -12,15 +12,6 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  // Debugging: Log environment variables
-  console.log('Environment Variables:', {
-    host: process.env.SMTP_SERVER_HOST,
-    user: process.env.SMTP_SERVER_USERNAME,
-    recipient: process.env.SMTP_SERVER_USERNAME,
-  });
-
-
-
   // Configure Nodemailer transporter
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_SERVER_HOST,
@@ -35,7 +26,7 @@ export default async function handler(req, res) {
   try {
     const info = await transporter.sendMail({
       from: `"ASHE Support" <${process.env.SMTP_SERVER_USERNAME}>`,
-      to: recipient,
+      to: 'contact@ashe.tn',
       replyTo: email,
       subject: subject,
       html: text,
