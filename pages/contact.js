@@ -89,22 +89,19 @@ export default function ContactForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: 'contact@ashe.tn',
+          email: values.email, // Use user's email from form
           subject: 'New Contact Us Form',
           text: mailText,
         }),
       });
   
-      const data = await response.json();
-  
-      if (response.ok) {
-        toast.success('Message sent successfully!');
-      } else {
-        toast.error('Failed to send message.');
-      }
+      if (!response.ok) throw new Error('Failed to send message');
+      
+      toast.success('Message sent successfully!');
+      form.reset();
     } catch (error) {
       console.error('Error:', error);
-      toast.error('An error occurred while sending your message.');
+      toast.error(error.message || 'An error occurred');
     }
   };
 
