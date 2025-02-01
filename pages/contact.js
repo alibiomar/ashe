@@ -18,23 +18,84 @@ export default function ContactForm() {
   });
 
   const onSubmit = async (values) => {
-    const mailText = `Name: ${values.name}\nEmail: ${values.email}\nMessage: ${values.message}`;
+    const mailText = `<div style="font-family: 'Montserrat', sans-serif; background-color: #f7f7f7; color: #333; padding: 40px; max-width: 700px; margin: auto; border-radius: 12px;">
+
+  <!-- Mobile Responsiveness -->
+  <style>
+    @media only screen and (max-width: 600px) {
+      .main-card {
+        padding: 20px !important;
+      }
+      .quote-box {
+        padding: 20px !important;
+      }
+      h1 {
+        font-size: 22px !important;
+      }
+      p, span {
+        font-size: 16px !important;
+      }
+      .contact-info {
+        padding: 20px !important;
+      }
+      .reply-button {
+        width: 100% !important;
+      }
+    }
+  </style>
+
+  <!-- Main Card -->
+  <div class="main-card" style="background-color: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); border: 1px solid #e0e0e0;">
+    
+    <!-- Header -->
+    <h1 style="font-size: 26px; font-weight: 700; color: #0abab5; text-align: left; margin-bottom: 30px; border-bottom: 2px solid #eaeaea; padding-bottom: 15px;">
+      New Message Received
+    </h1>
+
+    <!-- Message Section -->
+    <p style="font-size: 18px; color: #444; margin-bottom: 20px;">
+      A message has been received from <strong style="color: #333;">${values.name}</strong>:
+    </p>
+    
+    <div class="quote-box" style="font-style: italic; background-color: #f9f9fc; padding: 30px; margin: 30px 0; border-left: 5px solid #0abab5; border-radius: 4px; color: #555;">
+      <p style="font-size: 16px;">“${values.message}”</p>
+    </div>
+
+
+    <!-- Contact Info Section -->
+    <div class="contact-info" style="background-color: #f7f8fa; padding: 30px; margin-top: 40px; border-radius: 8px; text-align: left; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);">
+      <p style="font-size: 16px; color: #444; margin-bottom: 10px;"><strong>Contact Details:</strong></p>
+      <p style="font-size: 16px; color: #444;">Name: <strong>${values.name}</strong></p>
+      <p style="font-size: 16px; color: #444;">Email: <a href="mailto:${values.email}" style="color: #0abab5; text-decoration: none;">${values.email}</a></p>
+    </div>
+
+    <!-- "Click to Reply" Button -->
+    <div style="text-align: center; margin-top: 40px;">
+      <a href="mailto:${values.email}" style="display: inline-block; background-color: #0abab5; color: #fff; padding: 15px 30px; border-radius: 6px; text-decoration: none; font-weight: bold; letter-spacing: 1px; transition: background-color 0.3s;" class="reply-button">
+        Click to Reply
+      </a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <p style="font-size: 14px; color: #999; text-align: left; margin-top: 30px; border-top: 1px solid #eaeaea; padding-top: 20px;">
+    You can reply directly to <strong>${values.name}</strong> by clicking the button above.
+  </p>
+</div>
+`;
   
-    try {
-      console.log('Sending email with data:', { email: values.email, subject: 'New Contact Us Form', text: mailText });
-  
+    try {  
       const response = await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: values.email,
+          email: SITE_MAIL_RECIEVER,
           subject: 'New Contact Us Form',
           text: mailText,
         }),
       });
   
       const data = await response.json();
-      console.log('API response:', data);
   
       if (response.ok) {
         toast.success('Message sent successfully!');

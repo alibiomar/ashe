@@ -12,12 +12,10 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  // Log SMTP server details for debugging
-  console.log('Connecting to SMTP server:', process.env.SMTP_SERVER_HOST, process.env.SMTP_SERVER_USERNAME);
 
   // Configure Nodemailer transporter
   const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_SERVER_HOST, // e.g., smtp.mail.ovh.net
+    host: process.env.SMTP_SERVER_HOST,
     port: 465,
     secure: true, // Use SSL/TLS
     auth: {
