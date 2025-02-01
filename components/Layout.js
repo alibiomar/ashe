@@ -4,7 +4,7 @@ import Footer from './Footer'; // Add a Footer component
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react'; // Add useState
 import { Toaster } from 'sonner';
-
+import { SpeedInsights } from "@vercel/speed-insights/next"
 export default function Layout({ children }) {
   const router = useRouter();
   const [navbarHeight, setNavbarHeight] = useState(0); // State to store navbar height
@@ -21,11 +21,12 @@ export default function Layout({ children }) {
   }, [router]);
 
   return (
+    
     <div className="flex items-center justify-center flex-col min-h-screen w-full bg-white antialiased">
       {/* Pass the setNavbarHeight function to Navbar */}
       <Navbar onHeightChange={setNavbarHeight} />
       <Toaster position="bottom-center" richColors />
-
+      <SpeedInsights/>
       {/* Apply navbar height as top margin */}
       <motion.main
         id="main-content"
