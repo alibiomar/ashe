@@ -212,7 +212,6 @@ export default function Basket() {
   alt={items.name}
   className="w-full h-auto object-contain rounded-lg shadow-lg"
   onError={(e) => {
-    console.log('Error loading image:', e.target.src);  // Log the image URL on error
     e.target.src = '/placeholder-art.svg';  // Fallback if image doesn't load
   }}
   loading="lazy"
