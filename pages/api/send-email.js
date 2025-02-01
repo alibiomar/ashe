@@ -12,6 +12,20 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
+  // Debugging: Log environment variables
+  console.log('Environment Variables:', {
+    host: process.env.SMTP_SERVER_HOST,
+    user: process.env.SMTP_SERVER_USERNAME,
+    recipient: process.env.SITE_MAIL_RECEIVER,
+  });
+
+  // Validate recipient email
+  const recipient = process.env.SITE_MAIL_RECEIVER;
+  if (!recipient) {
+    console.error('Recipient email not configured. Please set SITE_MAIL_RECEIVER in your environment variables.');
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
+
   // Configure Nodemailer transporter
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_SERVER_HOST,
@@ -24,17 +38,15 @@ export default async function handler(req, res) {
   });
 
   try {
-    const recipient = process.env.SITE_MAIL_RECEIVER;
-    if (!recipient) throw new Error('Recipient email not configured');
-
     const info = await transporter.sendMail({
       from: `"ASHE Support" <${process.env.SMTP_SERVER_USERNAME}>`,
       to: recipient,
-      replyTo: email, // Use user's email as reply-to address
+      replyTo: email,
       subject: subject,
-      html: text, // Use HTML content instead of plain text
+      html: text,
     });
 
+    console.log('Email sent successfully:', info.messageId);
     res.status(200).json({ messageId: info.messageId });
   } catch (error) {
     console.error('Email error:', error);
