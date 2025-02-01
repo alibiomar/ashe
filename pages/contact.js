@@ -89,7 +89,7 @@ export default function ContactForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: SITE_MAIL_RECIEVER,
+          email: 'contact@ashe.tn',
           subject: 'New Contact Us Form',
           text: mailText,
         }),
