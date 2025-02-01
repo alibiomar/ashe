@@ -16,15 +16,10 @@ export default async function handler(req, res) {
   console.log('Environment Variables:', {
     host: process.env.SMTP_SERVER_HOST,
     user: process.env.SMTP_SERVER_USERNAME,
-    recipient: process.env.SITE_MAIL_RECEIVER,
+    recipient: process.env.SMTP_SERVER_USERNAME,
   });
 
-  // Validate recipient email
-  const recipient = process.env.SITE_MAIL_RECEIVER;
-  if (!recipient) {
-    console.error('Recipient email not configured. Please set SITE_MAIL_RECEIVER in your environment variables.');
-    return res.status(500).json({ error: 'Server configuration error' });
-  }
+
 
   // Configure Nodemailer transporter
   const transporter = nodemailer.createTransport({
