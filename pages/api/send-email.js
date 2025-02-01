@@ -12,6 +12,8 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
+  // Log the request payload for debugging
+  console.log('Request payload:', { email, subject, text });
 
   // Configure Nodemailer transporter
   const transporter = nodemailer.createTransport({
@@ -25,18 +27,41 @@ export default async function handler(req, res) {
   });
 
   try {
+    // Log SMTP configuration for debugging
+    console.log('SMTP Configuration:', {
+      host: process.env.SMTP_SERVER_HOST,
+      user: process.env.SMTP_SERVER_USERNAME,
+    });
+
+    // Validate recipient email
+    const recipient = process.env.SITE_MAIL_RECEIVER;
+    if (!recipient) {
+      throw new Error('Recipient email not configured');
+    }
+
+    // Log recipient email for debugging
+    console.log('Recipient email:', recipient);
+
     // Send email
     const info = await transporter.sendMail({
       from: `"ASHE Support" <${process.env.SMTP_SERVER_USERNAME}>`, // Sender name and email
-      to: process.env.SITE_MAIL_RECEIVER, // Receiver email
+      to: recipient, // Receiver email
       subject: subject,
       text: text,
     });
 
+    // Log success
+    console.log('Email sent successfully:', info.messageId);
+
     // Respond with success
     res.status(200).json({ messageId: info.messageId });
   } catch (error) {
-    console.error('Error sending email:', error);
-    res.status(500).json({ error: 'Failed to send email', details: error.message });
+    // Log the full error for debugging
+    console.error('Email error:', error);
+
+    res.status(500).json({
+      error: 'Failed to send email',
+      details: error.message,
+    });
   }
 }
