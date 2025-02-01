@@ -208,6 +208,8 @@ export default function Basket() {
                     >
                       <div className="relative w-24 h-24 flex-shrink-0">
                       <img
+                        crossOrigin="any"
+
   src={items?.images[0] || '/placeholder-art.svg'}
   alt={items.name}
   className="w-full h-auto object-contain rounded-lg shadow-lg"
