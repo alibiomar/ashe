@@ -17,7 +17,7 @@ export default function AcceptCookiesPopup() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-black text-white p-6 rounded-lg shadow-lg flex items-center gap-4 max-w-md">
+    <div className="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-black text-white p-6 rounded-lg shadow-lg flex flex-col items-center gap-4 max-w-md">
       <i className="fa-solid fa-cookie-bite text-2xl"></i>
       <div className="flex-1">
         <h2 className="text-lg font-bold">We use cookies</h2>
