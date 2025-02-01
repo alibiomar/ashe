@@ -5,6 +5,8 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react'; // Add useState
 import { Toaster } from 'sonner';
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/react"
+
 export default function Layout({ children }) {
   const router = useRouter();
   const [navbarHeight, setNavbarHeight] = useState(0); // State to store navbar height
@@ -27,6 +29,7 @@ export default function Layout({ children }) {
       <Navbar onHeightChange={setNavbarHeight} />
       <Toaster position="bottom-center" richColors />
       <SpeedInsights/>
+      <Analytics/>
       {/* Apply navbar height as top margin */}
       <motion.main
         id="main-content"
