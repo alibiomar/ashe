@@ -221,13 +221,13 @@ export default function Products() {
             {/* Product Grid */}
             <main className="container mx-auto px-4 mb-24">
                 <div className="grid grid-cols-1 gap-12">
-                    {products.map((product) => (
+                    {products.map((product, index) => (
                         <div
-                            key={product.id}
+                        key={product.id || `product-${index}`} 
                             className="group relative"
                         >
                             <Suspense fallback={
-                                <div className="aspect-square bg-gray-100 rounded-xl animate-pulse" />
+                                <div className="aspect-square bg-gray-100  animate-pulse" />
                             }>
                                 <ProductCard
                                     product={product}

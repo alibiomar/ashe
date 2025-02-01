@@ -160,6 +160,7 @@ export default function Navbar({ onHeightChange }) { // Add onHeightChange prop
                 src="/logow.png"
                 alt="ASHE Logo"
                 fill
+                sizes='auto'
                 className="object-contain"
                 priority
               />

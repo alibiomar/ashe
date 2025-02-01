@@ -207,14 +207,18 @@ export default function Basket() {
                       className="group flex items-center p-6 hover:bg-gray-50 transition-colors"
                     >
                       <div className="relative w-24 h-24 flex-shrink-0">
-                        <img
-                          src={items.images[0] || '/placeholder-art.svg'}
-                          alt={items.name}
-                          className="w-full h-full object-cover rounded-lg shadow-lg"
-                          onError={(e) => {
-                            e.target.src = '/placeholder-art.svg';
-                          }}
-                        />
+                      <img
+  src={items?.images[0] || '/placeholder-art.svg'}
+  alt={items.name}
+  className="w-full h-auto object-contain rounded-lg shadow-lg"
+  onError={(e) => {
+    console.log('Error loading image:', e.target.src);  // Log the image URL on error
+    e.target.src = '/placeholder-art.svg';  // Fallback if image doesn't load
+  }}
+  loading="lazy"
+/>
+
+
                         <div className="absolute -bottom-2 -right-2 bg-white px-2 py-1 rounded-full shadow text-sm font-medium">
                           ×{items.quantity}
                         </div>

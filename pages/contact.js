@@ -18,7 +18,7 @@ export default function ContactForm() {
   });
 
   const onSubmit = async (values) => {
-    const mailText = `<div style="font-family: 'Montserrat', sans-serif; background-color: #f7f7f7; color: #333; padding: 40px; max-width: 700px; margin: auto; border-radius: 12px;">
+    const mailText = `<div style="font-family: 'Montserrat', sans-serif; background-color: #ffffff; color: #333; padding: 40px; max-width: 700px; margin: auto;">
 
   <!-- Mobile Responsiveness -->
   <style>
@@ -45,43 +45,43 @@ export default function ContactForm() {
   </style>
 
   <!-- Main Card -->
-  <div class="main-card" style="background-color: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); border: 1px solid #e0e0e0;">
+  <div class="main-card" style="background-color: #fff; padding: 40px; border-radius: 8px; border: 1px solid #ddd;">
     
     <!-- Header -->
-    <h1 style="font-size: 26px; font-weight: 700; color: #0abab5; text-align: left; margin-bottom: 30px; border-bottom: 2px solid #eaeaea; padding-bottom: 15px;">
-      New Message Received
+    <h1 style="font-size: 28px; font-weight: 700; color: #000; text-align: left; margin-bottom: 20px; letter-spacing: 1px;">
+      NEW MESSAGE
     </h1>
 
     <!-- Message Section -->
-    <p style="font-size: 18px; color: #444; margin-bottom: 20px;">
-      A message has been received from <strong style="color: #333;">${values.name}</strong>:
+    <p style="font-size: 18px; margin-bottom: 20px;">
+      Message received from <strong>${values.name}</strong>:
     </p>
     
-    <div class="quote-box" style="font-style: italic; background-color: #f9f9fc; padding: 30px; margin: 30px 0; border-left: 5px solid #0abab5; border-radius: 4px; color: #555;">
-      <p style="font-size: 16px;">“${values.message}”</p>
+    <div class="quote-box" style="font-style: italic; background-color: #f9f9f9; padding: 30px; margin: 30px 0; border-left: 4px solid #000; border-radius: 4px;">
+      <p style="font-size: 16px; margin: 0;">“${values.message}”</p>
     </div>
 
-
     <!-- Contact Info Section -->
-    <div class="contact-info" style="background-color: #f7f8fa; padding: 30px; margin-top: 40px; border-radius: 8px; text-align: left; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);">
-      <p style="font-size: 16px; color: #444; margin-bottom: 10px;"><strong>Contact Details:</strong></p>
-      <p style="font-size: 16px; color: #444;">Name: <strong>${values.name}</strong></p>
-      <p style="font-size: 16px; color: #444;">Email: <a href="mailto:${values.email}" style="color: #0abab5; text-decoration: none;">${values.email}</a></p>
+    <div class="contact-info" style="background-color: #f7f7f7; padding: 20px; border-radius: 6px; margin-bottom: 30px;">
+      <p style="font-size: 16px; margin: 0 0 10px; font-weight: 700; letter-spacing: 0.5px;">CONTACT DETAILS</p>
+      <p style="font-size: 16px; margin: 0;">Name: <strong>${values.name}</strong></p>
+      <p style="font-size: 16px; margin: 0;">Email: <a href="mailto:${values.email}" style="color: #000; text-decoration: underline;">${values.email}</a></p>
     </div>
 
     <!-- "Click to Reply" Button -->
-    <div style="text-align: center; margin-top: 40px;">
-      <a href="mailto:${values.email}" style="display: inline-block; background-color: #0abab5; color: #fff; padding: 15px 30px; border-radius: 6px; text-decoration: none; font-weight: bold; letter-spacing: 1px; transition: background-color 0.3s;" class="reply-button">
-        Click to Reply
+    <div style="text-align: center;">
+      <a href="mailto:${values.email}" class="reply-button" style="display: inline-block; background-color: #000; color: #fff; padding: 15px 30px; border-radius: 6px; text-decoration: none; font-weight: 700; letter-spacing: 1px;">
+        REPLY
       </a>
     </div>
   </div>
 
   <!-- Footer -->
-  <p style="font-size: 14px; color: #999; text-align: left; margin-top: 30px; border-top: 1px solid #eaeaea; padding-top: 20px;">
-    You can reply directly to <strong>${values.name}</strong> by clicking the button above.
+  <p style="font-size: 14px; color: #777; text-align: left; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 20px;">
+    You can reply directly to <strong>${values.name}</strong> using the button above.
   </p>
 </div>
+
 `;
   
     try {  

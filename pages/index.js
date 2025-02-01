@@ -218,7 +218,7 @@ export default function Home() {
             transition={{ duration: 0.5 }}
             style={{ width: '100%', height: '600px', position: 'relative' }}
           >
-            <Suspense fallback={<div className="text-black text-center py-8">Loading Grid Distortion...</div>}>
+            <Suspense fallback={<div className='loading'></div>}>
               <GridDistortion
                 imageSrc="https://picsum.photos/1920/1080?grayscale"
                 grid={10}
@@ -240,11 +240,7 @@ export default function Home() {
               const isCurrent = index === 1;
               return (
                 <ErrorBoundary key={`testimonial-${testimonial.id}`} fallback="Failed to load Testimonial">
-                  <motion.div
-                    variants={childVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className={`transition-all duration-500 ease-in-out transform cursor-pointer ${
+                  <div className={`transition-all duration-500 ease-in-out transform cursor-pointer ${
                       isCurrent ? 'scale-100 opacity-100' : 'scale-95 opacity-70 blur-sm'
                     }`}
                     onClick={() => handleTestimonialClick(actualIndex)}
@@ -252,18 +248,19 @@ export default function Home() {
                     tabIndex={0}
                     aria-label={`View testimonial from ${testimonial.name}`}
                   >
-                    <Suspense fallback={<div>Loading Testimonial...</div>}>
+                    <Suspense fallback={<div className='loading'></div>}>
                       <Testimonial testimonial={testimonial} />
                     </Suspense>
-                  </motion.div>
+                  </div>
                 </ErrorBoundary>
               );
             })}
           </div>
         </section>
+        
                 {/* Newsletter Section */}
                 <section className="flex items-center">
-          <Suspense fallback={<div>Loading Newsletter Signup...</div>}>
+          <Suspense fallback={<div className='loading'></div>}>
             <NewsletterSignup />
           </Suspense>
         </section>

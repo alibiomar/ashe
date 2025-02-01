@@ -2,12 +2,17 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { db } from '../lib/firebase'; // Ensure Firebase is configured correctly
 import { collection, addDoc, serverTimestamp, query, where, getDocs } from 'firebase/firestore';
+import { useInView } from 'react-intersection-observer';
 
 const NewsletterSignup = ({ title = "Join Our Newsletter", subtitle = "Get exclusive access to premium content and special offers" }) => {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('idle');
   const inputRef = useRef(null);
   const [isFocused, setIsFocused] = useState(false);
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    initialInView: true, // Assume the element is in view initially
+  });
 
   useEffect(() => {
     if (status !== 'loading' && status !== 'idle') {
@@ -15,7 +20,6 @@ const NewsletterSignup = ({ title = "Join Our Newsletter", subtitle = "Get exclu
       return () => clearTimeout(timer);
     }
   }, [status]);
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,13 +52,13 @@ const NewsletterSignup = ({ title = "Join Our Newsletter", subtitle = "Get exclu
   };
 
   return (
-    <div className="w-full py-24 flex items-center justify-center bg-black p-8">
+    <div className="w-full py-24 flex items-center justify-center bg-black p-8 overflow-x-hidden" >
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         {/* Left Section: Animated Newsletter */}
-        <motion.div
+        <motion.div 
           className="space-y-6"
           initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
+          animate={inView ? { opacity: 1, x: 0 } : {}} 
           transition={{ duration: 0.8, ease: 'easeOut' }}
         >
           <h2 className="text-5xl font-black tracking-tighter text-white">
@@ -63,19 +67,19 @@ const NewsletterSignup = ({ title = "Join Our Newsletter", subtitle = "Get exclu
           <p className="text-xl text-gray-300">
             {subtitle}
           </p>
-          <motion.div
-            className="w-24 h-2 bg-[#46c7c7] rounded-full"
+          <motion.div ref={ref}
+            className="w-24 h-2 bg-[#46c7c7] "
             initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
+            animate={inView ? { scaleX: 1 } : {}} 
             transition={{ duration: 1, delay: 0.5, ease: 'easeOut' }}
           />
         </motion.div>
 
         {/* Right Section: Input and Button */}
-        <motion.div
+        <motion.div 
           className="space-y-4"
           initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
+          animate={inView ? { opacity: 1, x: 0 } : {}} 
           transition={{ duration: 0.8, ease: 'easeOut' }}
         >
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -89,11 +93,11 @@ const NewsletterSignup = ({ title = "Join Our Newsletter", subtitle = "Get exclu
                 onBlur={() => setIsFocused(false)}
                 placeholder="Enter your email"
                 required
-                className="w-full px-6 py-4 text-lg bg-white/10 backdrop-blur-sm rounded-xl border-2 border-transparent focus:border-[#46c7c7] focus:outline-none text-white placeholder-gray-400 transition-all"
+                className="w-full px-6 py-4 text-lg bg-white/10 backdrop-blur-sm  border-2 border-transparent focus:border-[#46c7c7] focus:outline-none text-white placeholder-gray-400 transition-all"
                 aria-invalid={status === 'invalid'}
               />
-              <motion.div
-                className="absolute inset-0 rounded-xl pointer-events-none"
+              <motion.div 
+                className="absolute inset-0  pointer-events-none"
                 style={{
                   background: isFocused
                     ? 'linear-gradient(45deg, rgba(70,199,199,0.1) 0%, rgba(70,199,199,0.05) 100%)'
@@ -109,7 +113,7 @@ const NewsletterSignup = ({ title = "Join Our Newsletter", subtitle = "Get exclu
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="w-full py-4 px-8 bg-[#46c7c7] text-black font-bold rounded-xl hover:bg-[#3aa8a8] active:scale-[98%] transition-all relative overflow-hidden"
+              className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-[#46c7c7] text-black hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none"
             >
               <span className="relative z-10">
                 {status === 'loading' ? (

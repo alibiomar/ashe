@@ -7,6 +7,18 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --swiper-theme-color: #46c7c7; /* This changes both navigation and pagination color */
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: #46c7c7 !important; /* Ensures navigation buttons are #46c7c7 */
+}
+
+.swiper-pagination-bullet {
+  background-color: #46c7c7 !important; /* Ensures pagination bullets are #46c7c7 */
+}
 
 body {
   @apply bg-white font-sans; /* Neutral background and classic Swiss typography */
@@ -78,30 +90,30 @@ h1, h2, h3, h4 {
 /* HTML: <div class="loader"></div> */
 /* Updated, smaller loader using filter invert for negative effect */
 .loading {
-  width: 30px;
-  height: 20px;
-  --_g: no-repeat radial-gradient(farthest-side, #fff 94%, #fff0);
-  background: var(--_g) 50% 0, var(--_g) 100% 0;
-  background-size: 8px 8px;
+  width: 50px;
+  height: 28px;
+  --_g: no-repeat radial-gradient(farthest-side,#000 94%,#0000);
+  background:
+    var(--_g) 50%  0,
+    var(--_g) 100% 0;
+  background-size: 12px 12px;
   position: relative;
   animation: l23-0 1.5s linear infinite;
-  /* Invert the colors */
-  filter: invert(1);
+
 }
 
 .loading:before {
   content: "";
   position: absolute;
-  height: 8px;
+  height: 12px;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: #fff;
-  left: 0;
-  top: 0;
+  background: #000;
+  left:0;
+  top:0;
   animation: 
     l23-1 1.5s linear infinite,
-    l23-2 0.5s cubic-bezier(0,200,0.8,200) infinite;
-  filter: invert(1);
+    l23-2 0.5s cubic-bezier(0,200,.8,200) infinite;
 }
 
 @keyframes l23-0 {
@@ -124,4 +136,3 @@ h1, h2, h3, h4 {
 ::placeholder {
   @apply text-xs text-gray-400;
 }
-
