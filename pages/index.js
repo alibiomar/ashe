@@ -9,7 +9,7 @@ import ErrorBoundary from '../components/ErrorBoundary';
 import LoadingSpinner from '../components/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Lazy-loaded components for better performance
+// Lazy-loaded components for improved performance
 const Testimonial = lazy(() => import('../components/Testimonial'));
 const GridDistortion = lazy(() => import('../components/GridDistortion'));
 const NewsletterSignup = lazy(() => import('../components/NewsletterSignup'));
@@ -21,6 +21,7 @@ export default function Home() {
   const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Animation variants for Framer Motion
   const containerVariants = {
@@ -29,7 +30,7 @@ export default function Home() {
       opacity: 1,
       transition: {
         staggerChildren: 0.2,
-        when: "beforeChildren"
+        when: 'beforeChildren'
       }
     }
   };
@@ -42,8 +43,20 @@ export default function Home() {
       transition: { type: 'spring', stiffness: 120, damping: 20 }
     }
   };
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+  
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  // Listen for authentication state changes and fetch user data if logged in.
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+    
+  // Listen for auth state changes and fetch user data if logged in.
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -52,8 +65,8 @@ export default function Home() {
           const userDocRef = doc(db, 'users', currentUser.uid);
           const userDoc = await getDoc(userDocRef);
           setFirstName(userDoc.exists() ? userDoc.data().firstName || 'Valued User' : 'Valued User');
-        } catch (error) {
-          console.error('Error fetching user data:', error);
+        } catch (err) {
+          console.error('Error fetching user data:', err);
           setError('Failed to load user data');
           setFirstName('Valued User');
         }
@@ -79,8 +92,8 @@ export default function Home() {
           rating: Number(doc.data().rating) || 0,
         }));
         setTestimonials(testimonialsList);
-      } catch (error) {
-        console.error('Error fetching testimonials:', error);
+      } catch (err) {
+        console.error('Error fetching testimonials:', err);
         setError('Failed to load testimonials');
       } finally {
         setLoading(false);
@@ -130,17 +143,17 @@ export default function Home() {
           >
             <Image
               src="/header.jpeg"
-              alt="Fashion Header"
+              alt="Stunning fashion header image"
               fill
               priority
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 100vw"
             />
           </motion.div>
-          
+
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30">
             <motion.div
-              className="container mx-auto px-4 h-[80vh] flex flex-col justify-end"
+              className="container mx-auto px-4 h-[80vh] flex flex-col justify-end items-center text-center"
               variants={childVariants}
             >
               <TextPressure
@@ -154,10 +167,10 @@ export default function Home() {
                 textColor="#ffffff"
                 strokeColor="#ff0000"
                 minFontSize={32}
-                className=" pt-16"
+                className="pt-16"
               />
               <motion.p
-                className="text-sm md:text-xl text-white/90 font-light max-w-2xl mx-auto text-center mb-5"
+                className="text-sm md:text-xl text-white/90 font-light max-w-2xl mb-5"
                 variants={childVariants}
               >
                 Crafting timeless elegance through meticulous tailoring and sustainable practices
@@ -174,18 +187,18 @@ export default function Home() {
               className={`group relative p-8 overflow-hidden ${idx === 0 ? 'bg-white' : 'bg-black text-white'}`}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "0px 0px -100px 0px" }}
+              viewport={{ once: true, margin: '0px 0px -100px 0px' }}
               transition={{ duration: 0.6, delay: idx * 0.1 }}
             >
               <div className="relative h-80 mb-8 overflow-hidden">
                 <Image
                   src={idx === 0 ? '/featured.jpg' : '/new-arrivals.jpg'}
-                  alt={section}
+                  alt={`${section} products image`}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               </div>
-              
+
               <h2 className="text-4xl font-semibold mb-4">{section}</h2>
               <p className={`text-lg mb-6 ${idx === 0 ? 'text-gray-600' : 'text-gray-300'}`}>
                 {idx === 0 
@@ -195,6 +208,7 @@ export default function Home() {
               <a
                 href="/products"
                 className="inline-flex items-center gap-2 text-lg font-medium hover:gap-3 transition-all"
+                aria-label={`Explore our ${section.toLowerCase()} collection`}
               >
                 Explore Collection
                 <span aria-hidden="true" className="text-xl">→</span>
@@ -204,11 +218,11 @@ export default function Home() {
         </section>
 
         {/* Grid Distortion Section */}
-        <ErrorBoundary fallback="Failed to load visual experience">
+        <ErrorBoundary fallback={<p className="text-center text-red-500">Failed to load visual experience</p>}>
           <motion.section
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "0px 0px -200px 0px" }}
+            viewport={{ once: true, margin: '0px 0px -200px 0px' }}
             className="relative h-[80vh] mb-24"
           >
             <Suspense fallback={<div className="absolute inset-0 bg-gray-100 animate-pulse" />}>
@@ -252,18 +266,8 @@ export default function Home() {
                       transition={{ duration: 0.5 }}
                       className="w-full"
                     >
-                      <ErrorBoundary
-                        fallback={
-                          <div className="h-full flex items-center justify-center text-red-500">
-                            Failed to load testimonial
-                          </div>
-                        }
-                      >
-                        <Suspense
-                          fallback={
-                            <div className="h-full bg-gray-50 animate-pulse rounded-2xl" />
-                          }
-                        >
+                      <ErrorBoundary fallback={<div className="h-full flex items-center justify-center text-red-500">Failed to load testimonial</div>}>
+                        <Suspense fallback={<div className="h-full bg-gray-50 animate-pulse rounded-2xl" />}>
                           <Testimonial testimonial={testimonial} />
                         </Suspense>
                       </ErrorBoundary>
@@ -279,9 +283,7 @@ export default function Home() {
               <button
                 key={index}
                 onClick={() => setCurrentTestimonialIndex(index)}
-                className={`w-3 h-3 rounded-full transition-colors ${
-                  index === currentTestimonialIndex ? 'bg-black' : 'bg-gray-300'
-                }`}
+                className={`w-3 h-3 rounded-full transition-colors ${index === currentTestimonialIndex ? 'bg-black' : 'bg-gray-300'}`}
                 aria-label={`View testimonial ${index + 1}`}
               />
             ))}
@@ -298,6 +300,15 @@ export default function Home() {
             <NewsletterSignup />
           </Suspense>
         </motion.section>
+        {showScrollTop && (
+            <button
+              onClick={scrollToTop}
+              aria-label="Scroll to top"
+              className="fixed bottom-8 right-8 p-3 bg-[#46c7c7] text-white rounded-full shadow-lg hover:bg-red-700 transition-all"
+            >
+              ↑
+            </button>
+          )}
       </motion.div>
     </Layout>
   );
