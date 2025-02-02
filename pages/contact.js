@@ -35,7 +35,7 @@ export default function ContactForm() {
   <div style="padding: 40px;">
     <!-- Header -->
     <h1 style="font-size: 32px; font-weight: 800; color: #000; margin: 0 0 32px; letter-spacing: -0.5px;">
-      New Message
+      NEW MESSAGE
     </h1>
 
     <!-- Sender Info -->
@@ -79,7 +79,7 @@ export default function ContactForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: values.email,
+          email: 'contact@ashe.tn',
           subject: 'New Contact Us Form',
           text: mailText,
         }),
@@ -95,9 +95,7 @@ export default function ContactForm() {
       setLoading(false);
     }
   };
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+
   return (
     <Layout>
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
