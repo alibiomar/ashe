@@ -182,8 +182,7 @@ export default function Basket() {
 
           <Suspense
             fallback={
-              <div className="flex justify-center py-12">
-                <div className="h-8 w-8 border-2 border-black border-t-transparent rounded-none animate-spin"></div>
+              <div className="loading">
               </div>
             }
           >
@@ -286,8 +285,7 @@ export default function Basket() {
           {showCheckoutPopup && userInfo && (
             <Suspense
               fallback={
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-                  <div className="h-12 w-12 border-4 border-white border-t-transparent rounded-none animate-spin"></div>
+                <div className="loading">
                 </div>
               }
             >

@@ -57,84 +57,127 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
     [basket]
   );
 
-  // Fetch Countries
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    
     const fetchCountries = async () => {
       setLoading(true);
+      setError('');
+      
       try {
-        const response = await fetch('https://api.countrystatecity.in/v1/countries', {
-          headers: {
-            'X-CSCAPI-KEY': process.env.REACT_APP_API_KEY,
-          },
-        });
+        const response = await fetch('https://countriesnow.space/api/v0.1/countries', { signal });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setCountryData(data);
+  
+        if (data.data && Array.isArray(data.data)) {
+          setCountryData(data.data);
+        } else {
+          throw new Error('Expected array of countries in response');
+        }
       } catch (error) {
-        setError('Failed to load countries: ' + error.message);
+        if (error.name !== 'AbortError') {
+          setError('Failed to load countries: ' + error.message);
+        }
       } finally {
         setLoading(false);
       }
     };
+  
     fetchCountries();
-  }, []);
-
-  // Fetch States
+    return () => controller.abort();
+  }, []);  
+  
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    
     const fetchStates = async () => {
-      if (!formData.country) return;
-      
+      if (!formData.country || !countryData.length) return;
+  
       setLoading(true);
       setError('');
+  
       try {
-        const response = await fetch(
-          `https://api.countrystatecity.in/v1/countries/${formData.country}/states`,
-          { headers: { 'X-CSCAPI-KEY': process.env.REACT_APP_API_KEY } }
-        );
-        
-        if (!response.ok) throw new Error('Failed to fetch states');
-        
+        const selectedCountry = countryData.find(c => c.iso2 === formData.country);
+        if (!selectedCountry) throw new Error('Country not found');
+  
+        const response = await fetch('https://countriesnow.space/api/v0.1/countries/states', {
+          signal,
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ country: selectedCountry.country })
+        });
+  
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setStateData(data);
-        setFormData(prev => ({ ...prev, state: '', city: '' }));
+  
+        if (data.data?.states && Array.isArray(data.data.states)) {
+          setStateData(data.data.states);
+          setFormData(prev => ({ ...prev, state: '', city: '' }));
+        } else {
+          throw new Error('Expected array of states in response');
+        }
       } catch (error) {
-        setError(error.message || 'Failed to load states');
+        if (error.name !== 'AbortError') {
+          setError('Failed to load states: ' + error.message);
+        }
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchStates();
-  }, [formData.country]);
-
-  // Fetch Cities
+    return () => controller.abort();
+  }, [formData.country, countryData]);
+  
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    
     const fetchCities = async () => {
-      if (!formData.country || !formData.state) return;
-      
+      if (!formData.country || !formData.state || !countryData.length) return;
+  
       setLoading(true);
       setError('');
+  
       try {
-        const response = await fetch(
-          `https://api.countrystatecity.in/v1/countries/${formData.country}/states/${formData.state}/cities`,
-          { headers: { 'X-CSCAPI-KEY': process.env.REACT_APP_API_KEY } }
-        );
-        
-        if (!response.ok) throw new Error('Failed to fetch cities');
-        
+        const selectedCountry = countryData.find(c => c.iso2 === formData.country);
+        if (!selectedCountry) throw new Error('Country not found');
+  
+        const response = await fetch('https://countriesnow.space/api/v0.1/countries/state/cities', {
+          signal,
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            country: selectedCountry.country,
+            state: formData.state
+          })
+        });
+  
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setCityData(data);
-        setFormData(prev => ({ ...prev, city: '' }));
+  
+        if (data.data?.cities && Array.isArray(data.data.cities)) {
+          setCityData(data.data.cities);
+          setFormData(prev => ({ ...prev, city: '' }));
+        } else {
+          throw new Error('Expected array of cities in response');
+        }
       } catch (error) {
-        setError(error.message || 'Failed to load cities');
+        if (error.name !== 'AbortError') {
+          setError('Failed to load cities: ' + error.message);
+        }
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchCities();
-  }, [formData.state]);
+    return () => controller.abort();
+  }, [formData.state, countryData]);
 
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -258,7 +301,7 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
                 name="country"
                 value={formData.country}
                 onChange={handleCountryInputChange}
-                className="w-full px-0 py-3 border-b border-gray-300 focus:border-black focus:outline-none bg-transparent"
+                className="w-full text-black px-0 py-3 border-b border-gray-300 focus:border-black focus:outline-none bg-transparent"
                 required
               >
                 <option value="">Select Country</option>
@@ -274,7 +317,7 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
                 name="state"
                 value={formData.state}
                 onChange={handleStateInputChange}
-                className="w-full px-0 py-3 border-b border-gray-300 focus:border-black focus:outline-none bg-transparent"
+                className="w-full text-black px-0 py-3 border-b border-gray-300 focus:border-black focus:outline-none bg-transparent"
                 required
                 disabled={!formData.country}
               >
@@ -291,7 +334,7 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
-                className="w-full px-0 py-3 border-b border-gray-300 focus:border-black focus:outline-none bg-transparent"
+                className="w-full text-black px-0 py-3 border-b border-gray-300 focus:border-black focus:outline-none bg-transparent"
                 required
                 disabled={!formData.state}
               >
