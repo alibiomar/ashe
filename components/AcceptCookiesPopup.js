@@ -9,6 +9,14 @@ export default function AcceptCookiesPopup() {
     }
   }, []);
 
+  useEffect(() => {
+    if (isVisible) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+  }, [isVisible]);
+
   const handleAcceptCookies = () => {
     localStorage.setItem('cookiesAccepted', 'true');
     setIsVisible(false);
@@ -17,18 +25,23 @@ export default function AcceptCookiesPopup() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-black text-white p-6 rounded-lg shadow-lg flex flex-col items-center gap-4 max-w-md">
-      <i className="fa-solid fa-cookie-bite text-2xl"></i>
-      <div className="flex-1">
-        <h2 className="text-lg font-bold">We use cookies</h2>
-        <p className="text-sm opacity-80">We use cookies to enhance your experience.</p>
+    <div className="fixed inset-0 bg-black/80 z-50 backdrop-blur-sm flex items-end justify-center ">
+      <div className="fixed bottom-0 mx-auto bg-white p-6 max-w-md w-full sm:bottom-5 sm:left-1/2 sm:-translate-x-1/2 sm:rounded-none border-t-2 border-black">
+        <div className="flex flex-col items-center gap-4">
+          <i className="fa-solid fa-cookie-bite text-3xl text-black" />
+          <div className="text-center">
+            <h2 className="text-lg font-bold text-black mb-2">COOKIE USAGE</h2>
+            <p className="text-sm text-gray-600">We use essential cookies to ensure proper functionality. By continuing, you agree to our use of cookies.</p>
+          </div>
+          <button
+            className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none"
+            onClick={handleAcceptCookies}
+            aria-label="Accept cookies"
+          >
+            Accept
+          </button>
+        </div>
       </div>
-      <button 
-        className="bg-white text-black font-semibold px-4 py-2 rounded-md hover:bg-gray-200 transition" 
-        onClick={handleAcceptCookies}
-      >
-        Got it
-      </button>
     </div>
   );
 }

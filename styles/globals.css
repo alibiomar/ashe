@@ -19,7 +19,9 @@
 .swiper-pagination-bullet {
   background-color: #46c7c7 !important; /* Ensures pagination bullets are #46c7c7 */
 }
-
+body.overflow-hidden {
+  overflow: hidden !important;
+}
 body {
   @apply bg-white font-sans; /* Neutral background and classic Swiss typography */
   font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -34,14 +36,6 @@ h1, h2, h3, h4 {
 .container {
   @apply mx-auto px-4 sm:px-6 lg:px-8;
   max-width: 1200px; /* Grid alignment */
-}
-
-.btn {
-  @apply inline-block px-6 py-2 bg-black text-white font-bold uppercase tracking-wider rounded-none hover:bg-gray-800 transition duration-300;
-}
-
-.btn-outline {
-  @apply inline-block px-6 py-2 border border-black text-black font-bold uppercase tracking-wider rounded-none hover:bg-black hover:text-white transition duration-300;
 }
 
 .card {

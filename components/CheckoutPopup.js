@@ -6,9 +6,9 @@ import { toast, Toaster } from 'sonner';
 
 // FormInput Component
 const FormInput = ({ label, name, value, onChange, type = 'text', required = true, children, ...props }) => (
-  <div className="mb-4">
-    <label htmlFor={name} className="block font-bold text-sm text-gray-700 mb-1">
-      {label} {required && <span className="text-red-600">*</span>}
+  <div className="mb-6">
+    <label htmlFor={name} className="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">
+      {label} {required && <span className="text-red-500">*</span>}
     </label>
     {children || (
       <input
@@ -17,7 +17,7 @@ const FormInput = ({ label, name, value, onChange, type = 'text', required = tru
         type={type}
         value={value}
         onChange={onChange}
-        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-black focus:ring-1 focus:ring-black"
+        className="w-full px-0 py-3 border-b border-gray-300 focus:border-black focus:outline-none placeholder-gray-400 text-base bg-transparent"
         required={required}
         {...props}
       />
@@ -79,30 +79,24 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
     fetchCountries();
   }, []);
 
-  // Fetch States when the selected country changes
+  // Fetch States
   useEffect(() => {
     const fetchStates = async () => {
-      if (!formData.country) return; // Skip fetching if no country is selected
+      if (!formData.country) return;
       
       setLoading(true);
-      setError(''); // Reset error message before fetch
+      setError('');
       try {
         const response = await fetch(
           `https://api.countrystatecity.in/v1/countries/${formData.country}/states`,
-          {
-            headers: {
-              'X-CSCAPI-KEY': process.env.REACT_APP_API_KEY,
-            },
-          }
+          { headers: { 'X-CSCAPI-KEY': process.env.REACT_APP_API_KEY } }
         );
         
-        if (!response.ok) {
-          throw new Error('Failed to fetch states');
-        }
+        if (!response.ok) throw new Error('Failed to fetch states');
         
         const data = await response.json();
         setStateData(data);
-        setFormData(prev => ({ ...prev, state: '', city: '' })); // Reset state and city on country change
+        setFormData(prev => ({ ...prev, state: '', city: '' }));
       } catch (error) {
         setError(error.message || 'Failed to load states');
       } finally {
@@ -113,30 +107,24 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
     fetchStates();
   }, [formData.country]);
 
-  // Fetch Cities when the selected state changes
+  // Fetch Cities
   useEffect(() => {
     const fetchCities = async () => {
-      if (!formData.country || !formData.state) return; // Skip fetching if no country or state is selected
+      if (!formData.country || !formData.state) return;
       
       setLoading(true);
-      setError(''); // Reset error message before fetch
+      setError('');
       try {
         const response = await fetch(
           `https://api.countrystatecity.in/v1/countries/${formData.country}/states/${formData.state}/cities`,
-          {
-            headers: {
-              'X-CSCAPI-KEY': process.env.REACT_APP_API_KEY,
-            },
-          }
+          { headers: { 'X-CSCAPI-KEY': process.env.REACT_APP_API_KEY } }
         );
         
-        if (!response.ok) {
-          throw new Error('Failed to fetch cities');
-        }
+        if (!response.ok) throw new Error('Failed to fetch cities');
         
         const data = await response.json();
         setCityData(data);
-        setFormData(prev => ({ ...prev, city: '' })); // Reset city on state change
+        setFormData(prev => ({ ...prev, city: '' }));
       } catch (error) {
         setError(error.message || 'Failed to load cities');
       } finally {
@@ -153,21 +141,19 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
   };
 
   const handleCountryInputChange = (e) => {
-    const selectedOption = e.target.value;
-    setFormData((prevData) => ({
-      ...prevData,
-      country: selectedOption, // Set country to selected country's ISO2 value
-      state: '', // Clear the state field
-      city: '',  // Clear the city field
+    setFormData(prev => ({
+      ...prev,
+      country: e.target.value,
+      state: '',
+      city: '',
     }));
   };
 
   const handleStateInputChange = (e) => {
-    const selectedOption = e.target.value;
-    setFormData((prevData) => ({
-      ...prevData,
-      state: selectedOption, // Set state to selected state's name
-      city: '',  // Clear the city field
+    setFormData(prev => ({
+      ...prev,
+      state: e.target.value,
+      city: '',
     }));
   };
 
@@ -237,93 +223,86 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-white backdrop-blur-sm flex justify-center items-center z-50 p-4">
       <Toaster position="top-center" richColors />
       
-      <div ref={popupRef} className="bg-white p-6 rounded-lg shadow-lg flex max-w-lg w-full mx-4">
+      <div ref={popupRef} className="bg-white w-full max-w-6xl h-[90vh] flex flex-col lg:grid lg:grid-cols-2 shadow-xl overflow-hidden">
         {/* Image Section */}
-        <div className="w-1/3 bg-gray-100 rounded-lg mr-6 flex items-center justify-center">
+        <div className="relative h-64 lg:h-full overflow-hidden">
           <img 
-            src="https://images.unsplash.com/photo-1583394838336-acd977736f90?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+            src="Delivery_Van.jpg"
             alt="Checkout Visual"
-            className="object-cover w-full h-full rounded-lg"
+            className="object-cover w-full h-full"
           />
-        </div>
-
-        {/* Form Section */}
-        <div className="w-2/3">
           <button
             onClick={onClose}
-            className="float-right text-gray-500 hover:text-black text-xl font-bold"
+            className="absolute top-4 right-4 text-white bg-black/20 hover:bg-black/30 p-2 rounded-full transition-all"
             aria-label="Close checkout"
             disabled={loading}
           >
-            &times;
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
+        </div>
 
-          <h2 className="text-xl font-bold mb-4">Checkout Details</h2>
+        {/* Form Section */}
+        <div className="flex-1 overflow-y-auto p-6 lg:p-8">
+          <h2 className="text-3xl font-bold mb-8 tracking-tight">ORDER DETAILS</h2>
           
-          <form onSubmit={handlePlaceOrder} className="space-y-3">
-            {/* Country Dropdown */}
+          <form onSubmit={handlePlaceOrder} className="space-y-6">
+            {/* Location Fields */}
             <FormInput label="Country" name="country" value={formData.country} onChange={handleCountryInputChange}>
               <select
                 id="country"
                 name="country"
                 value={formData.country}
                 onChange={handleCountryInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-black focus:ring-1 focus:ring-black"
+                className="w-full px-0 py-3 border-b border-gray-300 focus:border-black focus:outline-none bg-transparent"
                 required
               >
                 <option value="">Select Country</option>
                 {countryData.map((country) => (
-                  <option key={country.iso2} value={country.iso2}>
-                    {country.name}
-                  </option>
+                  <option key={country.iso2} value={country.iso2}>{country.name}</option>
                 ))}
               </select>
             </FormInput>
 
-            {/* State Dropdown */}
             <FormInput label="State" name="state" value={formData.state} onChange={handleStateInputChange}>
               <select
                 id="state"
                 name="state"
                 value={formData.state}
                 onChange={handleStateInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-black focus:ring-1 focus:ring-black"
+                className="w-full px-0 py-3 border-b border-gray-300 focus:border-black focus:outline-none bg-transparent"
                 required
                 disabled={!formData.country}
               >
                 <option value="">Select State</option>
                 {stateData.map((state) => (
-                  <option key={state.iso2} value={state.iso2}>
-                    {state.name}
-                  </option>
+                  <option key={state.iso2} value={state.iso2}>{state.name}</option>
                 ))}
               </select>
             </FormInput>
 
-            {/* City Dropdown */}
             <FormInput label="City" name="city" value={formData.city} onChange={handleChange}>
               <select
                 id="city"
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-black focus:ring-1 focus:ring-black"
+                className="w-full px-0 py-3 border-b border-gray-300 focus:border-black focus:outline-none bg-transparent"
                 required
                 disabled={!formData.state}
               >
                 <option value="">Select City</option>
                 {cityData.map((city) => (
-                  <option key={city.id} value={city.name}>
-                    {city.name}
-                  </option>
+                  <option key={city.id} value={city.name}>{city.name}</option>
                 ))}
               </select>
             </FormInput>
 
-            {/* Other Form Fields */}
+            {/* Address Fields */}
             <FormInput
               label="Zip Code"
               name="zipCode"
@@ -350,30 +329,32 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
               autoComplete="tel"
             />
 
-            <div className="p-3 bg-gray-100 rounded-lg">
-              <p className="text-lg font-bold text-center">
+            {/* Total Amount */}
+            <div className="pt-8 mt-8 border-t border-gray-200">
+              <p className="text-2xl font-bold text-right">
                 Total: {totalAmount.toFixed(2)} TND
               </p>
             </div>
 
-            <div className="flex justify-end space-x-3 mt-4">
+            {/* Action Buttons */}
+            <div className="flex justify-end space-x-4 mt-8">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-sm rounded-md font-bold"
+                className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-white text-black hover:bg-black hover:text-white focus:bg-white focus:text-black focus:outline-none "
                 disabled={loading}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-black hover:bg-gray-800 text-white text-sm rounded-md font-bold flex items-center justify-center"
+                className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none"
                 disabled={loading}
               >
                 {loading ? (
-                  <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="loading" />
                 ) : (
-                  'Place Order'
+                  'Confirm Order'
                 )}
               </button>
             </div>

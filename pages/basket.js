@@ -171,67 +171,67 @@ export default function Basket() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 flex items-center">
+      <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8 flex items-center">
         <div className="max-w-3xl mx-auto">
           <header className="text-center mb-16">
-            <h1 className="text-4xl font-black text-gray-900 mb-4 tracking-tighter">
-              Your Curated Selection
-            </h1>
+<h1 className="text-4xl font-black uppercase tracking-widest text-black mb-4">
+  Chosen Pieces
+</h1>
             <div className="h-1 w-24 bg-black mx-auto"></div>
           </header>
 
-          <Suspense fallback={
-            <div className="flex justify-center py-12">
-              <div className="h-8 w-8 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          }>
+          <Suspense
+            fallback={
+              <div className="flex justify-center py-12">
+                <div className="h-8 w-8 border-2 border-black border-t-transparent rounded-none animate-spin"></div>
+              </div>
+            }
+          >
             {basket.length === 0 ? (
-              <div className="text-center space-y-8 animate-fade-in">
-                <div className="text-8xl mb-6 animate-bounce">🧺</div>
-                <p className="text-2xl text-gray-600 font-medium mb-4">
-                  Your artisanal basket awaits
-                </p>
+              <div className="text-center  flex items-center flex-col space-y-8">
+                <div className="w-40 mb-6 animate-bounce"><img src="/basket.svg" alt="Empty Basket" /></div>
+                <p className="text-xl text-gray-600 font-medium tracking-wide">
+  Awaiting your selection
+</p>
                 <button
                   onClick={() => router.push('/products')}
-                  className="bg-black text-white px-8 py-3 rounded-xl font-bold hover:bg-gray-800 transition-colors"
+                  className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none "
                 >
                   Discover Collections
                 </button>
               </div>
             ) : (
               <div className="space-y-8">
-                <div className="bg-white shadow-2xl rounded-3xl overflow-hidden divide-y divide-gray-100">
-                  {basket.map((items) => (
+                <div className="bg-white border border-gray-300 rounded-none overflow-hidden divide-y divide-gray-300">
+                  {basket.map((item, index) => (
                     <div
-                      key={`${items.id}-${items.size}`}
-                      className="group flex items-center p-6 hover:bg-gray-50 transition-colors"
+                      key={item.id && item.size ? `${item.id}-${item.size}` : `basket-item-${index}`}
+                      className="group flex items-center p-6 hover:bg-gray-100 transition-all duration-300 animate-fadeIn"
                     >
                       <div className="relative w-24 h-24 flex-shrink-0">
-                      <img
-  src={items?.images[0] || '/placeholder-art.svg'}
-  alt={items.name}
-  className="w-full h-auto object-contain rounded-lg shadow-lg"
-  onError={(e) => {
-    e.target.src = '/placeholder-art.svg';  // Fallback if image doesn't load
-  }}
-  loading="lazy"
-/>
-
-
-                        <div className="absolute -bottom-2 -right-2 bg-white px-2 py-1 rounded-full shadow text-sm font-medium">
-                          ×{items.quantity}
+                        <img
+                          src={item?.images[0] || '/placeholder-art.svg'}
+                          alt={item.name}
+                          className="w-full h-auto object-contain rounded-none"
+                          onError={(e) => {
+                            e.target.src = '/placeholder-art.svg'; // Fallback if image doesn't load
+                          }}
+                          loading="lazy"
+                        />
+                        <div className="absolute -bottom-2 -right-2 bg-white border border-gray-300 px-2 py-1 rounded-full text-sm font-medium">
+                          ×{item.quantity}
                         </div>
                       </div>
 
                       <div className="ml-6 flex-1">
                         <div className="flex items-start justify-between">
                           <div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-1">{items.name}</h3>
-                            <p className="text-gray-600 text-sm">Size: {items.size}</p>
+                            <h3 className="text-xl font-bold text-black mb-1">{item.name}</h3>
+                            <p className="text-gray-600 text-sm">Size: {item.size}</p>
                           </div>
                           <button
-                            onClick={() => removeFromBasket(items.id, items.size)}
-                            className="text-gray-400 hover:text-red-600 transition-colors p-2 -m-2"
+                            onClick={() => removeFromBasket(item.id, item.size)}
+                            className="text-gray-400 hover:text-red-600 transition-colors duration-300 p-2"
                             aria-label="Remove items"
                           >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -242,12 +242,12 @@ export default function Basket() {
 
                         <div className="mt-4 flex items-center justify-between">
                           <div className="flex items-center space-x-4">
-                            <span className="text-lg font-medium text-gray-900">
-                              {(items.price * items.quantity).toFixed(2)} TND
+                            <span className="text-lg font-medium text-black">
+                              {(item.price * item.quantity).toFixed(2)} TND
                             </span>
                             <span className="text-gray-400">|</span>
                             <span className="text-sm text-gray-600">
-                              {items.price.toFixed(2)} TND each
+                              {item.price.toFixed(2)} TND each
                             </span>
                           </div>
                         </div>
@@ -256,22 +256,22 @@ export default function Basket() {
                   ))}
                 </div>
 
-                <div className="sticky bottom-6 bg-gradient-to-r from-black to-gray-900 text-white p-8 rounded-3xl shadow-2xl backdrop-blur-lg">
+                <div className="sticky bottom-6 bg-black p-6 rounded-none animate-fadeIn">
                   <div className="flex items-center justify-between mb-6">
                     <div>
-                      <h2 className="text-2xl font-black">Total Summary</h2>
-                      <p className="text-gray-300 mt-1 text-sm">
+                      <h2 className="text-2xl text-white">Total Summary</h2>
+                      <p className="text-gray-600 mt-1 text-sm">
                         {basketCount} premium items selected
                       </p>
                     </div>
                     <p className="text-2xl font-bold">
-                      {basket.reduce((total, items) => total + items.price * items.quantity, 0).toFixed(2)} TND
+                      {basket.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2)} TND
                     </p>
                   </div>
 
                   <button
                     onClick={proceedToCheckout}
-                    className="w-full flex items-center justify-center space-x-3 bg-white text-black py-5 px-8 rounded-xl font-bold hover:bg-gray-100 transition-all transform hover:scale-[1.02]"
+                    className="w-full  mt-4 py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-white text-black  hover:border-white hover:bg-black hover:text-white focus:bg-white focus:text-black focus:outline-none "
                   >
                     <span>Secure Checkout</span>
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -284,11 +284,13 @@ export default function Basket() {
           </Suspense>
 
           {showCheckoutPopup && userInfo && (
-            <Suspense fallback={
-              <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-                <div className="h-12 w-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-              </div>
-            }>
+            <Suspense
+              fallback={
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+                  <div className="h-12 w-12 border-4 border-white border-t-transparent rounded-none animate-spin"></div>
+                </div>
+              }
+            >
               <CheckoutPopup
                 basket={basket}
                 userInfo={userInfo}
@@ -299,6 +301,22 @@ export default function Basket() {
           )}
         </div>
       </div>
+      {/* Custom styles for fade-in animation */}
+      <style jsx>{`
+        .animate-fadeIn {
+          animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </Layout>
   );
 }

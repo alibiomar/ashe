@@ -37,9 +37,10 @@ export default function About() {
                         <Image
                             src="/heritage-hero.jpeg"
                             alt="Archival photo of master tailor at work"
-                            layout="fill"
+                            fill 
                             objectFit="cover"
                             className="opacity-20"
+                            priority
                         />
                     </div>
                     <motion.div 
@@ -82,25 +83,28 @@ export default function About() {
                                 craftsmanship while pioneering contemporary silhouettes.
                             </p>
                         </motion.div>
-                        <motion.div
-                            className="relative aspect-square bg-gray-50 group overflow-hidden"
-                            initial={{ opacity: 0 }}
-                            whileInView={{ opacity: 1 }}
-                        >
-                            <img 
-                                src="/sewing.jpeg" 
-                                className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                            />
-<div className="absolute inset-0 p-8 mt-[60%] text-white mix-blend-difference">
-  <blockquote className="max-w-2xl mx-auto text-center text-2xl md:text-3xl italic leading-relaxed drop-shadow-lg">
-    “My grandmother’s hands taught me that true elegance lives in the seams.”
-  </blockquote>
-  <p className="mt-4 text-center text-base md:text-lg font-light drop-shadow">
-    - Omar Alibi, Founder
-  </p>
-</div>
+    <motion.div
+      className="relative aspect-square bg-gray-50 group overflow-hidden"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+    >
+      {/* Image */}
+      <img
+        src="/sewing.jpeg"
+        className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+        alt="Sewing"
+      />
 
-                        </motion.div>
+      {/* Overlay Text */}
+      <div className="absolute inset-0 p-4 flex flex-col justify-end items-center text-white mix-blend-difference">
+        <blockquote className="w-full max-w-xl mx-auto text-center text-lg sm:text-xl md:text-2xl italic leading-relaxed drop-shadow-lg">
+          “My grandmother’s hands taught me that true elegance lives in the seams.”
+        </blockquote>
+        <p className="mt-2 sm:mt-4 text-center text-sm sm:text-base md:text-lg font-light drop-shadow">
+          - Omar Alibi, Founder
+        </p>
+      </div>
+    </motion.div>
                     </div>
                 </section>
 

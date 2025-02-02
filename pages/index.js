@@ -1,4 +1,4 @@
-import { useEffect, useState, Suspense, lazy, useCallback, useMemo } from 'react';
+import { useEffect, useState, Suspense, lazy } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
@@ -7,12 +7,12 @@ import TextPressure from '../components/TextPressure';
 import Image from 'next/image';
 import ErrorBoundary from '../components/ErrorBoundary';
 import LoadingSpinner from '../components/LoadingScreen';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Lazy-loaded components for better performance
 const Testimonial = lazy(() => import('../components/Testimonial'));
 const GridDistortion = lazy(() => import('../components/GridDistortion'));
-const NewsletterSignup = lazy(() => import('../components/NewsletterSignup')); // New component for newsletter signup
+const NewsletterSignup = lazy(() => import('../components/NewsletterSignup'));
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -22,22 +22,28 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Animation variants for Framer Motion
   const containerVariants = {
-    hidden: { opacity: 0, y: 40 },
+    hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      y: 0,
-      transition: { type: 'spring', stiffness: 100, damping: 25, staggerChildren: 0.2 },
-    },
+      transition: {
+        staggerChildren: 0.2,
+        when: "beforeChildren"
+      }
+    }
   };
-
 
   const childVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { duration: 0.5 } },
+    hidden: { y: 40, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: 'spring', stiffness: 120, damping: 20 }
+    }
   };
 
-  // Fetch user data on auth state change
+  // Listen for authentication state changes and fetch user data if logged in.
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -83,30 +89,17 @@ export default function Home() {
     fetchTestimonials();
   }, []);
 
-  // Auto-rotate testimonials
+  // Auto-rotate testimonials every 5 seconds
   useEffect(() => {
     if (testimonials.length > 1) {
       const interval = setInterval(() => {
         setCurrentTestimonialIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
-      }, 3000);
+      }, 5000);
       return () => clearInterval(interval);
     }
   }, [testimonials.length]);
 
-  // Memoize displayed testimonials
-  const displayedTestimonials = useMemo(() => {
-    const displayed = [];
-    for (let i = -1; i <= 1; i++) {
-      const index = (currentTestimonialIndex + i + testimonials.length) % testimonials.length;
-      displayed.push(testimonials[index]);
-    }
-    return displayed;
-  }, [currentTestimonialIndex, testimonials]);
-
-  const handleTestimonialClick = useCallback((index) => {
-    setCurrentTestimonialIndex(index);
-  }, []);
-
+  // Handle loading and error states
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -121,23 +114,36 @@ export default function Home() {
 
   return (
     <Layout>
-      <motion.div initial="hidden" animate="visible" variants={containerVariants}>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className="overflow-hidden"
+      >
         {/* Hero Section */}
-        <div className="relative w-full h-[100vh] mb-8 overflow-hidden">
-        <Image
-  src="/header.jpeg"
-  alt="Fashion Header"
-  fill
-  style={{ objectFit: 'cover' }}
-  className="rounded-lg shadow-lg transform transition-all duration-500 hover:scale-105"
-  loading="lazy"
-  sizes="(max-width: 768px) 100vw, 50vw" // Add sizes for better performance
-/>
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30 flex items-end justify-center pb-4">
+        <section className="relative w-full h-screen mb-16 overflow-hidden">
           <motion.div
-            variants={childVariants}
-            className="w-full max-w-6xl sm:max-w-2xl px-[5vw] mb-[10vh] text-center"
-          >              <TextPressure
+            className="absolute inset-0"
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Image
+              src="/header.jpeg"
+              alt="Fashion Header"
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 100vw"
+            />
+          </motion.div>
+          
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30">
+            <motion.div
+              className="container mx-auto px-4 h-full flex flex-col justify-end pb-16"
+              variants={childVariants}
+            >
+              <TextPressure
                 text={user ? `Welcome, ${firstName}!` : 'Welcome to ASHE'}
                 flex={true}
                 alpha={false}
@@ -147,123 +153,151 @@ export default function Home() {
                 italic={true}
                 textColor="#ffffff"
                 strokeColor="#ff0000"
-                minFontSize={24}
-              /></motion.div>
-            </div>
-          
-        </div>
+                minFontSize={32}
+                className="mb-8"
+              />
+              <motion.p
+                className="text-xl md:text-2xl text-white/90 font-light max-w-2xl mx-auto text-center mb-12"
+                variants={childVariants}
+              >
+                Crafting timeless elegance through meticulous tailoring and sustainable practices
+              </motion.p>
+            </motion.div>
+          </div>
+        </section>
 
-{/* Product Sections */}
-<section className="container mx-auto px-4 mb-24 grid grid-cols-1 md:grid-cols-2 gap-8">
-  {/* Featured Section */}
-  <motion.div
-    className="p-6 md:p-8 lg:p-12 bg-white border-2 border-black space-y-6 flex flex-col h-full"
-    initial={{ opacity: 0, y: 50 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-  >
-    {/* Image */}
-    <div className="w-full h-48 md:h-64 lg:h-80 relative mb-6">
-      <img
-        src="/featured.jpg" // Replace with your image path
-        alt="Featured Collection"
-        className="w-full h-full object-cover rounded-lg"
-      />
-    </div>
-    <h2 className="text-3xl md:text-4xl font-bold">Featured</h2>
-    <p className="text-lg text-gray-600 flex-1">
-      Curated selection of signature pieces
-    </p>
-    <a
-      href="/products"
-      className="inline-block text-lg font-medium underline hover:text-gray-600"
-    >
-      Explore Collection →
-    </a>
-  </motion.div>
+        {/* Product Sections */}
+        <section className="container mx-auto px-4 mb-24 grid grid-cols-1 md:grid-cols-2 gap-8">
+          {['Featured', 'New Arrivals'].map((section, idx) => (
+            <motion.div
+              key={section}
+              className={`group relative p-8 overflow-hidden ${idx === 0 ? 'bg-white' : 'bg-black text-white'}`}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "0px 0px -100px 0px" }}
+              transition={{ duration: 0.6, delay: idx * 0.1 }}
+            >
+              <div className="relative h-80 mb-8 overflow-hidden">
+                <Image
+                  src={idx === 0 ? '/featured.jpg' : '/new-arrivals.jpg'}
+                  alt={section}
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              </div>
+              
+              <h2 className="text-4xl font-semibold mb-4">{section}</h2>
+              <p className={`text-lg mb-6 ${idx === 0 ? 'text-gray-600' : 'text-gray-300'}`}>
+                {idx === 0 
+                  ? 'Curated selection of signature pieces' 
+                  : 'Discover our latest seasonal offerings'}
+              </p>
+              <a
+                href="/products"
+                className="inline-flex items-center gap-2 text-lg font-medium hover:gap-3 transition-all"
+              >
+                Explore Collection
+                <span aria-hidden="true" className="text-xl">→</span>
+              </a>
+            </motion.div>
+          ))}
+        </section>
 
-  {/* New Arrivals Section */}
-  <motion.div
-    className="p-6 md:p-8 lg:p-12 bg-black text-white space-y-6 flex flex-col h-full"
-    initial={{ opacity: 0, y: 50 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-  >
-    {/* Image */}
-    <div className="w-full h-48 md:h-64 lg:h-80 relative mb-6">
-      <img
-        src="/new-arrivals.jpg" // Replace with your image path
-        alt="New Arrivals"
-        className="w-full h-full object-cover rounded-lg"
-      />
-    </div>
-    <h2 className="text-3xl md:text-4xl font-bold">New Arrivals</h2>
-    <p className="text-lg text-gray-300 flex-1">
-      Discover our latest seasonal offerings
-    </p>
-    <a
-      href="/products"
-      className="inline-block text-lg font-medium underline hover:text-gray-400"
-    >
-      View New Items →
-    </a>
-  </motion.div>
-</section>
-
-        {/* Grid Distortion Component */}
-        <ErrorBoundary key="grid-distortion" fallback="Failed to load Grid Distortion">
-          <motion.div
+        {/* Grid Distortion Section */}
+        <ErrorBoundary fallback="Failed to load visual experience">
+          <motion.section
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            style={{ width: '100%', height: '600px', position: 'relative' }}
+            viewport={{ once: true, margin: "0px 0px -200px 0px" }}
+            className="relative h-[80vh] mb-24"
           >
-            <Suspense fallback={<div className='loading'></div>}>
+            <Suspense fallback={<div className="absolute inset-0 bg-gray-100 animate-pulse" />}>
               <GridDistortion
                 imageSrc="https://picsum.photos/1920/1080?grayscale"
-                grid={10}
-                mouse={0.1}
-                strength={0.15}
-                relaxation={0.9}
-                className="custom-class"
+                grid={12}
+                mouse={0.05}
+                strength={0.12}
+                relaxation={0.95}
               />
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <h3 className="text-4xl md:text-6xl font-bold text-white mix-blend-difference">
+                  Beyond Fashion
+                </h3>
+              </div>
             </Suspense>
-          </motion.div>
+          </motion.section>
         </ErrorBoundary>
 
         {/* Testimonials Section */}
-        <section className="my-16 px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">What Our Customers Say</h2>
-          <div className="flex flex-col md:flex-row gap-8 justify-center items-center">
-            {displayedTestimonials.map((testimonial, index) => {
-              const actualIndex = (currentTestimonialIndex + index - 1 + testimonials.length) % testimonials.length;
-              const isCurrent = index === 1;
-              return (
-                <ErrorBoundary key={`testimonial-${testimonial.id}`} fallback="Failed to load Testimonial">
-                  <div className={`transition-all duration-500 ease-in-out transform cursor-pointer ${
-                      isCurrent ? 'scale-100 opacity-100' : 'scale-95 opacity-70 blur-sm'
-                    }`}
-                    onClick={() => handleTestimonialClick(actualIndex)}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`View testimonial from ${testimonial.name}`}
-                  >
-                    <Suspense fallback={<div className='loading'></div>}>
-                      <Testimonial testimonial={testimonial} />
-                    </Suspense>
-                  </div>
-                </ErrorBoundary>
-              );
-            })}
+        <section className="px-4 mb-24 flex flex-col justify-center items-center">
+          <motion.h2
+            className="text-4xl font-bold text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            Voices of Elegance
+          </motion.h2>
+
+          <div className="relative w-full max-w-3xl min-h-[50vh]">
+            <AnimatePresence mode="wait">
+              {testimonials.map(
+                (testimonial, index) =>
+                  currentTestimonialIndex === index && (
+                    <motion.div
+                      key={testimonial.id}
+                      initial={{ opacity: 0, x: 50 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -50 }}
+                      transition={{ duration: 0.5 }}
+                      className="w-full"
+                    >
+                      <ErrorBoundary
+                        fallback={
+                          <div className="h-full flex items-center justify-center text-red-500">
+                            Failed to load testimonial
+                          </div>
+                        }
+                      >
+                        <Suspense
+                          fallback={
+                            <div className="h-full bg-gray-50 animate-pulse rounded-2xl" />
+                          }
+                        >
+                          <Testimonial testimonial={testimonial} />
+                        </Suspense>
+                      </ErrorBoundary>
+                    </motion.div>
+                  )
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Navigation Dots */}
+          <div className="flex justify-center gap-3 mt-8">
+            {testimonials.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentTestimonialIndex(index)}
+                className={`w-3 h-3 rounded-full transition-colors ${
+                  index === currentTestimonialIndex ? 'bg-black' : 'bg-gray-300'
+                }`}
+                aria-label={`View testimonial ${index + 1}`}
+              />
+            ))}
           </div>
         </section>
-        
-                {/* Newsletter Section */}
-                <section className="flex items-center">
-          <Suspense fallback={<div className='loading'></div>}>
+
+        {/* Newsletter Signup Section */}
+        <motion.section
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
+          <Suspense fallback={<div className="h-96 bg-white animate-pulse rounded-2xl" />}>
             <NewsletterSignup />
           </Suspense>
-        </section>
+        </motion.section>
       </motion.div>
     </Layout>
   );

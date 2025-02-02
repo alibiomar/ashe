@@ -173,9 +173,9 @@ export default function Navbar({ onHeightChange }) { // Add onHeightChange prop
               <Link
                 key={item.path}
                 href={item.path}
-                className={`flex items-center text-sm font-medium ${
+                className={`flex items-center text-sm  ${
                   isActive(item.path)
-                    ? 'text-teal-600'
+                    ? 'text-teal-600 font-semibold'
                     : 'text-gray-600 hover:text-teal-500'
                 } transition-colors`}
               >
@@ -243,9 +243,9 @@ export default function Navbar({ onHeightChange }) { // Add onHeightChange prop
                   key={item.path}
                   href={item.path}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`flex items-center px-4 py-3 rounded-lg ${
+                  className={`flex items-center px-4 py-3  ${
                     isActive(item.path)
-                      ? 'bg-teal-50 text-teal-600'
+                      ? 'bg-teal-50 text-teal-600 font-semibold '
                       : 'text-gray-600 hover:bg-gray-50'
                   }`}
                 >
