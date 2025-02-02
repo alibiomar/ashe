@@ -121,7 +121,7 @@ export default function Home() {
         className="overflow-hidden"
       >
         {/* Hero Section */}
-        <section className="relative w-full h-screen mb-16 overflow-hidden">
+        <section className="relative w-full h-[92vh] mb-32 overflow-hidden">
           <motion.div
             className="absolute inset-0"
             initial={{ scale: 1.1 }}
@@ -140,7 +140,7 @@ export default function Home() {
           
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30">
             <motion.div
-              className="container mx-auto px-4 h-full flex flex-col justify-end pb-16"
+              className="container mx-auto px-4 h-[80vh] flex flex-col justify-end"
               variants={childVariants}
             >
               <TextPressure
@@ -154,10 +154,10 @@ export default function Home() {
                 textColor="#ffffff"
                 strokeColor="#ff0000"
                 minFontSize={32}
-                className="mb-8"
+                className=" pt-16"
               />
               <motion.p
-                className="text-xl md:text-2xl text-white/90 font-light max-w-2xl mx-auto text-center mb-12"
+                className="text-sm md:text-xl text-white/90 font-light max-w-2xl mx-auto text-center mb-5"
                 variants={childVariants}
               >
                 Crafting timeless elegance through meticulous tailoring and sustainable practices
@@ -167,7 +167,7 @@ export default function Home() {
         </section>
 
         {/* Product Sections */}
-        <section className="container mx-auto px-4 mb-24 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <section className="container mx-auto px-4 mb-32 grid grid-cols-1 md:grid-cols-2 gap-8">
           {['Featured', 'New Arrivals'].map((section, idx) => (
             <motion.div
               key={section}
