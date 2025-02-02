@@ -182,8 +182,7 @@ export default function Basket() {
 
           <Suspense
             fallback={
-              <div className="loading">
-              </div>
+              <LoadingSpinner />
             }
           >
             {basket.length === 0 ? (
@@ -285,8 +284,7 @@ export default function Basket() {
           {showCheckoutPopup && userInfo && (
             <Suspense
               fallback={
-                <div className="loading">
-                </div>
+                <LoadingSpinner />
               }
             >
               <CheckoutPopup

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef, Suspense, lazy } from 'react';
-import { getFirestore, collection, getDocs, query, orderBy, limit, startAfter, doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, limit, startAfter, doc, getDoc, setDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Layout from '../components/Layout';
 import LoadingScreen from '../components/LoadingScreen'; // Import the custom loading component
@@ -212,8 +212,9 @@ export default function Products() {
                     </h1>
                     {user && (
                         <p className="text-xl text-gray-600 font-medium">
-                            Welcome back, {firstName} 👋
-                        </p>
+    Welcome back, {firstName} <span className="wave">👋</span>
+</p>
+
                     )}
                 </div>
             </header>

@@ -97,7 +97,7 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
           id: user.uid,
           name: userDoc.data().firstName || 'No name provided',
           email: user.email,
-          phone: user.phone,
+          phone: userDoc.data().phone,
 
         },
         shippingInfo: formData,

@@ -171,8 +171,7 @@ export default function Home() {
                 className="text-sm md:text-xl text-white/90 font-light max-w-2xl mb-5"
                 variants={childVariants}
               >
-                Crafting timeless elegance through meticulous tailoring and sustainable practices
-              </motion.p>
+Crafting timeless elegance through refined tailoring and sustainable mastery.              </motion.p>
             </motion.div>
           </div>
         </section>
