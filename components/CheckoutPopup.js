@@ -38,18 +38,15 @@ FormInput.propTypes = {
 // CheckoutPopup Component
 export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
   const [formData, setFormData] = useState({
-    country: '',
+
     state: '',
     city: '',
     zipCode: '',
     addressLine: '',
-    phone: '',
+
   });
   const [loading, setLoading] = useState(false);
-  const [countryData, setCountryData] = useState([]);
-  const [stateData, setStateData] = useState([]);
-  const [cityData, setCityData] = useState([]);
-  const [error, setError] = useState('');
+
   const popupRef = useRef(null);
 
   const totalAmount = useMemo(() => 
@@ -57,161 +54,23 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
     [basket]
   );
 
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-    
-    const fetchCountries = async () => {
-      setLoading(true);
-      setError('');
-      
-      try {
-        const response = await fetch('https://countriesnow.space/api/v0.1/countries', { signal });
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-  
-        if (data.data && Array.isArray(data.data)) {
-          setCountryData(data.data);
-        } else {
-          throw new Error('Expected array of countries in response');
-        }
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          setError('Failed to load countries: ' + error.message);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    fetchCountries();
-    return () => controller.abort();
-  }, []);  
-  
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-    
-    const fetchStates = async () => {
-      if (!formData.country || !countryData.length) return;
-  
-      setLoading(true);
-      setError('');
-  
-      try {
-        const selectedCountry = countryData.find(c => c.iso2 === formData.country);
-        if (!selectedCountry) throw new Error('Country not found');
-  
-        const response = await fetch('https://countriesnow.space/api/v0.1/countries/states', {
-          signal,
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ country: selectedCountry.country })
-        });
-  
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-  
-        if (data.data?.states && Array.isArray(data.data.states)) {
-          setStateData(data.data.states);
-          setFormData(prev => ({ ...prev, state: '', city: '' }));
-        } else {
-          throw new Error('Expected array of states in response');
-        }
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          setError('Failed to load states: ' + error.message);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    fetchStates();
-    return () => controller.abort();
-  }, [formData.country, countryData]);
-  
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-    
-    const fetchCities = async () => {
-      if (!formData.country || !formData.state || !countryData.length) return;
-  
-      setLoading(true);
-      setError('');
-  
-      try {
-        const selectedCountry = countryData.find(c => c.iso2 === formData.country);
-        if (!selectedCountry) throw new Error('Country not found');
-  
-        const response = await fetch('https://countriesnow.space/api/v0.1/countries/state/cities', {
-          signal,
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            country: selectedCountry.country,
-            state: formData.state
-          })
-        });
-  
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-  
-        if (data.data?.cities && Array.isArray(data.data.cities)) {
-          setCityData(data.data.cities);
-          setFormData(prev => ({ ...prev, city: '' }));
-        } else {
-          throw new Error('Expected array of cities in response');
-        }
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          setError('Failed to load cities: ' + error.message);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    fetchCities();
-    return () => controller.abort();
-  }, [formData.state, countryData]);
-
+ 
   
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleCountryInputChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      country: e.target.value,
-      state: '',
-      city: '',
-    }));
-  };
 
-  const handleStateInputChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      state: e.target.value,
-      city: '',
-    }));
-  };
 
   const validateForm = () => {
-    const { country, state, city, zipCode, phone } = formData;
-    if (!country || !state || !city || !zipCode || !phone) {
+    const {  state, city, zipCode} = formData;
+    if ( !state || !city || !zipCode) {
       toast.error('All fields are required');
       return false;
     }
     if (!/^\d+$/.test(zipCode)) {
       toast.error('Zip code must contain only numbers');
-      return false;
-    }
-    if (!/^\d{8,15}$/.test(phone)) {
-      toast.error('Phone number must be 8-15 digits');
       return false;
     }
     return true;
@@ -238,7 +97,7 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
           id: user.uid,
           name: userDoc.data().firstName || 'No name provided',
           email: user.email,
-          phone: formData.phone,
+
         },
         shippingInfo: formData,
         items: basket.map(item => ({
@@ -294,64 +153,29 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
           <h2 className="text-3xl font-bold mb-8 tracking-tight">ORDER DETAILS</h2>
           
           <form onSubmit={handlePlaceOrder} className="space-y-6">
-            {/* Location Fields */}
-            <FormInput label="Country" name="country" value={formData.country} onChange={handleCountryInputChange}>
-              <select
-                id="country"
-                name="country"
-                value={formData.country}
-                onChange={handleCountryInputChange}
-                className="w-full text-black px-0 py-3 border-b border-gray-300 focus:border-black focus:outline-none bg-transparent"
-                required
-              >
-                <option value="">Select Country</option>
-                {countryData.map((country) => (
-                  <option key={country.iso2} value={country.iso2}>{country.name}</option>
-                ))}
-              </select>
-            </FormInput>
 
-            <FormInput label="State" name="state" value={formData.state} onChange={handleStateInputChange}>
-              <select
-                id="state"
-                name="state"
-                value={formData.state}
-                onChange={handleStateInputChange}
-                className="w-full text-black px-0 py-3 border-b border-gray-300 focus:border-black focus:outline-none bg-transparent"
-                required
-                disabled={!formData.country}
-              >
-                <option value="">Select State</option>
-                {stateData.map((state) => (
-                  <option key={state.iso2} value={state.iso2}>{state.name}</option>
-                ))}
-              </select>
-            </FormInput>
-
-            <FormInput label="City" name="city" value={formData.city} onChange={handleChange}>
-              <select
-                id="city"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                className="w-full text-black px-0 py-3 border-b border-gray-300 focus:border-black focus:outline-none bg-transparent"
-                required
-                disabled={!formData.state}
-              >
-                <option value="">Select City</option>
-                {cityData.map((city) => (
-                  <option key={city.id} value={city.name}>{city.name}</option>
-                ))}
-              </select>
-            </FormInput>
-
+          <h3 className="text-mx font-light italic mb-8  text-red-500">*Currently, we only ship within Tunisia*</h3>
+          <FormInput
+              label="State"
+              name="state"
+              value={formData.state}
+              onChange={handleChange}
+              autoComplete="state"
+            />
+            <FormInput
+              label="City"
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              autoComplete="city"
+            />
             {/* Address Fields */}
             <FormInput
               label="Zip Code"
               name="zipCode"
               value={formData.zipCode}
               onChange={handleChange}
-              type="number"
+              type="text"
               autoComplete="postal-code"
             />
             
@@ -363,14 +187,7 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
               autoComplete="street-address"
             />
             
-            <FormInput
-              label="Phone Number"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              type="tel"
-              autoComplete="tel"
-            />
+
 
             {/* Total Amount */}
             <div className="pt-8 mt-8 border-t border-gray-200">

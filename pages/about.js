@@ -94,12 +94,11 @@ export default function About() {
                 </h4>
               </div>
               <h1 className="text-6xl md:text-8xl font-black mb-8 leading-none">
-                <span className="block">Crafting Distinction</span>
-                <span className="text-gray-400">Since Day One</span>
+                <span className="block">Born from Legacy</span>
+                <span className="text-gray-400">crafted for eternity</span>
               </h1>
               <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto">
-                Where timeless tailoring meets modern rebellion. At ASHE, every stitch whispers
-                heritage while defying the ordinary.
+                Welcome to ASHE, where every piece carries an inherited story.
               </p>
             </motion.div>
           </header>
@@ -120,9 +119,7 @@ export default function About() {
                     <div className="h-1 w-24 bg-black" />
                   </div>
                   <p className="text-lg text-gray-600 leading-relaxed">
-                    Born from generations of sartorial mastery, ASHE honors tradition by
-                    disrupting the status quo. Every collection is a fusion of classic techniques
-                    and audacious design, meant for those who dare to be different.
+                  At Ashe, we believe in timeless fashion inspired by an inherited legacy, crafted for those who appreciate the finer things in life. Every piece echoes the elegance of "old money," redefined through a modern lens.
                   </p>
                 </motion.div>
                 <motion.div
@@ -139,9 +136,9 @@ export default function About() {
                     alt="Close-up of sewing in progress"
                   />
                   {/* Overlay Text */}
-                  <div className="absolute inset-0 p-4 flex flex-col justify-end items-center text-white mix-blend-difference">
+                  <div className="absolute inset-0 p-4 flex flex-col justify-end items-center text-white ">
                     <blockquote className="w-full max-w-xl mx-auto text-center text-lg sm:text-xl md:text-2xl italic leading-relaxed drop-shadow-lg">
-                      “My grandmother’s hands taught me that true elegance lives in the seams.”
+                      “My grandmother’s hands showed me that true elegance is found in the details.”
                     </blockquote>
                     <p className="mt-2 sm:mt-4 text-center text-sm sm:text-base md:text-lg font-light drop-shadow">
                       - Omar Alibi, Founder
@@ -211,6 +208,20 @@ export default function About() {
             {/* Modern Manifesto */}
             <section className="min-h-screen py-32 px-8 bg-gray-50">
               <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+              <motion.div
+  className="relative aspect-square bg-black text-white flex items-center justify-center text-center p-12"
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true }}
+  variants={fadeIn}
+
+>
+  <div className="text-3xl font-semibold italic leading-relaxed tracking-wide text-shadow-lg">
+    "We don't sell clothes.<br />
+    We’re shaping <br />
+    a mindset."
+  </div>
+</motion.div>
                 {/* Text Content */}
                 <motion.div
                   className="space-y-8"
@@ -225,33 +236,14 @@ export default function About() {
                   </h2>
                   <div className="space-y-6">
                     <p className="text-lg text-gray-600 leading-relaxed">
-                      We reject the emptiness of fast fashion. Our garments are crafted to
-                      transcend fleeting trends and transform into heirlooms. Every collection is a
-                      chapter in our ongoing story of sartorial rebellion.
-                    </p>
-                    <div className="h-px bg-black/20 w-48" />
+                    Our mission is to create timeless, classic clothing that lasts. We design for those who value authenticity, quality, and the story behind every piece.   </p>                 <div className="h-px bg-black/20 w-48" />
                     <p className="text-lg text-gray-600 leading-relaxed">
-                      Wearing ASHE means carrying forward a legacy of distinction—where every cut
-                      commands attention and every fabric speaks of heritage.
-                    </p>
+                    Wearing ASHE is about more than just style, it's about carrying a legacy of excellence. Each design stands out, and every fabric tells a story of tradition, worn proudly by those who choose to be unique.                    </p>
                   </div>
                 </motion.div>
 
-                {/* Quote Container */}
-                <motion.div
-                  className="relative aspect-square bg-gray-900 text-white flex items-center justify-center text-center p-12 rounded-lg shadow-lg"
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={fadeIn}
-                  whileHover={{ scale: 1.02 }}
-                >
-                  <div className="text-3xl italic leading-relaxed">
-                    "We don't just make clothes.<br />
-                    We craft armor for<br />
-                    the distinctly bold."
-                  </div>
-                </motion.div>
+
+
               </div>
             </section>
 
@@ -270,7 +262,7 @@ export default function About() {
                 >
                   <span className="block">Wear Your Story</span>
                   <span className="text-gray-500 block mt-2">
-                    For the Bold. For the Fearless.
+                    Be Bold. Be ASHE.
                   </span>
                 </motion.div>
 

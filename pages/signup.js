@@ -35,7 +35,12 @@ export default function Signup() {
       setLoading(false); // Set loading to false
       return;
     }
+    if (!/^\d{8,15}$/.test(phone)) {
+      toast.error('Phone number must be 8-15 digits');
+      setLoading(false); // Set loading to false
 
+      return;
+    }
     try {
       // Create user with email and password using Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -139,7 +144,7 @@ export default function Signup() {
           </div>
           <div>
             <input
-              type="text"
+              type="tel"
               placeholder="Phone Number"
               className="w-full p-2 border -md placeholder-sm"
               value={phone}
