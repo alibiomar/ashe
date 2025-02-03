@@ -35,7 +35,7 @@ export default function ProductCard({ product, onAddToBasket }) {
   const { name, price, originalPrice, stock, images, description, sizes } = product;
 
   return (
-    <div className="w-full flex flex-col md:flex-row bg-white border-2 border-black p-6 gap-6">
+    <div className="w-full flex flex-col items-center md:flex-row bg-white  p-6 gap-6">
       {/* Image Slider */}
       <div className="w-full md:w-[60%] relative group">
         <Swiper
@@ -56,7 +56,7 @@ export default function ProductCard({ product, onAddToBasket }) {
       width={800}
       height={1000}
       priority={index === 0} 
-      className="object-cover h-[500px] w-full"
+      className="object-cover h-full w-full"
     />
   </SwiperSlide>
 ))}

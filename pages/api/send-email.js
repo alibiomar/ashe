@@ -24,8 +24,8 @@ export default async function handler(req, res) {
 
   try {
     const info = await transporter.sendMail({
-      from: `"ASHE Support" <noreply@ashe.tn>`, // Must match your OVH domain
-      to: process.env.SITE_MAIL_RECIEVER, // contact@ashe.tn
+      from: `"ASHE Support" <noreply@ashe.tn>`, 
+      to: process.env.SITE_MAIL_RECIEVER, 
       replyTo: email, // User’s email from the form
       subject: subject,
       html: text,
