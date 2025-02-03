@@ -1,4 +1,17 @@
 module.exports = {
+  async headers() {
+    return [
+      {
+        source: '/auth/action',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "default-src 'self' https://*.firebaseio.com"
+          }
+        ]
+      }
+    ]
+  },
   devIndicators: {
     buildActivity: false,
   },
