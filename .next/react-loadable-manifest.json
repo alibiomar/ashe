@@ -1,1 +1,32 @@
-{}
+{
+  "node_modules\\next\\dist\\client\\index.js -> ../pages/_app": {
+    "id": "node_modules\\next\\dist\\client\\index.js -> ../pages/_app",
+    "files": [
+      "static/chunks/node_modules_next_dist_pages__app_js.js"
+    ]
+  },
+  "node_modules\\next\\dist\\client\\index.js -> ../pages/_error": {
+    "id": "node_modules\\next\\dist\\client\\index.js -> ../pages/_error",
+    "files": [
+      "static/chunks/node_modules_next_dist_pages__error_js.js"
+    ]
+  },
+  "pages\\index.js -> ../components/GridDistortion": {
+    "id": "pages\\index.js -> ../components/GridDistortion",
+    "files": [
+      "static/chunks/components_GridDistortion_js.js"
+    ]
+  },
+  "pages\\index.js -> ../components/NewsletterSignup": {
+    "id": "pages\\index.js -> ../components/NewsletterSignup",
+    "files": [
+      "static/chunks/components_NewsletterSignup_js.js"
+    ]
+  },
+  "pages\\index.js -> ../components/Testimonial": {
+    "id": "pages\\index.js -> ../components/Testimonial",
+    "files": [
+      "static/chunks/components_Testimonial_js.js"
+    ]
+  }
+}
