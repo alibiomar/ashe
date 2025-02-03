@@ -10,12 +10,12 @@ module.exports = {
             value: [
               "default-src 'self'",
               "connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com",
-              "script-src 'self' 'unsafe-eval' https://www.gstatic.com",
-              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", // Add Google Fonts
-              "img-src 'self' data: https://*.googleusercontent.com https://firebasestorage.googleapis.com https://picsum.photos", // Add Picsum
+              "script-src 'self' 'unsafe-eval' https://www.gstatic.com https://apis.google.com", // Add Google API scripts
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "img-src 'self' data: https://*.googleusercontent.com https://firebasestorage.googleapis.com https://picsum.photos https://fastly.picsum.photos", // Add Fastly CDN for Picsum images
               "frame-src 'self' https://securetoken.googleapis.com",
               "form-action 'self'",
-              "font-src 'self' https://fonts.gstatic.com https://res.cloudinary.com", // Add Cloudinary
+              "font-src 'self' https://fonts.gstatic.com https://res.cloudinary.com",
               "media-src 'self' https://*.firebaseio.com"
             ].join('; ')
           },
