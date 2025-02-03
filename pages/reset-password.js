@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { getAuth, confirmPasswordReset } from "firebase/auth";
-import firebaseApp from "../lib/firebaseClient"; // Ensure Firebase is initialized
+import firebaseApp from '../lib/firebase'; // ✅ Correct import
 
 const ResetPassword = () => {
   const router = useRouter();

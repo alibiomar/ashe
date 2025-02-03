@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { sendPasswordResetEmail } from '../../lib/firebaseClient'; // Import your custom password reset function
+import { sendPasswordResetEmail } from '../../lib/firebase'; // Import your custom password reset function
 import toast from 'sonner';
 
 const PasswordResetForm = () => {

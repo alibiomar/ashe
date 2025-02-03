@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { auth } from '../../lib/firebaseClient';
+import { auth } from '../../lib/firebase';
 
 const VerifyEmailBanner = () => {
   const router = useRouter();

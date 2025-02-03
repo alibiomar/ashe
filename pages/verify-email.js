@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { auth } from '../lib/firebaseClient';
-import AuthLayout from '../components/Auth/AuthLayout';
+import { auth } from '../lib/firebase';
+import AuthLayout from '../components/auth/VerifyEmailBanner';
 
 const VerifyEmailPage = () => {
   const router = useRouter();
