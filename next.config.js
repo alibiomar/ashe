@@ -18,7 +18,7 @@ module.exports = {
               "font-src 'self' https://fonts.gstatic.com https://res.cloudinary.com data:", // Allow base64-encoded fonts
               "media-src 'self' https://*.firebaseio.com"
             ].join('; ')
-          }
+          },
           
           
           
