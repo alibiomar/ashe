@@ -33,6 +33,7 @@ yarn-error.log*
 
 # Next.js build artifacts
 /.next
+.next
 
 # Static export folder (if using `next export`)
 /out
