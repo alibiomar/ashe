@@ -1,1 +1,8 @@
-{"/_app":"pages/_app.js","/_error":"pages/_error.js","/about":"pages/about.html","/api/sendVerificationEmail":"pages/api/sendVerificationEmail.js","/_document":"pages/_document.js","/api/sendPasswordResetEmail":"pages/api/sendPasswordResetEmail.js","/basket":"pages/basket.html","/api/send-email":"pages/api/send-email.js","/contact":"pages/contact.html","/":"pages/index.html","/products":"pages/products.html","/signup":"pages/signup.html","/verify-email":"pages/verify-email.html","/login":"pages/login.html","/reset-password":"pages/reset-password.html","/404":"pages/404.html"}
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js",
+  "/": "pages/index.js",
+  "/login": "pages/login.js",
+  "/products": "pages/products.js"
+}
