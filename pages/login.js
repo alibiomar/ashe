@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react';import { Suspense, lazy } from 'react';
-import LoadingScreen from '../components/LoadingScreen'; // Import the custom loading component
-
 import { useRouter } from 'next/router';
 import {
   signInWithEmailAndPassword,
