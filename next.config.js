@@ -6,25 +6,20 @@ module.exports = {
         headers: [
           // HSTS
           {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=63072000; includeSubDomains; preload'
-          },
-          
-          // CSP
-          {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
               "connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com",
               "script-src 'self' 'unsafe-eval' https://www.gstatic.com",
-              "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: https://*.googleusercontent.com https://firebasestorage.googleapis.com",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", // Add Google Fonts
+              "img-src 'self' data: https://*.googleusercontent.com https://firebasestorage.googleapis.com https://picsum.photos", // Add Picsum
               "frame-src 'self' https://securetoken.googleapis.com",
               "form-action 'self'",
-              "font-src 'self' https://fonts.gstatic.com",
+              "font-src 'self' https://fonts.gstatic.com https://res.cloudinary.com", // Add Cloudinary
               "media-src 'self' https://*.firebaseio.com"
             ].join('; ')
           },
+          
           
           // Other headers
           {
