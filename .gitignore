@@ -27,5 +27,22 @@ yarn-error.log*
 # Environment files (local configs)
 /.env.*
 .env
+
+# Node.js dependencies
 /node_modules
-.next
+
+# Next.js build artifacts
+/.next
+
+# Static export folder (if using `next export`)
+/out
+
+# macOS system files (if applicable)
+.DS_Store
+
+# VS Code settings (optional, if using VS Code)
+.vscode/
+
+# Lock files (optional, if you don’t want to commit them)
+package-lock.json
+yarn.lock
