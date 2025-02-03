@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { getAuth, confirmPasswordReset } from "firebase/auth";
-import firebaseApp from '../lib/firebase'; // ✅ Correct import
+import { app } from '../lib/firebase';
 
 const ResetPassword = () => {
   const router = useRouter();
@@ -11,7 +11,7 @@ const ResetPassword = () => {
 
   const handleReset = async () => {
     try {
-      const auth = getAuth(firebaseApp);
+      const auth = getAuth(app);
       await confirmPasswordReset(auth, oobCode, password);
       setMessage("Password reset successful! Redirecting...");
       setTimeout(() => router.push("/login"), 3000);
