@@ -28,11 +28,5 @@
     "files": [
       "static/chunks/components_Testimonial_js.js"
     ]
-  },
-  "pages\\products.js -> ../components/ProductCard": {
-    "id": "pages\\products.js -> ../components/ProductCard",
-    "files": [
-      "static/chunks/components_ProductCard_js.js"
-    ]
   }
 }
