@@ -2,21 +2,31 @@ module.exports = {
   async headers() {
     return [
       {
-        source: '/auth/action',
+        source: '/:path*', // Applies to all routes
         headers: [
+          // HSTS
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload'
+          },
+          
+          // CSP
           {
             key: 'Content-Security-Policy',
-            // Enhanced CSP for Firebase integration
             value: [
               "default-src 'self'",
-              "connect-src 'self' https://test.ashe.tn https://*.firebaseio.com https://identitytoolkit.googleapis.com",
-              "script-src 'self' 'unsafe-eval'", // Required for Firebase in dev
-              "style-src 'self' 'unsafe-inline'", // Allow inline styles
-              "img-src 'self' data: https://www.dropbox.com https://dl.dropboxusercontent.com",
+              "connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com",
+              "script-src 'self' 'unsafe-eval' https://www.gstatic.com",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: https://*.googleusercontent.com https://firebasestorage.googleapis.com",
               "frame-src 'self' https://securetoken.googleapis.com",
-              "form-action 'self'"
+              "form-action 'self'",
+              "font-src 'self' https://fonts.gstatic.com",
+              "media-src 'self' https://*.firebaseio.com"
             ].join('; ')
           },
+          
+          // Other headers
           {
             key: 'X-Frame-Options',
             value: 'DENY'
@@ -31,11 +41,15 @@ module.exports = {
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()'
+            value: [
+              'accelerometer=()',
+              'ambient-light-sensor=()',
+              // ... rest of policies
+            ].join(', ')
           }
         ]
       }
-    ];
+    ]
   },
   
   devIndicators: {
@@ -51,6 +65,9 @@ module.exports = {
       {
         protocol: 'https',
         hostname: 'via.placeholder.com',
+      },
+      { protocol: 'https',
+        hostname: 'dl.dropboxusercontent.com',
       },
       {
         protocol: 'https',
