@@ -1,0 +1,19 @@
+"use strict";(()=>{var e={};e.id=688,e.ids=[688],e.modules={5600:e=>{e.exports=require("next/dist/compiled/next-server/pages-api.runtime.prod.js")},1572:e=>{e.exports=require("nodemailer")},9849:e=>{e.exports=import("express-rate-limit")},9801:e=>{e.exports=import("firebase-admin/app")},4276:e=>{e.exports=import("firebase-admin/auth")},6762:(e,t)=>{Object.defineProperty(t,"M",{enumerable:!0,get:function(){return function e(t,r){return r in t?t[r]:"then"in t&&"function"==typeof t.then?t.then(t=>e(t,r)):"function"==typeof t&&"default"===r?t:void 0}}})},1895:(e,t,r)=>{r.a(e,async(e,a)=>{try{r.r(t),r.d(t,{config:()=>l,default:()=>c,routeModule:()=>d});var n=r(9947),o=r(2706),i=r(6762),s=r(6903),p=e([s]);s=(p.then?(await p)():p)[0];let c=(0,i.M)(s,"default"),l=(0,i.M)(s,"config"),d=new n.PagesAPIRouteModule({definition:{kind:o.A.PAGES_API,page:"/api/sendVerificationEmail",pathname:"/api/sendVerificationEmail",bundlePath:"",filename:""},userland:s});a()}catch(e){a(e)}})},6388:(e,t,r)=>{r.a(e,async(e,a)=>{try{r.d(t,{Q:()=>c});var n=r(9801),o=r(4276),i=e([n,o]);[n,o]=i.then?(await i)():i;let s=(0,n.getApps)(),p=0===s.length?(0,n.initializeApp)({credential:cert({projectId:"ashe-comm",clientEmail:process.env.FIREBASE_ADMIN_CLIENT_EMAIL,privateKey:process.env.FIREBASE_ADMIN_PRIVATE_KEY.replace(/\\n/g,"\n")})}):s[0],c=(0,o.getAuth)(p);a()}catch(e){a(e)}})},6903:(e,t,r)=>{r.a(e,async(e,a)=>{try{r.r(t),r.d(t,{default:()=>p});var n=r(6388),o=r(9979),i=r(9849),s=e([n,i]);[n,i]=s.then?(await s)():s;let c=(0,i.default)({windowMs:9e5,max:3,handler:(e,t)=>t.status(429).json({error:"Too many requests"})});async function p(e,t){if(await l(e,t,c),"POST"!==e.method)return t.status(405).end();let{email:r}=e.body;if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r))return t.status(400).json({error:"Invalid email"});try{let e={url:`${process.env.NEXTAUTH_URL}/verify-email?email=${encodeURIComponent(r)}`,handleCodeInApp:!0},a=await n.Q.generateEmailVerificationLink(r,e),i=`
+      <h1 style="color: #2d3748;">Verify Your Email</h1>
+      <p>Click below to complete your registration:</p>
+      <a href="${a}" style="display: inline-block; padding: 12px 24px; background: #4299e1; color: white; text-decoration: none; border-radius: 4px;">
+        Confirm Email
+      </a>
+      <p style="margin-top: 20px; color: #718096;">
+        If you didn't create this account, please ignore this email.
+      </p>
+    `;await (0,o.Z)(r,"Confirm Your ASHE Account",i),t.status(200).json({success:!0})}catch(e){console.error("Verification error:",e),t.status(500).json({error:e.message})}}let l=(e,t,r)=>new Promise((a,n)=>{r(e,t,e=>e instanceof Error?n(e):a(e))});a()}catch(e){a(e)}})},9979:(e,t,r)=>{r.d(t,{Z:()=>s});var a=r(1572),n=r.n(a);let o=()=>n().createTransport({host:process.env.OVH_SMTP_HOST||"ssl0.ovh.net",port:parseInt(process.env.OVH_SMTP_PORT)||465,secure:!0,auth:{user:process.env.OVH_EMAIL,pass:process.env.OVH_PASSWORD},tls:{rejectUnauthorized:!0}}),i=e=>`
+  <div style="max-width: 600px; margin: 20px auto; padding: 20px; font-family: Arial, sans-serif;">
+    ${e}
+    <footer style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+      <p style="color: #666; font-size: 12px;">
+        This email was sent by ASHE. Please do not reply to this message.
+      </p>
+    </footer>
+  </div>
+`,s=async(e,t,r)=>{let a=o();try{return await a.sendMail({from:`ASHE Team <${process.env.OVH_EMAIL}>`,to:e,subject:t,html:i(r),text:r.replace(/<[^>]+>/g,"")}),{success:!0}}catch(e){return console.error("Email send error:",e),{success:!1,error:e.message}}}},2706:(e,t)=>{Object.defineProperty(t,"A",{enumerable:!0,get:function(){return r}});var r=function(e){return e.PAGES="PAGES",e.PAGES_API="PAGES_API",e.APP_PAGE="APP_PAGE",e.APP_ROUTE="APP_ROUTE",e.IMAGE="IMAGE",e}({})},9947:(e,t,r)=>{e.exports=r(5600)}};var t=require("../../webpack-api-runtime.js");t.C(e);var r=t(t.s=1895);module.exports=r})();

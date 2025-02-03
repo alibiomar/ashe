@@ -1,0 +1,19 @@
+"use strict";(()=>{var e={};e.id=441,e.ids=[441],e.modules={5600:e=>{e.exports=require("next/dist/compiled/next-server/pages-api.runtime.prod.js")},1572:e=>{e.exports=require("nodemailer")},9849:e=>{e.exports=import("express-rate-limit")},9801:e=>{e.exports=import("firebase-admin/app")},4276:e=>{e.exports=import("firebase-admin/auth")},6762:(e,t)=>{Object.defineProperty(t,"M",{enumerable:!0,get:function(){return function e(t,r){return r in t?t[r]:"then"in t&&"function"==typeof t.then?t.then(t=>e(t,r)):"function"==typeof t&&"default"===r?t:void 0}}})},5633:(e,t,r)=>{r.a(e,async(e,s)=>{try{r.r(t),r.d(t,{config:()=>l,default:()=>d,routeModule:()=>c});var a=r(9947),o=r(2706),n=r(6762),i=r(704),p=e([i]);i=(p.then?(await p)():p)[0];let d=(0,n.M)(i,"default"),l=(0,n.M)(i,"config"),c=new a.PagesAPIRouteModule({definition:{kind:o.A.PAGES_API,page:"/api/sendPasswordResetEmail",pathname:"/api/sendPasswordResetEmail",bundlePath:"",filename:""},userland:i});s()}catch(e){s(e)}})},6388:(e,t,r)=>{r.a(e,async(e,s)=>{try{r.d(t,{Q:()=>d});var a=r(9801),o=r(4276),n=e([a,o]);[a,o]=n.then?(await n)():n;let i=(0,a.getApps)(),p=0===i.length?(0,a.initializeApp)({credential:cert({projectId:"ashe-comm",clientEmail:process.env.FIREBASE_ADMIN_CLIENT_EMAIL,privateKey:process.env.FIREBASE_ADMIN_PRIVATE_KEY.replace(/\\n/g,"\n")})}):i[0],d=(0,o.getAuth)(p);s()}catch(e){s(e)}})},704:(e,t,r)=>{r.a(e,async(e,s)=>{try{r.r(t),r.d(t,{default:()=>p});var a=r(6388),o=r(9979),n=r(9849),i=e([a,n]);[a,n]=i.then?(await i)():i;let d=(0,n.default)({windowMs:9e5,max:3,handler:(e,t)=>t.status(429).json({error:"Too many requests"})});async function p(e,t){if(await l(e,t,d),"POST"!==e.method)return t.status(405).end();let{email:r}=e.body;if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r))return t.status(400).json({error:"Invalid email"});try{let e={url:`${process.env.NEXTAUTH_URL}/reset-password?email=${encodeURIComponent(r)}`,handleCodeInApp:!0},s=await a.Q.generatePasswordResetLink(r,e),n=`
+      <h1 style="color: #2d3748;">Reset Your Password</h1>
+      <p>Click the button below to reset your password:</p>
+      <a href="${s}" style="display: inline-block; padding: 12px 24px; background: #e53e3e; color: white; text-decoration: none; border-radius: 4px;">
+        Reset Password
+      </a>
+      <p style="margin-top: 20px; color: #718096;">
+        If you did not request this, please ignore this email.
+      </p>
+    `;await (0,o.Z)(r,"Reset Your Password - ASHE",n),t.status(200).json({success:!0})}catch(e){console.error("Password reset error:",e),t.status(500).json({error:e.message})}}let l=(e,t,r)=>new Promise((s,a)=>{r(e,t,e=>e instanceof Error?a(e):s(e))});s()}catch(e){s(e)}})},9979:(e,t,r)=>{r.d(t,{Z:()=>i});var s=r(1572),a=r.n(s);let o=()=>a().createTransport({host:process.env.OVH_SMTP_HOST||"ssl0.ovh.net",port:parseInt(process.env.OVH_SMTP_PORT)||465,secure:!0,auth:{user:process.env.OVH_EMAIL,pass:process.env.OVH_PASSWORD},tls:{rejectUnauthorized:!0}}),n=e=>`
+  <div style="max-width: 600px; margin: 20px auto; padding: 20px; font-family: Arial, sans-serif;">
+    ${e}
+    <footer style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+      <p style="color: #666; font-size: 12px;">
+        This email was sent by ASHE. Please do not reply to this message.
+      </p>
+    </footer>
+  </div>
+`,i=async(e,t,r)=>{let s=o();try{return await s.sendMail({from:`ASHE Team <${process.env.OVH_EMAIL}>`,to:e,subject:t,html:n(r),text:r.replace(/<[^>]+>/g,"")}),{success:!0}}catch(e){return console.error("Email send error:",e),{success:!1,error:e.message}}}},2706:(e,t)=>{Object.defineProperty(t,"A",{enumerable:!0,get:function(){return r}});var r=function(e){return e.PAGES="PAGES",e.PAGES_API="PAGES_API",e.APP_PAGE="APP_PAGE",e.APP_ROUTE="APP_ROUTE",e.IMAGE="IMAGE",e}({})},9947:(e,t,r)=>{e.exports=r(5600)}};var t=require("../../webpack-api-runtime.js");t.C(e);var r=t(t.s=5633);module.exports=r})();

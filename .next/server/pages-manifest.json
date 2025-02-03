@@ -1,6 +1,17 @@
 {
   "/_app": "pages/_app.js",
-  "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/": "pages/index.js"
+  "/_error": "pages/_error.js",
+  "/about": "pages/about.js",
+  "/api/send-email": "pages/api/send-email.js",
+  "/api/sendPasswordResetEmail": "pages/api/sendPasswordResetEmail.js",
+  "/api/sendVerificationEmail": "pages/api/sendVerificationEmail.js",
+  "/basket": "pages/basket.js",
+  "/contact": "pages/contact.js",
+  "/": "pages/index.js",
+  "/login": "pages/login.js",
+  "/products": "pages/products.js",
+  "/signup": "pages/signup.js",
+  "/reset-password": "pages/reset-password.js",
+  "/verify-email": "pages/verify-email.js"
 }
