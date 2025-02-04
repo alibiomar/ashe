@@ -16,8 +16,13 @@ export default async function handler(req, res) {
     }
 
     const sanitizedSubject = sanitizeHtml(subject);
-    const sanitizedText = sanitizeHtml(text);
-
+    const sanitizedText = sanitizeHtml(text, {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['style']),
+      allowedAttributes: {
+        '*': ['style'], // Autorise les styles inline
+      },
+    });
+    
     // Configure transporter with OVH SMTP settings
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_SERVER_HOST, // "ssl0.ovh.net"
