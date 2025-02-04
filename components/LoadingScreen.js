@@ -4,36 +4,34 @@ import React from 'react';
 const LoadingScreen = () => {
   return (
     <div className="loader-container">
-      <svg
-        className="loader"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 1427.4 1153.8"
-        width="500"
-        height="500"
-      >
-        <defs>
-          <filter id="blurFilter">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="0">
-              <animate
-                attributeName="stdDeviation"
-                values="0;50;0"
-                dur="2s"
-                repeatCount="indefinite"
-              />
-            </feGaussianBlur>
-          </filter>
-        </defs>
-        <path
-          d="M904.3,531.7c-66.1.1-121.5-53.4-121.2-119.5.3,66.2-55,119.6-121.2,119.5,0,0-327,0-327,0v13h327c66.1-.1,121.5,53.4,121.2,119.5-.3-66.2,55-119.6,121.2-119.5,0,0,216.7,0,216.7,0v-13h-216.7ZM840.1,544.7c-25,14.5-45.2,36.7-57,63.2-13.8-30.8-38.9-55.9-69.7-69.7,30.8-13.8,55.9-38.9,69.7-69.7,13.8,30.8,39,56,69.7,69.7-4.4,2-8.6,4.1-12.7,6.5Z"
-          fill="#000"
-          stroke="#000"
-          strokeWidth="4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          filter="url(#blurFilter)"
-        />
-      </svg>
-    </div>
+  <svg
+    className="loader"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 1427.4 1153.8"
+    width="500"
+    height="500"
+  >
+    <path
+      d="M904.3,531.7c-66.1.1-121.5-53.4-121.2-119.5.3,66.2-55,119.6-121.2,119.5,0,0-327,0-327,0v13h327c66.1-.1,121.5,53.4,121.2,119.5-.3-66.2,55-119.6,121.2-119.5,0,0,216.7,0,216.7,0v-13h-216.7ZM840.1,544.7c-25,14.5-45.2,36.7-57,63.2-13.8-30.8-38.9-55.9-69.7-69.7,30.8-13.8,55.9-38.9,69.7-69.7,13.8,30.8,39,56,69.7,69.7-4.4,2-8.6,4.1-12.7,6.5Z"
+      fill="none"
+      stroke="#000"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeDasharray="1000"  // Set a large enough value to cover the entire path length
+      strokeDashoffset="1000" // Start the dash offset at the length of the path
+    >
+      <animate
+        attributeName="stroke-dashoffset"
+        from="1000"
+        to="0"
+        dur="2s"
+        repeatCount="indefinite"
+      />
+    </path>
+  </svg>
+</div>
+
   );
 };
 
