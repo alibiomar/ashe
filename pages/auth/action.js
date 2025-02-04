@@ -23,7 +23,7 @@ export default function AuthActionPage() {
     if (lang) auth.languageCode = lang;
 
     // Security checks
-    const isValidDomain = window.location.host === "test.ashe.tn";
+    const isValidDomain = window.location.host === "auth.ashe.tn";
     if (!isValidDomain) {
       toast.error("Unauthorized domain");
       router.push("/");
