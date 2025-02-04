@@ -17,9 +17,11 @@ export default async function handler(req, res) {
 
     const sanitizedSubject = sanitizeHtml(subject);
     const sanitizedText = sanitizeHtml(text, {
-      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['style']),
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['style', 'button']),
       allowedAttributes: {
-        '*': ['style'], // Autorise les styles inline
+        a: ['href', 'name', 'target', 'style'], // Autorise href et style pour les liens
+        button: ['style'], // Autorise le style sur les boutons
+        '*': ['style'], // Autorise le style sur toutes les autres balises
       },
     });
     
