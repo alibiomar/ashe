@@ -39,10 +39,11 @@ module.exports = {
             key: 'Permissions-Policy',
             value: [
               'accelerometer=()',
-              'ambient-light-sensor=()',
-              // ... rest of policies
+              'geolocation=()',
+              'microphone=()',
+              'camera=()',
             ].join(', ')
-          }
+          }          
         ]
       }
     ]
