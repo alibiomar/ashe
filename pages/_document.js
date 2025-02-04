@@ -3,9 +3,12 @@ import Document, { Html, Head, Main, NextScript } from 'next/document';
 export default class MyDocument extends Document {
   render() {
     return (
+      
       <Html lang="en" className="scroll-smooth">
         <Head>
-          {/* Fonts */}
+        
+          <title>ASHE™</title>
+          <link rel="icon" type="image/x-icon" href="/favicon.ico" />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
           <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" as="style" />
@@ -16,8 +19,8 @@ export default class MyDocument extends Document {
 
           {/* Favicons */}
           <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-          <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-          <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+          <link rel="icon" type="image/png" sizes="72x72" href="/logo72.png" />
+          <link rel="icon" type="image/png" sizes="192x192" href="/logo192.png" />
           <link rel="manifest" href="/site.webmanifest" />
           <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#000000" />
           <meta name="msapplication-TileColor" content="#ffffff" />
@@ -28,7 +31,7 @@ export default class MyDocument extends Document {
           <meta name="keywords" content="fashion, online store, brand,old money,tunisia, clothes, ASHE, clothing, style" />
           <meta property="og:type" content="website" />
           <meta property="og:site_name" content="ASHE™" />
-          <meta property="og:url" content="www.ashe.tn" />
+          <meta property="og:url" content="Canonical link preview URL" />
           <meta property="og:title" content="ASHE™- Be Distinct" />
           <meta property="og:description" content="Shop the latest in fashion with ASHE™. Find high-quality clothing for every style." />
           <meta property="og:image" content="/og-image.jpg" />
