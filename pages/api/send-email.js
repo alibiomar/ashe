@@ -19,28 +19,27 @@ export default async function handler(req, res) {
     const sanitizedText = sanitizeHtml(text, {
       allowedTags: sanitizeHtml.defaults.allowedTags.concat(['style', 'button']),
       allowedAttributes: {
-        a: ['href', 'name', 'target', 'style'], // Autorise href et style pour les liens
-        button: ['style'], // Autorise le style sur les boutons
-        '*': ['style'], // Autorise le style sur toutes les autres balises
+        a: ['href', 'name', 'target', 'style'], 
+        button: ['style'], 
+        '*': ['style'], 
       },
     });
     
-    // Configure transporter with OVH SMTP settings
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_SERVER_HOST, // "ssl0.ovh.net"
-      port: 465, // OVH’s recommended SSL port
-      secure: true, // Must be true for port 465
+      host: process.env.SMTP_SERVER_HOST,
+      port: 465, 
+      secure: true, 
       auth: {
-        user: process.env.SMTP_SERVER_USERNAME, // "noreply@ashe.tn"
+        user: process.env.SMTP_SERVER_USERNAME, 
         pass: process.env.SMTP_SERVER_PASSWORD,
       },
     });
 
     const mailOptions = {
-      from: `"ASHE Support" <${process.env.SMTP_SERVER_USERNAME}>`, // Must match OVH sender
-      to: 'contact@ashe.tn', // Admin or business email
+      from: `"ASHE Support" <${process.env.SMTP_SERVER_USERNAME}>`, 
+      to: 'contact@ashe.tn', 
       subject: sanitizedSubject,
-      html: `<p>${sanitizedText}</p>`, // Ensure it's HTML safe
+      html: `<p>${sanitizedText}</p>`, 
     };
 
     const info = await transporter.sendMail(mailOptions);
