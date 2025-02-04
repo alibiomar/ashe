@@ -1,5 +1,7 @@
-import { useState } from 'react';import { Suspense, lazy } from 'react';
+import { useState } from 'react';
+import { Suspense, lazy } from 'react';
 import { useRouter } from 'next/router';
+import Head from 'next/head'; // Import Head from next/head
 import { createUserWithEmailAndPassword, sendEmailVerification, signOut } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
@@ -85,131 +87,133 @@ export default function Signup() {
 
   return (
     <Suspense fallback={<div className='loader'></div>}>
+      <Head>
+        <title>Sign Up</title>
+        <meta name="description" content="Sign up for an account" />
+      </Head>
+      <div className="min-h-screen flex flex-col items-center justify-center ">
+        <Toaster position="bottom-center" />
 
-<div className="min-h-screen flex flex-col items-center justify-center ">
-  <Toaster position="bottom-center" />
+        <div className="w-full max-w-lg mx-auto bg-white -lg shadow-lg overflow-hidden">
+          {/* Image section for mobile */}
+          <div className="md:hidden">
+            <img
+              src="/image_h.jpg"
+              alt="Signup"
+              className="w-full h-48 object-cover"
+            />
+          </div>
 
-  <div className="w-full max-w-lg mx-auto bg-white -lg shadow-lg overflow-hidden">
-    {/* Image section for mobile */}
-    <div className="md:hidden">
-      <img
-        src="/image_h.jpg"
-        alt="Signup"
-        className="w-full h-48 object-cover"
-      />
-    </div>
-
-    <div className="grid grid-cols-1 md:grid-cols-2">
-      {/* Image section for larger screens */}
-      <div className="hidden md:block">
-        <img
-          src="/image_h.jpg"
-          alt="Signup"
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      {/* Signup form */}
-      <div className="p-8 relative">
-        <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
-        <button
-              className="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-xl font-bold"
-              onClick={() => router.push('/')}
-              aria-label="Close"
-            >
-              &times;
-            </button>
-        <form onSubmit={handleSignup} className="grid gap-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <input
-                type="text"
-                placeholder="First Name"
-                className="w-full p-2 border -md placeholder-sm"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            {/* Image section for larger screens */}
+            <div className="hidden md:block">
+              <img
+                src="/image_h.jpg"
+                alt="Signup"
+                className="w-full h-full object-cover"
               />
             </div>
-            <div>
-              <input
-                type="text"
-                placeholder="Last Name"
-                className="w-full p-2 border -md placeholder-sm"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
-              />
+
+            {/* Signup form */}
+            <div className="p-8 relative">
+              <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
+              <button
+                className="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-xl font-bold"
+                onClick={() => router.push('/')}
+                aria-label="Close"
+              >
+                &times;
+              </button>
+              <form onSubmit={handleSignup} className="grid gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="First Name"
+                      className="w-full p-2 border -md placeholder-sm"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Last Name"
+                      className="w-full p-2 border -md placeholder-sm"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div>
+                  <input
+                    type="tel"
+                    placeholder="Phone Number"
+                    className="w-full p-2 border -md placeholder-sm"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    className="w-full p-2 border -md placeholder-sm"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <div>
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    className="w-full p-2 border -md placeholder-sm"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <div>
+                  <input
+                    type="password"
+                    placeholder="Confirm Password"
+                    className="w-full p-2 border -md placeholder-sm"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none "
+                  disabled={loading}
+                >
+                  {loading ? <div className="loading"></div> : 'Sign Up'}
+                </button>
+              </form>
+
+              <div className="text-center mt-4">
+                <p className="text-sm">
+                  Already have an account?{' '}
+                  <a
+                    href="/login"
+                    className="w-full  mt-4 py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-white text-black hover:bg-black hover:text-white focus:bg-white focus:text-black focus:outline-none "
+                    onClick={(e) => {
+                      e.preventDefault();
+                      router.push('/login');
+                    }}
+                  >
+                    Log in
+                  </a>
+                </p>
+              </div>
             </div>
           </div>
-          <div>
-            <input
-              type="tel"
-              placeholder="Phone Number"
-              className="w-full p-2 border -md placeholder-sm"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
-          </div>
-          <div>
-            <input
-              type="email"
-              placeholder="Email"
-              className="w-full p-2 border -md placeholder-sm"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <input
-              type="password"
-              placeholder="Password"
-              className="w-full p-2 border -md placeholder-sm"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              className="w-full p-2 border -md placeholder-sm"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none "
-            disabled={loading}
-          >
-            {loading ? <div className="loading"></div> : 'Sign Up'}
-          </button>
-        </form>
-
-        <div className="text-center mt-4">
-          <p className="text-sm">
-            Already have an account?{' '}
-            <a
-              href="/login"
-              className="w-full  mt-4 py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-white text-black hover:bg-black hover:text-white focus:bg-white focus:text-black focus:outline-none "
-              onClick={(e) => {
-                e.preventDefault();
-                router.push('/login');
-              }}
-            >
-              Log in
-            </a>
-          </p>
         </div>
       </div>
-    </div>
-  </div>
-</div>                      </Suspense>
-
-
+    </Suspense>
   );
 }

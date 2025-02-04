@@ -1,4 +1,5 @@
 import { useEffect, useState, Suspense, lazy } from 'react';
+import Head from 'next/head';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
@@ -52,8 +53,6 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-
-    
   // Listen for auth state changes and fetch user data if logged in.
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -125,6 +124,11 @@ export default function Home() {
 
   return (
     <Layout>
+      <Head>
+        <title>ASHE™</title>
+        <meta name="description" content="Crafting timeless elegance through refined tailoring and sustainable mastery." />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
       <motion.div
         initial="hidden"
         animate="visible"

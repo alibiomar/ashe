@@ -8,7 +8,6 @@ import 'jspdf-autotable';
 // PDF generation helper function
 
 const generateInvoice = (order, userData) => {
-
   try {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -75,7 +74,7 @@ const generateInvoice = (order, userData) => {
     const clientInfo = [
       order.shippingInfo.addressLine,
       `${order.shippingInfo.city}, ${order.shippingInfo.state} ${order.shippingInfo.zipCode}`,
-      `Phone: ${userData.phone || 'N/A'}`
+      `Phone: ${userData.phone}`,`Client: ${userData.firstName} ${userData.lastName}`
     ].join('\n');
     doc.text(clientInfo, pageWidth - columnWidth - 10, yPosition + 5, { 
       lineHeightFactor: 1.5 
@@ -83,20 +82,31 @@ const generateInvoice = (order, userData) => {
 
     // Enhanced Items Table
     yPosition += 60;
-    const headers = [['Product', 'Quantity', 'Unit Price', 'Total']];
+    const headers = [['Product', 'Size', 'Quantity', 'Unit Price', 'Total']];
     const itemsData = order.items.map(item => [
-      { content: item.name, styles: { fontStyle: 'bold' }},
+      { content: `${item.name}`, styles: { fontStyle: 'bold' }},
+      item.size,
       item.quantity,
       { content: `${item.price.toFixed(2)} TND`, styles: { halign: 'right' }},
       { content: `${(item.quantity * item.price).toFixed(2)} TND`, styles: { halign: 'right' }}
     ]);
     
-    // Styled Total Row
+    // Calculate total amount
     const totalAmount = order.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+    const shippingFee = 8.00;  // Shipping fee in TND
+    const grandTotal = totalAmount + shippingFee;
+
+    // Add the shipping row
+    itemsData.push([
+      { content: 'Shipping', colSpan: 4, styles: { halign: 'right' }},
+      { content: `${shippingFee.toFixed(2)} TND`, styles: { halign: 'right' }}
+    ]);
+
+    // Styled Total Row
     itemsData.push([
       { 
         content: 'TOTAL', 
-        colSpan: 3, 
+        colSpan: 4, 
         styles: { 
           fontStyle: 'bold', 
           halign: 'right',
@@ -105,7 +115,7 @@ const generateInvoice = (order, userData) => {
         }
       },
       { 
-        content: `${totalAmount.toFixed(2)} TND`, 
+        content: `${grandTotal.toFixed(2)} TND`, 
         styles: { 
           fontStyle: 'bold',
           fillColor: accentColor,
@@ -134,10 +144,11 @@ const generateInvoice = (order, userData) => {
         fillColor: [250, 250, 250]
       },
       columnStyles: {
-        0: { cellWidth: 60, fontStyle: 'bold' },
-        1: { cellWidth: 30, halign: 'center' },
-        2: { cellWidth: 45, halign: 'right' },
-        3: { cellWidth: 45, halign: 'right' }
+        0: { cellWidth: 45, fontStyle: 'bold' },  // Product
+        1: { cellWidth: 20, halign: 'center' },   // Size
+        2: { cellWidth: 30, halign: 'center' },   // Quantity
+        3: { cellWidth: 40, halign: 'right' },    // Unit Price
+        4: { cellWidth: 45, halign: 'right' }     // Total
       },
       margin: { horizontal: 15 },
       tableLineColor: [200, 200, 200],
@@ -178,6 +189,7 @@ const generateInvoice = (order, userData) => {
     toast.error('Failed to generate invoice. Please try again or contact support.');
   }
 };
+
 
 // FormInput Component
 const FormInput = ({ label, name, value, onChange, type = 'text', required = true, children, ...props }) => (
@@ -235,10 +247,6 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
     const { state, city, zipCode } = formData;
     if (!state || !city || !zipCode) {
       toast.error('All fields are required');
-      return false;
-    }
-    if (!/^\d+$/.test(zipCode)) {
-      toast.error('Zip code must contain only numbers');
       return false;
     }
     return true;

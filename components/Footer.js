@@ -39,15 +39,15 @@ export default function Footer() {
             </p>
           </motion.div>
 
-          {/* Collections */}
+          
           <motion.div variants={itemVariants} className="space-y-4">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-300">Collections</h3>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-300">Links</h3>
             <ul className="space-y-3">
-              {['Summer Edition', 'Winter Essentials', 'Limited Series'].map((collection) => (
-                <li key={collection}>
+              {['Summer Edition', 'Winter Essentials', 'Limited Series'].map((products) => (
+                <li key={products}>
                   <Link href="#" className="text-gray-400 hover:text-white transition-all duration-300 text-sm font-medium flex items-center group">
                     <span className="w-2 h-px bg-transparent mr-2 group-hover:bg-white transition-all duration-300" />
-                    {collection}
+                    {products}
                   </Link>
                 </li>
               ))}
@@ -58,11 +58,11 @@ export default function Footer() {
           <motion.div variants={itemVariants} className="space-y-4">
             <h3 className="text-sm font-bold uppercase tracking-wider text-gray-300">Legal</h3>
             <ul className="space-y-3">
-              {['Terms of Service', 'Privacy Policy', 'Shipping Policy'].map((item) => (
-                <li key={item}>
-                  <Link href="#" className="text-gray-400 hover:text-white transition-all duration-300 text-sm font-medium flex items-center group">
+              {['Terms of Service', 'Privacy Policy', 'Shipping Policy'].map((terms) => (
+                <li key={terms}>
+                  <Link href="/terms" className="text-gray-400 hover:text-white transition-all duration-300 text-sm font-medium flex termss-center group">
                     <span className="w-2 h-px bg-transparent mr-2 group-hover:bg-white transition-all duration-300" />
-                    {item}
+                    {terms}
                   </Link>
                 </li>
               ))}

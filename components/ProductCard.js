@@ -70,7 +70,7 @@ export default function ProductCard({ product, onAddToBasket }) {
         width={800}
         height={1000}
         priority={index === 0}
-        className="object-cover h-full w-full cursor-pointer transition-transform duration-300 hover:scale-105"
+        className="object-cover h-full w-full cursor-zoom-in transition-transform duration-300"
         onClick={() => openModal(index)}
       />
     </SwiperSlide>
@@ -157,7 +157,7 @@ export default function ProductCard({ product, onAddToBasket }) {
             </div>
             <div className="flex items-center gap-2">
               <span className="font-semibold">Returns:</span>
-              <span>30-day free returns</span>
+              <span>7-day free returns</span>
             </div>
           </div>
         </div>

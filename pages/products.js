@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef, Suspense, lazy } from 'react';
+import Head from 'next/head'; // Import Head from next/head
 import { collection, getDocs, query, orderBy, limit, startAfter, doc, getDoc, setDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Layout from '../components/Layout';
@@ -204,6 +205,10 @@ export default function Products() {
 
     return (
         <Layout>
+            <Head>
+                <title>Products | ASHE™</title>
+                <meta name="description" content="Browse our collection of products." />
+            </Head>
             {/* Hero Section */}
             <header className="bg-gradient-to-b from-white to-gray-50 py-20 mb-16 border-b">
                 <div className="container mx-auto px-4 text-center">
@@ -211,10 +216,7 @@ export default function Products() {
                         Our Collection
                     </h1>
                     {user && (
-                        <p className="text-xl text-gray-600 font-medium">
-    Welcome back, {firstName} <span className="wave">👋</span>
-</p>
-
+                        <p className="text-xl text-gray-600 font-medium">Welcome back, {firstName} <span className="wave">👋</span></p>
                     )}
                 </div>
             </header>

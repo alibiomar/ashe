@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';import { Suspense, lazy } from 'react';
+import { useState, useEffect } from 'react';
+import { Suspense, lazy } from 'react';
 import { useRouter } from 'next/router';
+import Head from 'next/head'; // Import Head from next/head
 import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
@@ -98,10 +100,12 @@ export default function Login() {
     return () => unsubscribe(); // Cleanup subscription
   }, [router, setUser]);
 
-
   return (
-                      <Suspense fallback={<div className='loader'></div>}>
-    
+    <Suspense fallback={<div className='loader'></div>}>
+      <Head>
+        <title>Login</title>
+        <meta name="description" content="Login to your account" />
+      </Head>
       <div className="min-h-screen flex flex-col items-center justify-center">
         <Toaster position="bottom-center" />
   
@@ -217,8 +221,7 @@ export default function Login() {
             </div>
           </div>
         </div>
-      </div></Suspense>
+      </div>
+    </Suspense>
   );
-  
-  
 }
