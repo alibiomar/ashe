@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 import sanitizeHtml from "sanitize-html";
+import dotenv from "dotenv";
+dotenv.config();
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -29,7 +31,7 @@ export default async function handler(req, res) {
 
     const mailOptions = {
       from: `"ASHE Support" <${process.env.SMTP_SERVER_USERNAME}>`, // Must match OVH sender
-      to: process.env.SITE_MAIL_RECIEVER, // Admin or business email
+      to: 'contact@ashe.tn', // Admin or business email
       subject: sanitizedSubject,
       html: `<p>${sanitizedText}</p>`, // Ensure it's HTML safe
     };
