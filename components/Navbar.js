@@ -149,7 +149,7 @@ export default function Navbar({ onHeightChange }) { // Add onHeightChange prop
   return (
     <nav
       ref={navRef} // Attach the ref to the nav element
-      className={`fixed top-0 left-0 right-0 transition-transform ${isNavbarVisible ? 'translate-y-0' : '-translate-y-full'} ${isScrolled ? 'bg-white shadow-lg' : 'bg-transparent'} bg-white/90 backdrop-blur-sm border-b border-gray-100 w-full z-50`}
+      className={`fixed top-0 left-0 right-0 transition-transform ${isNavbarVisible ? 'translate-y-0' : '-translate-y-full'} ${isScrolled ? 'bg-white' : 'bg-transparent'} bg-white/90 backdrop-blur-sm border-b border-gray-100 w-full z-50`}
     >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
