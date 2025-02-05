@@ -61,7 +61,7 @@ export default function About() {
   return (
     <>
       <Head>
-        <title>About Us | ASHE – Where Heritage Ignites Bold Rebellion</title>
+        <title>About Us | ASHE™</title>
         <meta
           name="description"
           content="Step into the world of ASHE: a legacy of timeless craftsmanship reimagined for the modern rebel. Discover how tradition fuels our fearless designs."
