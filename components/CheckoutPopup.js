@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { doc, addDoc, collection, getDoc } from 'firebase/firestore';
+import { doc, addDoc, collection, getDoc, updateDoc, increment } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
 import { toast, Toaster } from 'sonner';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable'; 
-// PDF generation helper function
 
+// PDF generation helper function
 const generateInvoice = (order, userData) => {
   try {
     const doc = new jsPDF();
@@ -74,7 +74,8 @@ const generateInvoice = (order, userData) => {
     const clientInfo = [
       order.shippingInfo.addressLine,
       `${order.shippingInfo.city}, ${order.shippingInfo.state} ${order.shippingInfo.zipCode}`,
-      `Phone: ${userData.phone}`,`Client: ${userData.firstName} ${userData.lastName}`
+      `Phone: ${userData.phone}`,
+      `Client: ${userData.firstName} ${userData.lastName}`
     ].join('\n');
     doc.text(clientInfo, pageWidth - columnWidth - 10, yPosition + 5, { 
       lineHeightFactor: 1.5 
@@ -180,16 +181,14 @@ const generateInvoice = (order, userData) => {
       lineHeightFactor: 1.4
     });
 
-    // Save PDF
+    // Save PDF when button is clicked
     doc.save(`invoice-${order.id}.pdf`);
     toast.success('Invoice generated successfully!');
-
   } catch (error) {
     console.error('Invoice generation error:', error);
     toast.error('Failed to generate invoice. Please try again or contact support.');
   }
 };
-
 
 // FormInput Component
 const FormInput = ({ label, name, value, onChange, type = 'text', required = true, children, ...props }) => (
@@ -231,6 +230,8 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
     addressLine: '',
   });
   const [loading, setLoading] = useState(false);
+  const [placedOrder, setPlacedOrder] = useState(null);
+  const [userDataForInvoice, setUserDataForInvoice] = useState(null);
   const popupRef = useRef(null);
 
   const totalAmount = useMemo(() =>
@@ -288,16 +289,40 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
         status: 'Pending',
       };
 
+      // Create the order document
       const docRef = await addDoc(collection(db, 'orders'), orderData);
       const orderWithId = { ...orderData, id: docRef.id };
 
+      // Update the stock for each ordered product
+      await Promise.all(
+        basket.map(async (item) => {
+          const productRef = doc(db, 'products', item.id);
+          const productDoc = await getDoc(productRef);
+      
+          if (productDoc.exists()) {
+            const productData = productDoc.data();
+      
+            // Vérifier si la taille existe
+            if (productData.stock && productData.stock[item.size] !== undefined) {
+              await updateDoc(productRef, {
+                [`stock.${item.size}`]: increment(-item.quantity)
+              });
+            } else {
+              console.warn(`Taille ${item.size} non trouvée pour le produit ${item.id}`);
+            }
+          }
+        })
+      );
+      
+
+      // Save order details in state instead of generating the PDF immediately
+      setPlacedOrder(orderWithId);
+      setUserDataForInvoice(userDoc.data());
       onPlaceOrder(orderWithId);
       toast.success('Order placed successfully!');
 
-      // Generate and download the PDF invoice
-      generateInvoice(orderWithId, userDoc.data());
-
-      onClose();
+      // Optionally, remove or delay closing the popup so that the user can download the invoice
+      // onClose();
     } catch (error) {
       console.error('Order Error:', error);
       toast.error(error.message || 'Failed to place order. Please try again.');
@@ -305,6 +330,31 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
       setLoading(false);
     }
   };
+
+  // If order has been placed, show the confirmation and Download Invoice button
+  if (placedOrder) {
+    return (
+      <div className="fixed inset-0 bg-white backdrop-blur-sm flex flex-col justify-center items-center z-50 p-4">
+        <Toaster position="top-center" richColors />
+        <div className="bg-white w-full max-w-md p-8 shadow-xl rounded">
+          <h2 className="text-2xl font-bold mb-4">Order Confirmation</h2>
+          <p className="mb-6">Your order <span className="font-bold">#{placedOrder.id}</span> has been placed successfully.</p>
+          <button
+            onClick={() => generateInvoice(placedOrder, userDataForInvoice)}
+            className="w-full py-4 mb-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none"
+          >
+            Download Invoice
+          </button>
+          <button
+            onClick={onClose}
+            className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-white text-black hover:bg-black hover:text-white focus:bg-white focus:text-black focus:outline-none"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-white backdrop-blur-sm flex justify-center items-center z-50 p-4">

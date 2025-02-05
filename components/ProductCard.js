@@ -8,16 +8,15 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/zoom';
 
-export default function ProductCard({ product, onAddToBasket }) {
-  const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || '');
+export default function ProductCard({ product, onAddToBasket, getBasketQuantity }) {
+  const [selectedSize, setSelectedSize] = useState('');
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState('');
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const handleSizeChange = useCallback((event) => {
     setSelectedSize(event.target.value);
-    setError(''); // Reset error when user selects a size
+    setError('');
   }, []);
 
   const openModal = (index) => {
@@ -36,8 +35,19 @@ export default function ProductCard({ product, onAddToBasket }) {
       setError('Please select a size before adding to the basket.');
       return;
     }
+
+    const selectedSizeStock = product.stock?.[selectedSize] || 0;
+    const currentBasketQty = getBasketQuantity(product.id, selectedSize) || 0;
+    const availableForUser = selectedSizeStock - currentBasketQty;
+
+    if (availableForUser <= 0) {
+      setError('You cannot add more than the available stock.');
+      return;
+    }
+
+    setError('');
     onAddToBasket({ ...product, size: selectedSize, images: product.images });
-  }, [selectedSize, product, onAddToBasket]);
+  }, [selectedSize, product, getBasketQuantity, onAddToBasket]);
 
   if (!product) {
     return (
@@ -48,7 +58,9 @@ export default function ProductCard({ product, onAddToBasket }) {
   }
 
   const { name, price, originalPrice, stock, images, description, sizes } = product;
-
+  const selectedSizeStock = stock?.[selectedSize] || 0;
+  const currentBasketQty = selectedSize ? getBasketQuantity(product.id, selectedSize) : 0;
+  const availableForUser = selectedSizeStock - currentBasketQty;
   return (
     <div className="w-full flex flex-col items-center md:flex-row bg-white p-6 gap-6">
       {/* Image Slider */}
@@ -62,19 +74,19 @@ export default function ProductCard({ product, onAddToBasket }) {
           lazy={{ loadPrevNext: true }}
           className="w-full h-full"
         >
-  {images?.map((image, index) => (
-    <SwiperSlide key={`image-${index}`}>
-      <Image
-        src={image}
-        alt={`${name} - Image ${index + 1}`}
-        width={800}
-        height={1000}
-        priority={index === 0}
-        className="object-cover h-full w-full cursor-zoom-in transition-transform duration-300"
-        onClick={() => openModal(index)}
-      />
-    </SwiperSlide>
-  ))}
+          {images?.map((image, index) => (
+            <SwiperSlide key={`image-${index}`}>
+              <Image
+                src={image}
+                alt={`${name} - Image ${index + 1}`}
+                width={800}
+                height={1000}
+                priority={index === 0}
+                className="object-cover h-full w-full cursor-zoom-in transition-transform duration-300"
+                onClick={() => openModal(index)}
+              />
+            </SwiperSlide>
+          ))}
         </Swiper>
       </div>
 
@@ -93,13 +105,20 @@ export default function ProductCard({ product, onAddToBasket }) {
               </span>
             )}
           </p>
-          <span className={`px-3 py-1 text-xs font-black uppercase text-white ${stock > 0 ? 'bg-[#46c7c7]' : 'bg-red-500'}`}>
-            {stock > 0 ? 'AVAILABLE' : 'SOLD OUT'}
-          </span>
+          {/* Optionally, show a badge for the selected size stock status */}
+          {selectedSize && (
+            <span
+              className={`px-3 py-1 text-xs font-black uppercase text-white ${
+                selectedSizeStock > 0 ? 'bg-[#46c7c7]' : 'bg-red-500'
+              }`}
+            >
+              {selectedSizeStock > 0 ? 'AVAILABLE' : 'SOLD OUT'}
+            </span>
+          )}
         </div>
 
         {/* Size Selector */}
-        {sizes?.length > 1 && (
+        {sizes?.length > 0 && (
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
               <label htmlFor="size" className="font-semibold text-gray-700">
@@ -116,16 +135,19 @@ export default function ProductCard({ product, onAddToBasket }) {
               onChange={handleSizeChange}
               className="w-full py-3 border-2 border-black focus:outline-none font-semibold bg-transparent px-3 appearance-none hover:border-gray-500 focus:border-[#46c7c7] transition-colors"
             >
-              <option value="" disabled hidden>
-                What is your size?
-              </option>
+              {/* Default option prompting user to select a size */}
+              <option value="">No size selected</option>
               {sizes?.map((size, index) => (
                 <option key={`${size}-${index}`} value={size}>
                   {size.toUpperCase()}
                 </option>
               ))}
             </select>
-            {error && <p className="text-red-500 text-sm mt-2" aria-live="polite">{error}</p>}
+            {error && (
+              <p className="text-red-500 text-sm mt-2" aria-live="polite">
+                {error}
+              </p>
+            )}
           </div>
         )}
 
@@ -137,15 +159,15 @@ export default function ProductCard({ product, onAddToBasket }) {
         {/* Add to Basket Button */}
         <button
           onClick={handleAddToBasket}
-          disabled={stock === 0}
+          disabled={!selectedSize || availableForUser <= 0}
           className={`w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all ${
-            stock === 0
+            !selectedSize || availableForUser <= 0
               ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
               : 'bg-black text-white hover:bg-white hover:text-black hover:scale-105 focus:bg-white focus:text-black focus:outline-none'
           }`}
         >
           <FaShoppingBasket className="mr-2" />
-          {stock === 0 ? 'Out of Stock' : 'Add to Basket'}
+          {availableForUser <= 0 ? 'Out of Stock' : 'Add to Basket'}
         </button>
 
         {/* Additional Info */}
@@ -165,55 +187,53 @@ export default function ProductCard({ product, onAddToBasket }) {
 
       {/* Image Modal */}
       {isModalOpen && (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in"
-    >
-      <div 
-        className="fixed inset-0"
-        onClick={closeModal}
-        aria-label="Close modal"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === 'Escape' && closeModal()}
-      />
-      
-      <div className="relative w-[95%] h-[90vh] max-w-6xl bg-white p-6 transform transition-all duration-300 scale-95 animate-slide-up">
-        <button
-          onClick={closeModal}
-          className="absolute top-6 right-6 z-50 text-[#46c7c7] hover:text-dark transition-colors duration-200"
-          aria-label="Close image modal"
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in"
         >
-          <FaTimes className="text-xl md:text-2xl" />
-        </button>
-
-        <Swiper
-          initialSlide={selectedImageIndex}
-          modules={[Navigation, Pagination, Zoom]}
-          navigation
-          pagination={{ clickable: true }}
-          zoom
-          className="h-full w-full"
-        >
-          {images?.map((image, index) => (
-            <SwiperSlide key={`modal-image-${index}`}>
-              <div className="swiper-zoom-container relative h-full w-full">
-                <Image
-                  src={image}
-                  alt={`Enlarged view of ${name} - Image ${index + 1}`}
-                  fill
-                  priority
-                  quality={90}
-                  className="object-contain"
-                  sizes="(max-width: 768px) 95vw, (max-width: 1200px) 85vw, 75vw"
-                />
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
-    </div>
-  )}
+          <div
+            className="fixed inset-0"
+            onClick={closeModal}
+            aria-label="Close modal"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Escape' && closeModal()}
+          />
+          <div className="relative w-[95%] h-[90vh] max-w-6xl bg-white p-6 transform transition-all duration-300 scale-95 animate-slide-up">
+            <button
+              onClick={closeModal}
+              className="absolute top-6 right-6 z-50 text-[#46c7c7] hover:text-dark transition-colors duration-200"
+              aria-label="Close image modal"
+            >
+              <FaTimes className="text-xl md:text-2xl" />
+            </button>
+            <Swiper
+              initialSlide={selectedImageIndex}
+              modules={[Navigation, Pagination, Zoom]}
+              navigation
+              pagination={{ clickable: true }}
+              zoom
+              className="h-full w-full"
+            >
+              {images?.map((image, index) => (
+                <SwiperSlide key={`modal-image-${index}`}>
+                  <div className="swiper-zoom-container relative h-full w-full">
+                    <Image
+                      src={image}
+                      alt={`Enlarged view of ${name} - Image ${index + 1}`}
+                      fill
+                      priority
+                      quality={90}
+                      className="object-contain"
+                      sizes="(max-width: 768px) 95vw, (max-width: 1200px) 85vw, 75vw"
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
