@@ -167,7 +167,7 @@ export default function ProductCard({ product, onAddToBasket, getBasketQuantity 
           }`}
         >
           <FaShoppingBasket className="mr-2" />
-          {availableForUser <= 0 ? 'Out of Stock' : 'Add to Basket'}
+          Add to Basket
         </button>
 
         {/* Additional Info */}
