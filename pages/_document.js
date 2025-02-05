@@ -56,7 +56,7 @@ export default class MyDocument extends Document {
             `}
           </script>
         </Head>
-        <body className="font-montserrat antialiased bg-black">
+        <body className="font-montserrat antialiased">
           <Main />
           <NextScript />
 
