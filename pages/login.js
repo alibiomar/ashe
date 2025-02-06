@@ -92,22 +92,28 @@ export default function Login() {
 
   const resendVerificationEmail = async () => {
     try {
-      if (auth.currentUser) {
-        await sendEmailVerification(auth.currentUser);
-        toast.success('Verification email resent. Please check your inbox.');
-      }
+       if (auth.currentUser) {
+          // Check if the user needs reauthentication
+          await auth.currentUser.getIdToken(true); // Force refresh of ID token
+          await sendEmailVerification(auth.currentUser);
+          toast.success('Verification email resent. Please check your inbox.');
+       }
     } catch (err) {
-      toast.error('Unable to resend verification email. Please try again later.');
+       toast.error('Unable to resend verification email. Please try again later.');
+       console.error(err);
     }
-  };
+ };
+ 
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user && user.emailVerified) {
         setUser(user);
         router.push('/'); // Redirect to home page if already logged in
+      } else {
+        console.log('User not logged in or email not verified.');
       }
-    });
+   });
 
     return () => unsubscribe(); // Cleanup subscription
   }, [router, setUser]);
