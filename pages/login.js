@@ -92,17 +92,20 @@ export default function Login() {
 
   const resendVerificationEmail = async () => {
     try {
-       if (auth.currentUser) {
-          // Check if the user needs reauthentication
-          await auth.currentUser.getIdToken(true); // Force refresh of ID token
-          await sendEmailVerification(auth.currentUser);
-          toast.success('Verification email resent. Please check your inbox.');
-       }
+      if (auth.currentUser) {
+        // Force refresh the ID token to ensure it's valid
+        await auth.currentUser.getIdToken(true); // Forces token refresh
+        await sendEmailVerification(auth.currentUser); // Send the verification email
+        toast.success('Verification email resent. Please check your inbox.');
+      } else {
+        toast.error('User is not authenticated. Please log in.');
+      }
     } catch (err) {
-       toast.error('Unable to resend verification email. Please try again later.');
-       console.error(err);
+      toast.error('Unable to resend verification email. Please try again later.');
+      console.error(err);
     }
- };
+  };
+  
  
 
   useEffect(() => {
