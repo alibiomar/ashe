@@ -183,7 +183,6 @@ const generateInvoice = (order, userData) => {
 
     // Save PDF when button is clicked
     doc.save(`invoice-${order.id}.pdf`);
-    toast.success('Invoice generated successfully!');
   } catch (error) {
     console.error('Invoice generation error:', error);
     toast.error('Failed to generate invoice. Please try again or contact support.');

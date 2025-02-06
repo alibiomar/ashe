@@ -288,6 +288,10 @@ export default function Basket() {
                             src={item?.images?.[0] || '/placeholder-art.svg'}
                             alt={item.name}
                             className="w-full h-auto object-contain rounded-none"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              router.push('/products');
+                            }}
                             onError={(e) => {
                               e.target.src = '/placeholder-art.svg'; // Fallback if image doesn't load
                             }}

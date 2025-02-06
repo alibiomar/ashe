@@ -8,10 +8,9 @@ import { app, db } from '../lib/firebase';
 import Cookies from 'js-cookie';
 import { toast, Toaster } from 'sonner';
 
-// Lazy-load ProductCard component
 const ProductCard = lazy(() => import('../components/ProductCard'));
 
-const PRODUCTS_PER_PAGE = 2; // Limit the number of products per page
+const PRODUCTS_PER_PAGE = 2;
 
 export default function Products() {
     const [firstName, setFirstName] = useState('');
@@ -20,51 +19,13 @@ export default function Products() {
     const [lastVisible, setLastVisible] = useState(null);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
-    const [basketItems, setBasketItems] = useState([]); // State to track basket items
+    const [basketItems, setBasketItems] = useState([]);
 
-    // Fetch products with pagination
-    const fetchProducts = useCallback(async () => {
-        if (loading || !hasMore) return;
-
-        setLoading(true);
-        const productsCollection = collection(db, 'products');
-        let productQuery = query(
-            productsCollection,
-            orderBy('index', 'desc'),
-            limit(PRODUCTS_PER_PAGE)
-        );
-
-        if (lastVisible) {
-            productQuery = query(productQuery, startAfter(lastVisible));
-        }
-
-        try {
-            const productsSnapshot = await getDocs(productQuery);
-            const productsList = productsSnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-
-            setProducts((prevProducts) => [...prevProducts, ...productsList]);
-            setLoading(false);
-
-            const lastDoc = productsSnapshot.docs[productsSnapshot.docs.length - 1];
-            setLastVisible(lastDoc);
-
-            setHasMore(productsSnapshot.docs.length === PRODUCTS_PER_PAGE);
-        } catch (error) {
-            console.error('Error fetching products:', error);
-            setLoading(false);
-        }
-    }, [loading, hasMore, lastVisible]);
-
-    // Get basket quantity for a specific product and size
     const getBasketQuantity = useCallback((productId, size) => {
         const item = basketItems.find(item => item.id === productId && item.size === size);
         return item ? item.quantity : 0;
     }, [basketItems]);
 
-    // Add product to basket
     const addToBasket = useCallback(async (product) => {
         const newBasket = [...basketItems];
         const existingIndex = newBasket.findIndex(
@@ -88,7 +49,6 @@ export default function Products() {
         toast.success(`${product.name} added to your basket!`);
     }, [user, basketItems]);
 
-    // Sync basket from cookies to Firestore when user logs in
     const syncBasketWithFirestore = useCallback(async (userId) => {
         const cookieBasket = Cookies.get('basket') ? JSON.parse(Cookies.get('basket')) : [];
         if (cookieBasket.length === 0) return;
@@ -97,7 +57,6 @@ export default function Products() {
         const basketDoc = await getDoc(basketRef);
         let firestoreBasket = basketDoc.exists() ? basketDoc.data().items : [];
 
-        // Merge baskets
         const mergedBasket = [...firestoreBasket];
         cookieBasket.forEach(cookieItem => {
             const existingIndex = mergedBasket.findIndex(
@@ -115,7 +74,6 @@ export default function Products() {
         setBasketItems(mergedBasket);
     }, []);
 
-    // Fetch user's first name from Firestore
     const fetchUserFirstName = useCallback(async (userId) => {
         try {
             const userDocRef = doc(db, 'users', userId);
@@ -133,10 +91,78 @@ export default function Products() {
         }
     }, []);
 
-    useEffect(() => {
-        fetchProducts();
-        const auth = getAuth();
+    const loadMoreProducts = useCallback(async () => {
+        if (loading || !hasMore) return;
 
+        setLoading(true);
+        const productsCollection = collection(db, 'products');
+        let productQuery = query(
+            productsCollection,
+            orderBy('index', 'desc'),
+            limit(PRODUCTS_PER_PAGE)
+        );
+
+        if (lastVisible) {
+            productQuery = query(productQuery, startAfter(lastVisible));
+        }
+
+        try {
+            const productsSnapshot = await getDocs(productQuery);
+            const productsList = productsSnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+
+            setProducts(prev => [...prev, ...productsList]);
+            setLoading(false);
+
+            const lastDoc = productsSnapshot.docs[productsSnapshot.docs.length - 1];
+            setLastVisible(lastDoc);
+
+            setHasMore(productsSnapshot.docs.length === PRODUCTS_PER_PAGE);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            setLoading(false);
+        }
+    }, [loading, hasMore, lastVisible]);
+
+    // Initial products fetch
+    useEffect(() => {
+        const initialFetch = async () => {
+            setLoading(true);
+            const productsCollection = collection(db, 'products');
+            const productQuery = query(
+                productsCollection,
+                orderBy('index', 'desc'),
+                limit(PRODUCTS_PER_PAGE)
+            );
+
+            try {
+                const productsSnapshot = await getDocs(productQuery);
+                const productsList = productsSnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+
+                setProducts(productsList);
+                
+                const lastDoc = productsSnapshot.docs[productsSnapshot.docs.length - 1];
+                setLastVisible(lastDoc);
+                
+                setHasMore(productsSnapshot.docs.length === PRODUCTS_PER_PAGE);
+            } catch (error) {
+                console.error('Error fetching initial products:', error);
+            }
+            setLoading(false);
+        };
+
+        initialFetch();
+    }, []);
+
+    // Auth and basket management
+    useEffect(() => {
+        const auth = getAuth();
+        
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             setUser(currentUser);
             if (currentUser) {
@@ -153,9 +179,9 @@ export default function Products() {
         });
 
         return () => unsubscribe();
-    }, [fetchProducts, syncBasketWithFirestore, fetchUserFirstName]);
+    }, [syncBasketWithFirestore, fetchUserFirstName]);
 
-    if (loading) {
+    if (loading && products.length === 0) {
         return <LoadingScreen />;
     }
 
@@ -166,19 +192,19 @@ export default function Products() {
                 <meta name="description" content="Browse our collection of products." />
             </Head>
 
-            {/* Hero Section */}
             <header className="bg-gradient-to-b from-white to-gray-50 py-20 mb-16 border-b">
                 <div className="container mx-auto px-4 text-center">
                     <h1 className="text-5xl font-black text-gray-900 mb-4 tracking-tight">
                         Our Collection
                     </h1>
                     {user && (
-                        <p className="text-xl text-gray-600 font-medium">Welcome back, {firstName} <span className="wave">👋</span></p>
+                        <p className="text-xl text-gray-600 font-medium">
+                            Welcome back, {firstName} <span className="wave">👋</span>
+                        </p>
                     )}
                 </div>
             </header>
 
-            {/* Product Grid */}
             <main className="container mx-auto px-4 mb-24">
                 <div className="grid grid-cols-1 gap-12">
                     {products.map((product, index) => (
@@ -199,11 +225,10 @@ export default function Products() {
                     ))}
                 </div>
 
-                {/* Load More Button */}
                 {hasMore && (
                     <div className="flex justify-center mt-16">
                         <button
-                            onClick={fetchProducts}
+                            onClick={loadMoreProducts}
                             disabled={loading}
                             className={`w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none ${
                                 loading ? 'opacity-50 cursor-not-allowed' : ''
