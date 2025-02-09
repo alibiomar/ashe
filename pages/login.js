@@ -52,6 +52,18 @@ export default function Login() {
       const user = userCredential.user;
 
       if (!user.emailVerified) {
+        const response = await fetch('https://auth.ashe.tn/auth/send-verification', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ uid: user.uid })
+        });
+  
+        const data = await response.json();
+        if (!data.success) {
+          throw new Error('Failed to send verification email');
+        }
         toast.error('Please verify your email before logging in.');
         setError(true);
         setLoading(false);
@@ -80,11 +92,23 @@ export default function Login() {
       toast.error('Please enter your email to reset your password.');
       return;
     }
-
+  
     try {
-      await sendPasswordResetEmail(auth, email);
-      setPasswordResetEmailSent(true); // Update state to show feedback
-      toast.success('Password reset email sent. Please check your inbox.');
+      const response = await fetch('https://auth.ashe.tn/auth/send-password-reset', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email })
+      });
+  
+      const data = await response.json();
+      if (data.success) {
+        setPasswordResetEmailSent(true);
+        toast.success('Password reset email sent. Please check your inbox.');
+      } else {
+        throw new Error('Failed to send password reset email');
+      }
     } catch (err) {
       toast.error('Failed to send password reset email. Please try again later.');
     }
@@ -93,10 +117,20 @@ export default function Login() {
   const resendVerificationEmail = async () => {
     try {
       if (auth.currentUser) {
-        // Force refresh the ID token to ensure it's valid
-        await auth.currentUser.getIdToken(true); // Forces token refresh
-        await sendEmailVerification(auth.currentUser); // Send the verification email
-        toast.success('Verification email resent. Please check your inbox.');
+        const response = await fetch('https://auth.ashe.tn/auth/send-verification', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ uid: auth.currentUser.uid })
+        });
+  
+        const data = await response.json();
+        if (data.success) {
+          toast.success('Verification email resent. Please check your inbox.');
+        } else {
+          throw new Error('Failed to send verification email');
+        }
       } else {
         toast.error('User is not authenticated. Please log in.');
       }

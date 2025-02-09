@@ -60,10 +60,28 @@ export default function Signup() {
       await setDoc(doc(db, 'baskets', user.uid), {
         items: []
       });
-      // Send email verification
-      await sendEmailVerification(user);
-      toast.success('Signup successful! A verification email has been sent. Please check your inbox.');
-
+      const response = await fetch('https://auth.ashe.tn/auth/send-verification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ uid: user.uid })
+      });
+  
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error('Failed to send verification email');
+      }
+  
+      toast.success('Account created! Please check your email to verify your account.');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+  
+      setTimeout(() => {
+        router.push('/login');
+      }, 2000);
+  
       // Log the user out immediately after signup
       await signOut(auth);
 
