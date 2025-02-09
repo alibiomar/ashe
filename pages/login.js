@@ -4,8 +4,6 @@ import Head from 'next/head';
 import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  sendPasswordResetEmail,
-  sendEmailVerification,
 } from 'firebase/auth';
 import { auth } from '../lib/firebase'; // Import Firebase initialization
 import { useAuth } from '../contexts/AuthContext'; // Import the useAuth hook
@@ -14,154 +12,131 @@ import { toast, Toaster } from 'sonner'; // Import toast and Toaster from sonner
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false); // Loading state for login
-  const [showPassword, setShowPassword] = useState(false); // Toggle password visibility
-  const [passwordResetEmailSent, setPasswordResetEmailSent] = useState(false); // Track if reset email was sent
-  const [invalidCredentials, setInvalidCredentials] = useState(false); // Show "Forgot password" option
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordResetEmailSent, setPasswordResetEmailSent] = useState(false);
+  const [verificationSent, setVerificationSent] = useState(false);
   const router = useRouter();
-  const { user, loading: authLoading, setUser } = useAuth(); // Access global login state
-
-  // Extract query parameters (e.g., status=emailVerified or status=passwordReset)
+  const { user, loading: authLoading, setUser } = useAuth();
+  const [invalidCredentials, setInvalidCredentials] = useState(false); 
   const { query } = useRouter();
   const { status } = query;
-
   useEffect(() => {
-    // Display success messages based on the query parameter
     if (status === 'emailVerified') {
-      toast.success('Your email has been verified successfully!');
+      toast.success('Email verified successfully!');
     } else if (status === 'passwordReset') {
-      toast.success('Your password has been reset successfully!');
+      toast.success('Password reset successfully!');
     }
   }, [status]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setInvalidCredentials(false); // Reset the invalid credentials state
-    setLoading(true); // Set loading state
-
-    // Validate inputs
-    if (!email || !password) {
-      toast.error('Email and password are required.');
-      setLoading(false);
-      return;
-    }
+    setInvalidCredentials(false);
+    setLoading(true);
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
       if (!user.emailVerified) {
-        const response = await fetch('https://auth.ashe.tn/auth/send-verification', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ uid: user.uid })
-        });
-  
-        const data = await response.json();
-        if (!data.success) {
-          throw new Error('Failed to send verification email');
+        try {
+          const response = await fetch('https://auth.ashe.tn/auth/send-verification', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ uid: user.uid })
+          });
+
+          if (!response.ok) throw new Error('Failed to send verification email');
+          
+          setVerificationSent(true);
+          toast.error('Verify your email before logging in. Check your inbox.');
+        } catch (error) {
+          toast.error('Failed to send verification email');
         }
-        toast.error('Please verify your email before logging in.');
-        setError(true);
         setLoading(false);
-      } else {
-        setUser(user);
-        router.push('/'); // Redirect to home page
+        return;
       }
+
+      setUser(user);
+      router.push('/');
     } catch (err) {
-      setLoading(false); // Stop loading
-      if (err.code === 'auth/invalid-credential') {
-        toast.error('Invalid credentials. Please check your email and password.');
-        setPassword(''); // Reset password only
-        setInvalidCredentials(true); // Enable "Forgot password?" option
-      } else if (err.code === 'auth/user-not-found') {
-        toast.error('No account found with this email. Please check your email or sign up.');
-      } else if (err.code === 'auth/missing-email' || err.code === 'auth/invalid-email') {
-        toast.error('Please provide a valid email address.');
-      } else {
-        toast.error('An unexpected error occurred. Please try again.');
-      }
+      setLoading(false);
+      handleAuthError(err);
     }
   };
 
+  const handleAuthError = (err) => {
+    const errorMap = {
+      'auth/invalid-credential': 'Invalid email or password',
+      'auth/user-not-found': 'No account found with this email',
+      'auth/wrong-password': 'Incorrect password',
+      'auth/too-many-requests': 'Account temporarily locked - try again later',
+      'auth/user-disabled': 'Account disabled - contact support'
+    };
+
+    toast.error(errorMap[err.code] || 'Login failed. Please try again.');
+    
+    if (['auth/invalid-credential', 'auth/wrong-password'].includes(err.code)) {
+      setInvalidCredentials(true);
+      setPassword('');
+    }
+  };
   const handlePasswordReset = async () => {
     if (!email) {
-      toast.error('Please enter your email to reset your password.');
+      toast.error('Enter your email to reset password');
       return;
     }
-  
+
     try {
       const response = await fetch('https://auth.ashe.tn/auth/send-password-reset', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
       });
-  
-      const data = await response.json();
-      if (data.success) {
-        setPasswordResetEmailSent(true);
-        toast.success('Password reset email sent. Please check your inbox.');
-      } else {
-        throw new Error('Failed to send password reset email');
-      }
+
+      if (!response.ok) throw new Error('Password reset failed');
+
+      setPasswordResetEmailSent(true);
+      toast.success('Password reset email sent - check your inbox');
     } catch (err) {
-      toast.error('Failed to send password reset email. Please try again later.');
+      toast.error(err.message || 'Failed to send reset email');
     }
   };
 
-  const resendVerificationEmail = async () => {
+  const resendVerification = async () => {
     try {
-      if (auth.currentUser) {
-        const response = await fetch('https://auth.ashe.tn/auth/send-verification', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ uid: auth.currentUser.uid })
-        });
-  
-        const data = await response.json();
-        if (data.success) {
-          toast.success('Verification email resent. Please check your inbox.');
-        } else {
-          throw new Error('Failed to send verification email');
-        }
-      } else {
-        toast.error('User is not authenticated. Please log in.');
-      }
+      const response = await fetch('https://auth.ashe.tn/auth/send-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid: auth.currentUser?.uid })
+      });
+
+      if (!response.ok) throw new Error('Verification email failed');
+      
+      toast.success('Verification email resent');
+      setVerificationSent(true);
     } catch (err) {
-      toast.error('Unable to resend verification email. Please try again later.');
-      console.error(err);
+      toast.error(err.message || 'Failed to resend verification');
     }
   };
-  
  
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && user.emailVerified) {
-        setUser(user);
-        router.push('/'); // Redirect to home page if already logged in
-      } else {
-        console.log('User not logged in or email not verified.');
+      if (user?.emailVerified) {
+        router.push('/');
       }
-   });
-
-    return () => unsubscribe(); // Cleanup subscription
+    });
+    return () => unsubscribe();
   }, [router, setUser]);
 
   return (
     <div>
       <Head>
-        <title>Login</title>
-        <meta name="description" content="Login to your account" />
+        <title>Login - ASHE</title>
+        <meta name="description" content="Secure login to ASHE platform" />
       </Head>
-      <Toaster position="bottom-center" />
+      <Toaster position="bottom-center" richColors />
 
       <div className="min-h-screen flex flex-col items-center justify-center">
         <div className="w-full max-w-lg mx-auto bg-white -lg shadow-lg overflow-hidden">
@@ -235,32 +210,32 @@ export default function Login() {
                 </button>
               </form>
 
-              {invalidCredentials && (
+              {invalidCredentials  && (
                 <div className="mt-4 text-center">
                   <button
                     onClick={handlePasswordReset}
                     className={`text-black hover:underline ${!email ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    disabled={!email}
+                    disabled={!email || passwordResetEmailSent}
                   >
                     Forgot Password?
                   </button>
                 </div>
               )}
 
-              {error && (
+              {verificationSent  && (
                 <div className="mt-4 text-center">
                   <button
-                    onClick={resendVerificationEmail}
+                    onClick={resendVerification}
                     className="text-black hover:underline"
                   >
-                    Resend Verification Email
+                    Didn't receive verification?{' '}
                   </button>
                 </div>
               )}
 
               <div className="text-center mt-4">
                 <p className="text-sm">
-                  Don't have an account?{' '}
+                New to ASHE?{' '}
                   <a
                     href="/signup"
                     className="w-full mt-4 py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-white text-black hover:bg-black hover:text-white focus:bg-white focus:text-black focus:outline-none"

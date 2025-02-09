@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { Suspense, lazy } from 'react';
 import { useRouter } from 'next/router';
-import Head from 'next/head'; // Import Head from next/head
-import { createUserWithEmailAndPassword, sendEmailVerification, signOut } from 'firebase/auth';
+import Head from 'next/head';
+import { createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
-import { toast, Toaster } from 'sonner'; // Import toast and Toaster from sonner
+import { toast, Toaster } from 'sonner';
 
 export default function Signup() {
   const [firstName, setFirstName] = useState('');
@@ -14,37 +13,34 @@ export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false); // New loading state
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    setError(null); // Reset error state
-    setLoading(true); // Set loading to true
+    setLoading(true);
 
-    // Validate password confirmation
+    // Validate inputs
     if (password !== confirmPassword) {
       toast.error('Passwords do not match!');
-      setLoading(false); // Set loading to false
+      setLoading(false);
       return;
     }
 
-    // Simple email format validation
-    const emailRegex = /\S+@\S+\.\S+/;
-    if (!emailRegex.test(email)) {
+    if (!/\S+@\S+\.\S+/.test(email)) {
       toast.error('Please enter a valid email address.');
-      setLoading(false); // Set loading to false
+      setLoading(false);
       return;
     }
-    if (!/^\d{8,15}$/.test(phone)) {
-      toast.error('Phone number must be 8-15 digits');
-      setLoading(false); // Set loading to false
 
+    if (!/^\d{8,15}$/.test(phone)) {
+      toast.error('Phone number must be 8-15 digits.');
+      setLoading(false);
       return;
     }
+
     try {
-      // Create user with email and password using Firebase Authentication
+      // Create user with Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
@@ -55,62 +51,64 @@ export default function Signup() {
         phone,
         email,
         createdAt: new Date().toISOString(),
-        role: 'user'
+        role: 'user',
       });
+
+      // Create an empty basket for the user
       await setDoc(doc(db, 'baskets', user.uid), {
-        items: []
+        items: [],
       });
+
+      // Send verification email via backend
       const response = await fetch('https://auth.ashe.tn/auth/send-verification', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ uid: user.uid })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid: user.uid }),
       });
-  
-      const data = await response.json();
-      if (!data.success) {
-        throw new Error('Failed to send verification email');
-      }
-  
+
+      if (!response.ok) throw new Error('Failed to send verification email');
+
+      // Notify user and clear form
       toast.success('Account created! Please check your email to verify your account.');
+      setFirstName('');
+      setLastName('');
+      setPhone('');
       setEmail('');
       setPassword('');
       setConfirmPassword('');
-  
+
+      // Log out the user immediately after signup
+      await signOut(auth);
+
+      // Redirect to login page after 2 seconds
       setTimeout(() => {
         router.push('/login');
       }, 2000);
-  
-      // Log the user out immediately after signup
-      await signOut(auth);
-
-      // Redirect to login page after signup
-      router.push('/login');
     } catch (err) {
-      // Handle Firebase errors
-      switch (err.code) {
-        case 'auth/email-already-in-use':
-          toast.error('This email is already in use. Please use a different email.');
-          break;
-        case 'auth/weak-password':
-          toast.error('Password is too weak. Please use a stronger password.');
-          break;
-        default:
-          toast.error('An unexpected error occurred. Please try again.');
-      }
+      handleSignupError(err);
     } finally {
-      setLoading(false); // Set loading to false after the process is complete
+      setLoading(false);
     }
   };
 
+  const handleSignupError = (err) => {
+    const errorMap = {
+      'auth/email-already-in-use': 'This email is already in use. Please use a different email.',
+      'auth/weak-password': 'Password is too weak. Please use a stronger password.',
+      'auth/invalid-email': 'Please enter a valid email address.',
+      'auth/network-request-failed': 'Network error. Please check your connection.',
+    };
+
+    toast.error(errorMap[err.code] || 'An unexpected error occurred. Please try again.');
+  };
+
   return (
-    <Suspense fallback={<div className='loader'></div>}>
+    <>
       <Head>
         <title>Sign Up</title>
         <meta name="description" content="Sign up for an account" />
       </Head>
-      <div className="min-h-screen flex flex-col items-center justify-center ">
+      <div className="min-h-screen flex flex-col items-center justify-center">
         <Toaster position="bottom-center" />
 
         <div className="w-full max-w-lg mx-auto bg-white -lg shadow-lg overflow-hidden">
@@ -207,7 +205,7 @@ export default function Signup() {
                 </div>
                 <button
                   type="submit"
-                  className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none "
+                  className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none"
                   disabled={loading}
                 >
                   {loading ? <div className="loading"></div> : 'Sign Up'}
@@ -219,7 +217,7 @@ export default function Signup() {
                   Already have an account?{' '}
                   <a
                     href="/login"
-                    className="w-full  mt-4 py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-white text-black hover:bg-black hover:text-white focus:bg-white focus:text-black focus:outline-none "
+                    className="w-full mt-4 py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-white text-black hover:bg-black hover:text-white focus:bg-white focus:text-black focus:outline-none"
                     onClick={(e) => {
                       e.preventDefault();
                       router.push('/login');
@@ -233,6 +231,6 @@ export default function Signup() {
           </div>
         </div>
       </div>
-    </Suspense>
+    </>
   );
 }
