@@ -55,6 +55,7 @@ export default function Signup() {
         phone,
         email,
         createdAt: new Date().toISOString(),
+        role: 'user'
       });
       await setDoc(doc(db, 'baskets', user.uid), {
         items: []
