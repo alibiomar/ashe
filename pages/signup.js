@@ -63,7 +63,7 @@ export default function Signup() {
       const response = await fetch('https://auth.ashe.tn/auth/verify-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ uid: user.uid }),
+        body: JSON.stringify({ email }),
       });
 
       if (!response.ok) throw new Error('Failed to send verification email');
