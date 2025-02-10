@@ -40,7 +40,7 @@ export default function Login() {
 
       if (!user.emailVerified) {
         try {
-          const response = await fetch('https://auth.ashe.tn/auth/send-verification', {
+          const response = await fetch('https://auth.ashe.tn/auth/verify-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ uid: user.uid })
@@ -105,7 +105,7 @@ export default function Login() {
 
   const resendVerification = async () => {
     try {
-      const response = await fetch('https://auth.ashe.tn/auth/send-verification', {
+      const response = await fetch('https://auth.ashe.tn/auth/verify-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ uid: auth.currentUser?.uid })

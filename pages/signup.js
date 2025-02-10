@@ -60,7 +60,7 @@ export default function Signup() {
       });
 
       // Send verification email via backend
-      const response = await fetch('https://auth.ashe.tn/auth/send-verification', {
+      const response = await fetch('https://auth.ashe.tn/auth/verify-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ uid: user.uid }),
