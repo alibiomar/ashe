@@ -20,14 +20,14 @@ const itemVariants = {
 
 export default function Footer() {
   return (
-    <motion.footer 
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
-      variants={footerVariants}
+    <footer 
+
       className="bg-black text-white py-16 w-full border-t-2 border-white/10"
     >
-      <div className="px-6 lg:px-8 max-w-7xl mx-auto">
+      <motion.div       initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      variants={footerVariants} className="px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           {/* Brand Section */}
           <motion.div variants={itemVariants} className="space-y-6">
@@ -114,7 +114,7 @@ export default function Footer() {
             © {new Date().getFullYear()} ASHE™. Crafted with passion in Tunisia.
           </p>
         </motion.div>
-      </div>
-    </motion.footer>
+      </motion.div>
+    </footer>
   );
 }

@@ -144,7 +144,7 @@ export default function Home() {
             transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
           >
             <Image
-              src="/header.jpg"
+              src="https://dl.dropboxusercontent.com/scl/fi/l29rvwj0ej9n0z6wuqqa5/headerImg.jpeg?rlkey=no7v0ury7jsggfl6gnynefk5q&st=z4l7iysn&dl=1"
               alt="Stunning fashion header image"
               fill
               priority
