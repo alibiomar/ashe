@@ -227,7 +227,6 @@ export default function Navbar({ onHeightChange }) { // Add onHeightChange prop
           </div>
         </div>
       </div>
-
       {/* Mobile Menu */}
       <AnimatePresence>
         {isMenuOpen && (
@@ -298,12 +297,20 @@ export default function Navbar({ onHeightChange }) { // Add onHeightChange prop
 
 const BasketIcon = ({ count }) => (
   <motion.div whileHover={{ scale: 1.05 }} className="relative">
-    <Link href="/basket" className="text-gray-600 hover:text-teal-500">
+    <Link 
+      href="/basket" 
+      className="text-gray-600 hover:text-teal-500"
+      aria-label={`Basket items: ${count}`}
+    >
       <FaShoppingBasket className="h-5 w-5" />
       {count > 0 && (
-        <span className="absolute -top-2 -right-2 bg-teal-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+        <motion.span
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          className="absolute -top-2 -right-2 bg-teal-500 text-white text-xs font-bold rounded-full h-5 min-w-[20px] flex items-center justify-center"
+        >
           {count}
-        </span>
+        </motion.span>
       )}
     </Link>
   </motion.div>

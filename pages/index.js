@@ -168,7 +168,7 @@ export default function Home() {
         stroke={false}
         width={true}
         weight={true}
-        italic={true}
+        slant={false}
         textColor="#ffffff"
         strokeColor="#ff0000"
         minFontSize={32}
@@ -198,9 +198,10 @@ export default function Home() {
             >
               <div className="relative h-80 mb-8 overflow-hidden">
                 <Image
-                  src={idx === 0 ? '/featured.jpg' : '/new-arrivals.jpg'}
+                  src={idx === 0 ? '/11425.png' : '/xsc.png'}
                   alt={`${section} products image`}
                   fill
+                  unoptimized={true}
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               </div>
