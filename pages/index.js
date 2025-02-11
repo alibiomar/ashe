@@ -143,14 +143,15 @@ export default function Home() {
     animate={{ scale: 1 }}
     transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
   >
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-[92vh] hero-image-container">
       <Image
         src="https://dl.dropboxusercontent.com/scl/fi/l29rvwj0ej9n0z6wuqqa5/headerImg.jpeg?rlkey=no7v0ury7jsggfl6gnynefk5q&st=z4l7iysn&dl=1"
         alt="Stunning fashion header image"
         fill
         priority
         className="object-cover"
-        sizes="100vw"
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 3840px"
+        unoptimized={true}
       />
     </div>
   </motion.div>
