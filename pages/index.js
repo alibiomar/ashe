@@ -137,48 +137,52 @@ export default function Home() {
       >
         {/* Hero Section */}
         <section className="relative w-full h-[92vh] mb-32 overflow-hidden">
-          <motion.div
-            className="absolute inset-0"
-            initial={{ scale: 1.1 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <Image
-              src="https://dl.dropboxusercontent.com/scl/fi/l29rvwj0ej9n0z6wuqqa5/headerImg.jpeg?rlkey=no7v0ury7jsggfl6gnynefk5q&st=z4l7iysn&dl=1"
-              alt="Stunning fashion header image"
-              fill
-              priority
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 100vw"
-            />
-          </motion.div>
+  <motion.div
+    className="absolute inset-0"
+    initial={{ scale: 1.1 }}
+    animate={{ scale: 1 }}
+    transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+  >
+    <div className="relative w-full h-full">
+      <Image
+        src="https://dl.dropboxusercontent.com/scl/fi/l29rvwj0ej9n0z6wuqqa5/headerImg.jpeg?rlkey=no7v0ury7jsggfl6gnynefk5q&st=z4l7iysn&dl=1"
+        alt="Stunning fashion header image"
+        fill
+        priority
+        className="object-cover"
+        sizes="100vw"
+      />
+    </div>
+  </motion.div>
 
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30">
-            <motion.div
-              className="container mx-auto px-4 h-[80vh] flex flex-col justify-end items-center text-center"
-              variants={childVariants}
-            >
-              <TextPressure
-                text={user ? `Welcome, ${firstName}!` : 'Welcome to ASHE'}
-                flex={true}
-                alpha={false}
-                stroke={false}
-                width={true}
-                weight={true}
-                italic={true}
-                textColor="#ffffff"
-                strokeColor="#ff0000"
-                minFontSize={32}
-                className="pt-16"
-              />
-              <motion.p
-                className="text-sm md:text-xl text-white/90 font-light max-w-2xl mb-5"
-                variants={childVariants}
-              >
-Crafting timeless elegance through refined tailoring and sustainable mastery.              </motion.p>
-            </motion.div>
-          </div>
-        </section>
+  <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30">
+    <motion.div
+      className="container mx-auto px-4 h-[80vh] flex flex-col justify-end items-center text-center"
+      variants={childVariants}
+    >
+      <TextPressure
+        text={user ? `Welcome, ${firstName}!` : 'Welcome to ASHE'}
+        flex={true}
+        alpha={false}
+        stroke={false}
+        width={true}
+        weight={true}
+        italic={true}
+        textColor="#ffffff"
+        strokeColor="#ff0000"
+        minFontSize={32}
+        className="pt-16"
+      />
+      <motion.p
+        className="text-sm md:text-xl text-white/90 font-light max-w-2xl mb-5"
+        variants={childVariants}
+      >
+        Crafting timeless elegance through refined tailoring and sustainable mastery.
+      </motion.p>
+    </motion.div>
+  </div>
+</section>
+
 
         {/* Product Sections */}
         <section className="container mx-auto px-4 mb-32 grid grid-cols-1 md:grid-cols-2 gap-8">
