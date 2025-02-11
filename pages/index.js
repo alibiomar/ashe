@@ -145,7 +145,7 @@ export default function Home() {
   >
     <div className="relative w-full h-[92vh] hero-image-container">
       <Image
-        src="https://dl.dropboxusercontent.com/scl/fi/l29rvwj0ej9n0z6wuqqa5/headerImg.jpeg?rlkey=no7v0ury7jsggfl6gnynefk5q&st=z4l7iysn&dl=1"
+        src="/headerImg.jpeg"
         alt="Stunning fashion header image"
         fill
         priority
