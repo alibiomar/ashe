@@ -3,6 +3,41 @@ const withPWA = require('next-pwa')({
   disable: process.env.NODE_ENV === 'development',
   register: true,
   skipWaiting: true,
+  runtimeCaching: [
+    {
+      urlPattern: /^\/_next\/.*/, // Cache all Next.js assets
+      handler: 'NetworkFirst', // Avoid 404 errors on dynamic assets
+      options: {
+        cacheName: 'next-static-cache',
+        expiration: {
+          maxEntries: 50,
+          maxAgeSeconds: 24 * 60 * 60, // 1 day
+        },
+      },
+    },
+    {
+      urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'google-fonts',
+        expiration: {
+          maxEntries: 10,
+          maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+        },
+      },
+    },
+    {
+      urlPattern: /^https:\/\/firebasestorage\.googleapis\.com\/.*/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'firebase-storage',
+        expiration: {
+          maxEntries: 50,
+          maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+        },
+      },
+    },
+  ],
 });
 
 module.exports = withPWA({
@@ -56,6 +91,12 @@ module.exports = withPWA({
   },
 
   images: {
+    domains: [
+      'via.placeholder.com',
+      'dl.dropboxusercontent.com',
+      'firebasestorage.googleapis.com',
+      'lh3.googleusercontent.com',
+    ],
     remotePatterns: [
       {
         protocol: 'https',
@@ -78,7 +119,7 @@ module.exports = withPWA({
         hostname: 'lh3.googleusercontent.com',
       }
     ],
-  },
+  },  
 
   poweredByHeader: false,
   reactStrictMode: true,
