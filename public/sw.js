@@ -13,7 +13,7 @@ const ASSETS_TO_CACHE = [
   '/logo192.png',
 ];
 
-// Install event - cache essential assets
+// Install event - Cache essential assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -25,7 +25,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate event - clean up old caches
+// Activate event - Clean up old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -42,43 +42,36 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - serve from cache, fall back to network
 self.addEventListener('fetch', (event) => {
-  // Only handle GET requests
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
     (async () => {
       try {
-        // Try to get from cache first
         const cache = await caches.open(CACHE_NAME);
         const cachedResponse = await cache.match(event.request);
         if (cachedResponse) {
           return cachedResponse;
         }
 
-        // If not in cache, try network
+        // If not in cache, fetch from network
         const networkResponse = await fetch(event.request);
-        
+
         // Cache successful responses
-        if (networkResponse.ok) {
-          // Clone the response before caching
+        if (networkResponse && networkResponse.ok) {
           const responseToCache = networkResponse.clone();
           await cache.put(event.request, responseToCache);
         }
-        
+
         return networkResponse;
       } catch (error) {
-        // Network failure - show offline page for navigation requests
-        if (event.request.mode === 'navigate') {
-          const offlineResponse = await caches.match(OFFLINE_URL);
-          if (offlineResponse) {
-            return offlineResponse;
-          }
+        console.error('[Service Worker] Fetch failed:', error);
+
+        // Serve offline.html for navigation requests
+        if (event.request.mode === 'navigate' || event.request.destination === 'document') {
+          return caches.match(OFFLINE_URL);
         }
-        
-        // If offline page is not available, throw the error
-        throw error;
       }
-    })() // <-- Missing closing parenthesis was added here
+    })() // ✅ Corrected missing closing parenthesis
   );
 });
 
