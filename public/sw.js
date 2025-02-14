@@ -1,10 +1,11 @@
 // sw.js - Place this file in your public directory
 const CACHE_NAME = 'ashe-cache-v1';
+const OFFLINE_URL = '/offline.html';
 
 // Assets to cache
 const ASSETS_TO_CACHE = [
   '/',
-  '/offline.html', 
+  OFFLINE_URL, 
   '/manifest.json',
   '/favicon.ico',
   '/logo.svg',
@@ -41,52 +42,50 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - serve from cache, fall back to network
 self.addEventListener('fetch', (event) => {
+  // Only handle GET requests
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Cache hit - return response
-        if (response) {
-          return response;
+    (async () => {
+      try {
+        // Try to get from cache first
+        const cache = await caches.open(CACHE_NAME);
+        const cachedResponse = await cache.match(event.request);
+        if (cachedResponse) {
+          return cachedResponse;
         }
 
-        // Clone the request because it's a one-time use stream
-        const fetchRequest = event.request.clone();
-
-        return fetch(fetchRequest)
-          .then((response) => {
-            // Check if valid response
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            // Clone the response because it's a one-time use stream
-            const responseToCache = response.clone();
-
-            // Add the response to cache
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                // Cache successful responses only
-                if (event.request.method === 'GET') {
-                  cache.put(event.request, responseToCache);
-                }
-              });
-
-            return response;
-          })
-          .catch(() => {
-            // If fetch fails, return the offline page for navigate requests
-            if (event.request.mode === 'navigate') {
-              return caches.match('/offline.html');
-            }
-          });
-      })
+        // If not in cache, try network
+        const networkResponse = await fetch(event.request);
+        
+        // Cache successful responses
+        if (networkResponse.ok) {
+          // Clone the response before caching
+          const responseToCache = networkResponse.clone();
+          await cache.put(event.request, responseToCache);
+        }
+        
+        return networkResponse;
+      } catch (error) {
+        // Network failure - show offline page for navigation requests
+        if (event.request.mode === 'navigate') {
+          const offlineResponse = await caches.match(OFFLINE_URL);
+          if (offlineResponse) {
+            return offlineResponse;
+          }
+        }
+        
+        // If offline page is not available, throw the error
+        throw error;
+      }
+    })() // <-- Missing closing parenthesis was added here
   );
 });
 
 // Handle push notifications
 self.addEventListener('push', (event) => {
   const options = {
-    body: event.data.text(),
+    body: event.data ? event.data.text() : 'New notification',
     icon: '/logo192.png',
     badge: '/logo72.png'
   };
