@@ -1,6 +1,5 @@
 const withPWA = require('next-pwa')({
   dest: 'public',
-  disable: process.env.NODE_ENV === 'development',
   register: true,
   skipWaiting: true,
   runtimeCaching: [
@@ -10,8 +9,8 @@ const withPWA = require('next-pwa')({
       options: {
         cacheName: 'next-static-cache',
         expiration: {
-          maxEntries: 50,
-          maxAgeSeconds: 24 * 60 * 60, // 1 day
+          maxEntries: 100, // Increased from 50
+          maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
         },
       },
     },
@@ -21,8 +20,8 @@ const withPWA = require('next-pwa')({
       options: {
         cacheName: 'google-fonts',
         expiration: {
-          maxEntries: 10,
-          maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+          maxEntries: 20, // Increased from 10
+          maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
         },
       },
     },
@@ -32,13 +31,13 @@ const withPWA = require('next-pwa')({
       options: {
         cacheName: 'firebase-storage',
         expiration: {
-          maxEntries: 50,
-          maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+          maxEntries: 100, // Increased from 50
+          maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
         },
       },
     },
-    
-  ],exclude: [/\_next\/dynamic-css-manifest\.json$/],
+  ],
+  exclude: [/\_next\/dynamic-css-manifest\.json$/],
 });
 
 module.exports = withPWA({
@@ -52,7 +51,7 @@ module.exports = withPWA({
             value: [
               "default-src 'self'",
               "connect-src 'self' https://auth.ashe.tn/auth/verify-email https://auth.ashe.tn/auth/send-password-reset https://auth.ashe.tn https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://apis.google.com",
-              "script-src 'self' 'unsafe-eval' 'unsafe-eval' https://www.gstatic.com https://apis.google.com",
+              "script-src 'self' 'unsafe-eval' https://www.gstatic.com https://apis.google.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: https://*.googleusercontent.com https://dl.dropboxusercontent.com https://firebasestorage.googleapis.com https://picsum.photos https://fastly.picsum.photos",
               "frame-src 'self' https://securetoken.googleapis.com https://ashe-comm.firebaseapp.com",
@@ -125,4 +124,27 @@ module.exports = withPWA({
   poweredByHeader: false,
   reactStrictMode: true,
   productionBrowserSourceMaps: false,
+
+  // Additional Enhancements
+  compress: true, // Enable compression
+  env: {
+    FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
+    FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
+    FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
+    FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET,
+    FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/service-worker.js',
+        destination: '/_next/static/service-worker.js',
+      },
+    ];
+  },
+  onDemandEntries: {
+    maxInactiveAge: 1000 * 60 * 60, // 1 hour
+    pagesBufferLength: 10,
+  },
 });
