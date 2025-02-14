@@ -141,7 +141,7 @@ export default function Home() {
     animate={{ scale: 1 }}
     transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
   >
-    <div className="relative w-full h-[92vh] hero-image-container">
+    <div className="relative w-full h-[97vh] hero-image-container">
       <Image
         src="/headerImg.jpeg"
         alt="Stunning fashion header image"
