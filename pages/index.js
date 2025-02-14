@@ -134,7 +134,7 @@ export default function Home() {
         className="overflow-hidden"
       >
         {/* Hero Section */}
-        <section className="relative w-full h-[92vh] mb-32 overflow-hidden">
+        <section className="relative w-full h-[97vh] mb-32 overflow-hidden">
   <motion.div
     className="absolute inset-0"
     initial={{ scale: 1.1 }}

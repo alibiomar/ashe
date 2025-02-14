@@ -121,7 +121,7 @@ export default function ContactForm() {
 
             </h2>
 
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10" enctype="multipart/form-data">
 
               {['name', 'email', 'message'].map((field) => (
 

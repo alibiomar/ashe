@@ -171,7 +171,7 @@ export default function Login() {
 
               <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
-              <form onSubmit={handleLogin}>
+              <form onSubmit={handleLogin} enctype="multipart/form-data">
                 <div className="mb-4">
                   <input
                     type="email"

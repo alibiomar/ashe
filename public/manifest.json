@@ -28,9 +28,22 @@
       "src": "logo512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "maskable"
     }
   ],
+  "screenshots": [    {
+      "src": "screenshots-desktop-wide.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Desktop View"
+    },
+    {
+      "src": "screenshots-mobile-home.png",
+      "sizes": "360x640",
+      "type": "image/png",
+      "label": "Mobile Homepage"
+    }],
   "start_url": "/",
   "display": "standalone",
   "display_override": ["standalone", "window-controls-overlay"],
@@ -46,28 +59,28 @@
       "short_name": "Home",
       "description": "Go to the homepage",
       "url": "/",
-      "icons": [{ "src": "logo72.png", "sizes": "72x72", "type": "image/png" }]
+      "icons": [{ "src": "logo96.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "Shop Collection",
       "short_name": "Shop",
       "description": "Browse our latest collection",
       "url": "/products",
-      "icons": [{ "src": "logo72.png", "sizes": "72x72", "type": "image/png" }]
+      "icons": [{ "src": "logo96.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "About Ashe",
       "short_name": "About",
       "description": "Learn about Ashe's story",
       "url": "/about",
-      "icons": [{ "src": "logo72.png", "sizes": "72x72", "type": "image/png" }]
+      "icons": [{ "src": "logo96.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "Contact Ashe",
       "short_name": "Contact",
       "description": "Get in touch with Ashe",
       "url": "/contact",
-      "icons": [{ "src": "logo72.png", "sizes": "72x72", "type": "image/png" }]
+      "icons": [{ "src": "logo96.png", "sizes": "96x96", "type": "image/png" }]
     }
   ],
   "share_target": {
