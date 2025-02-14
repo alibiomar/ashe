@@ -21,7 +21,7 @@ self.addEventListener('install', (event) => {
         console.log('Opened cache');
         return cache.addAll(ASSETS_TO_CACHE);
       })
-      .then(() => self.skipWaiting())
+      .then(() => self.skipWaiting()) // Remove this line if you don't want to force immediate activation
   );
 });
 
@@ -32,46 +32,53 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
+            return caches.delete(cacheName); // Remove old caches not related to the current version
           }
         })
       );
-    }).then(() => self.clients.claim())
+    })
+    .then(() => {
+      // Call `clients.claim()` only if you want the new SW to take control immediately
+      self.clients.claim();
+    })
   );
 });
 
 // Fetch event - serve from cache, fall back to network
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;  // Ignore non-GET requests
+  if (event.request.method !== 'GET') return;  // Ignore non-GET requests (e.g., POST, PUT)
 
   event.respondWith(
     (async () => {
       try {
         const cache = await caches.open(CACHE_NAME);
         const cachedResponse = await cache.match(event.request);
+        
+        // Return cached response if exists
         if (cachedResponse) {
           return cachedResponse;
         }
 
-        // If not in cache, fetch from network
+        // Otherwise, fetch from the network
         const networkResponse = await fetch(event.request);
 
-        // Cache successful responses
+        // Cache successful responses (only for GET requests)
         if (networkResponse && networkResponse.ok) {
           const responseToCache = networkResponse.clone();
           await cache.put(event.request, responseToCache);
         }
 
-        return networkResponse;
+        return networkResponse; // Return the network response
+
       } catch (error) {
         console.error('[Service Worker] Fetch failed:', error);
 
-        // Serve offline.html for navigation requests
+        // Serve offline.html for navigation requests if network fails
         if (event.request.mode === 'navigate' || event.request.destination === 'document') {
-          return caches.match(OFFLINE_URL);
+          return caches.match(OFFLINE_URL); // Serve offline page if the user is trying to load a page
         }
       }
-    })() 
+    })()
   );
 });
 
