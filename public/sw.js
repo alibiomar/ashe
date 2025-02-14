@@ -82,15 +82,4 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Handle push notifications
-self.addEventListener('push', (event) => {
-  const options = {
-    body: event.data ? event.data.text() : 'New notification',
-    icon: '/logo192.png',
-    badge: '/logo72.png'
-  };
 
-  event.waitUntil(
-    self.registration.showNotification('ASHE™', options)
-  );
-});
