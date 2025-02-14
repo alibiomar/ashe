@@ -377,7 +377,7 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
         {/* Form Section */}
         <div className="flex-1 overflow-y-auto p-6 lg:p-8">
           <h2 className="text-3xl font-bold mb-8 tracking-tight">ORDER DETAILS</h2>
-          <form onSubmit={handlePlaceOrder} className="space-y-6">
+          <form onSubmit={handlePlaceOrder} className="space-y-6" enctype="multipart/form-data">
             <h3 className="text-mx font-light italic mb-8 text-red-500">*Currently, we only ship within Tunisia*</h3>
             <FormInput
               label="State"

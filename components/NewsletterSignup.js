@@ -81,7 +81,7 @@ const NewsletterSignup = ({ title = "Join Our Newsletter", subtitle = "Get exclu
           animate={inView ? { opacity: 1, x: 0 } : {}} 
           transition={{ duration: 0.8, ease: 'easeOut' }}
         >
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" enctype="multipart/form-data">
             <div className="relative">
               <input
                 ref={inputRef}
