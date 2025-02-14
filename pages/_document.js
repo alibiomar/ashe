@@ -7,6 +7,7 @@ export default class MyDocument extends Document {
         <Head>
           {/* Progressive Web App */}
           <link rel="manifest" href="/manifest.json" />
+          <link rel="preload" href="/_next/static/css/styles.css" as="style" />
           <meta name="application-name" content="ASHE™" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="default" />

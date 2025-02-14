@@ -42,7 +42,7 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - serve from cache, fall back to network
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
+  if (event.request.method !== 'GET') return;  // Ignore non-GET requests
 
   event.respondWith(
     (async () => {
@@ -71,7 +71,7 @@ self.addEventListener('fetch', (event) => {
           return caches.match(OFFLINE_URL);
         }
       }
-    })() // ✅ Corrected missing closing parenthesis
+    })() 
   );
 });
 
