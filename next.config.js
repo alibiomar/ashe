@@ -1,11 +1,16 @@
-module.exports = {
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+  register: true,
+  skipWaiting: true,
+});
 
+module.exports = withPWA({
   async headers() {
     return [
       {
-        source: '/:path*', // Applies to all routes
+        source: '/:path*',
         headers: [
-          // HSTS
           {
             key: 'Content-Security-Policy',
             value: [
@@ -20,10 +25,6 @@ module.exports = {
               "media-src 'self' https://*.firebaseio.com"
             ].join('; ')
           },
-          
-          
-          
-          // Other headers
           {
             key: 'X-Frame-Options',
             value: 'DENY'
@@ -42,9 +43,9 @@ module.exports = {
               'accelerometer=()',
               'geolocation=()',
               'microphone=()',
-              'camera=()',
+              'camera=()'
             ].join(', ')
-          }          
+          }
         ]
       }
     ]
@@ -58,28 +59,28 @@ module.exports = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**.dropbox.com', // Wildcard for subdomains
+        hostname: '**.dropbox.com',
       },
       {
         protocol: 'https',
         hostname: 'via.placeholder.com',
       },
-      { protocol: 'https',
+      {
+        protocol: 'https',
         hostname: 'dl.dropboxusercontent.com',
       },
       {
         protocol: 'https',
-        hostname: 'firebasestorage.googleapis.com', // Add Firebase Storage
+        hostname: 'firebasestorage.googleapis.com',
       },
       {
         protocol: 'https',
-        hostname: 'lh3.googleusercontent.com', // Google user content
+        hostname: 'lh3.googleusercontent.com',
       }
     ],
   },
 
-  // Additional security enhancements
   poweredByHeader: false,
   reactStrictMode: true,
   productionBrowserSourceMaps: false,
-};
+});
