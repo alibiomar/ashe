@@ -192,16 +192,19 @@ export default function Products() {
                 <meta name="description" content="Browse our collection of products." />
             </Head>
 
+            {/* Fixed height header */}
             <header className="bg-gradient-to-b from-white to-gray-50 py-20 mb-16 border-b">
                 <div className="container mx-auto px-4 text-center">
-                    <h1 className="text-5xl font-black text-gray-900 mb-4 tracking-tight">
-                        Our Collection
-                    </h1>
-                    {user && (
-                        <p className="text-xl text-gray-600 font-medium">
-                            Welcome back, {firstName} <span className="wave">👋</span>
-                        </p>
-                    )}
+                    <div className="min-h-[120px] flex flex-col justify-center">
+                        <h1 className="text-5xl font-black text-gray-900 mb-4 tracking-tight">
+                            Our Collection
+                        </h1>
+                        {user && (
+                            <p className="text-xl text-gray-600 font-medium">
+                                Welcome back, {firstName} <span className="wave">👋</span>
+                            </p>
+                        )}
+                    </div>
                 </div>
             </header>
 
@@ -213,7 +216,12 @@ export default function Products() {
                             className="group relative"
                         >
                             <Suspense fallback={
-                                <div className="aspect-square bg-gray-100 animate-pulse" />
+                                <div className="space-y-4">
+                                    <div className="aspect-square bg-gray-100 animate-pulse rounded-lg" />
+                                    <div className="h-5 bg-gray-100 animate-pulse w-3/4" />
+                                    <div className="h-5 bg-gray-100 animate-pulse w-1/3" />
+                                    <div className="h-12 bg-gray-100 animate-pulse w-full rounded-lg" />
+                                </div>
                             }>
                                 <ProductCard
                                     product={product}
@@ -230,7 +238,7 @@ export default function Products() {
                         <button
                             onClick={loadMoreProducts}
                             disabled={loading}
-                            className={`w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none ${
+                            className={`w-full max-w-sm py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none h-[56px] ${
                                 loading ? 'opacity-50 cursor-not-allowed' : ''
                             }`}
                         >
