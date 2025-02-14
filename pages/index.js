@@ -63,7 +63,6 @@ export default function Home() {
           const userDoc = await getDoc(userDocRef);
           setFirstName(userDoc.exists() ? userDoc.data().firstName || 'Valued User' : 'Valued User');
         } catch (err) {
-          console.error('Error fetching user data:', err);
           setError('Failed to load user data');
           setFirstName('Valued User');
         }
@@ -90,7 +89,6 @@ export default function Home() {
         }));
         setTestimonials(testimonialsList);
       } catch (err) {
-        console.error('Error fetching testimonials:', err);
         setError('Failed to load testimonials');
       } finally {
         setLoading(false);

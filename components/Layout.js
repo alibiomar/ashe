@@ -13,7 +13,7 @@ export default function Layout({ children }) {
 
   useEffect(() => {
     const handleRouteChange = (url) => {
-      console.log('App is changing to:', url);
+      window.scrollTo(0, 0);
     };
 
     router.events.on('routeChangeStart', handleRouteChange);

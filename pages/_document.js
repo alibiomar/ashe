@@ -93,25 +93,6 @@ export default class MyDocument extends Document {
         <body className="font-montserrat antialiased">
           <Main />
           <NextScript />
-          
-          {/* Service Worker Registration */}
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                if ('serviceWorker' in navigator && window.location.hostname !== 'localhost') {
-                  window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/sw.js', {
-                      scope: '/'
-                    }).then(function(registration) {
-                      console.log('SW registered: ', registration.scope);
-                    }).catch(function(error) {
-                      console.log('SW registration failed: ', error);
-                    });
-                  });
-                }
-              `
-            }}
-          />
         </body>
       </Html>
     );

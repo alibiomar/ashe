@@ -86,7 +86,6 @@ export default function Products() {
                 setFirstName('Valued User');
             }
         } catch (error) {
-            console.error('Error fetching user data:', error);
             setFirstName('Valued User');
         }
     }, []);
@@ -121,7 +120,6 @@ export default function Products() {
 
             setHasMore(productsSnapshot.docs.length === PRODUCTS_PER_PAGE);
         } catch (error) {
-            console.error('Error fetching products:', error);
             setLoading(false);
         }
     }, [loading, hasMore, lastVisible]);
@@ -151,7 +149,6 @@ export default function Products() {
                 
                 setHasMore(productsSnapshot.docs.length === PRODUCTS_PER_PAGE);
             } catch (error) {
-                console.error('Error fetching initial products:', error);
             }
             setLoading(false);
         };

@@ -46,7 +46,6 @@ const NewsletterSignup = ({ title = "Join Our Newsletter", subtitle = "Get exclu
       setEmail('');
       setTimeout(() => inputRef.current?.blur(), 1000);
     } catch (error) {
-      console.error("Error saving email: ", error);
       setStatus('error');
     }
   };

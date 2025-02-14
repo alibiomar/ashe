@@ -184,7 +184,6 @@ const generateInvoice = (order, userData) => {
     // Save PDF when button is clicked
     doc.save(`invoice-${order.id}.pdf`);
   } catch (error) {
-    console.error('Invoice generation error:', error);
     toast.error('Failed to generate invoice. Please try again or contact support.');
   }
 };
@@ -307,7 +306,7 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
                 [`stock.${item.size}`]: increment(-item.quantity)
               });
             } else {
-              console.warn(`Taille ${item.size} non trouvée pour le produit ${item.id}`);
+              toast.warn(`Taille ${item.size} non trouvée pour le produit ${item.id}`);
             }
           }
         })
@@ -318,12 +317,9 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
       setPlacedOrder(orderWithId);
       setUserDataForInvoice(userDoc.data());
       onPlaceOrder(orderWithId);
-      toast.success('Order placed successfully!');
-
       // Optionally, remove or delay closing the popup so that the user can download the invoice
       // onClose();
     } catch (error) {
-      console.error('Order Error:', error);
       toast.error(error.message || 'Failed to place order. Please try again.');
     } finally {
       setLoading(false);
