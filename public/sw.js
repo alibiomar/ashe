@@ -1,62 +1,66 @@
-// sw.js - Place this file in your public directory
-const cacheName = 'ashe-cache-v1';
-// Assets to cache
-const contentToCache = [
+// Cache name and assets to be cached
+const CACHE_NAME = 'my-cache-v1';
+const ASSETS_TO_CACHE = [
   '/',
-  '/offline.html', 
-  '/manifest.json',
-  '/favicon.ico',
-  '/logo.svg',
-  '/logo72.png',
-  '/logo192.png',
+  '/offline.html',
+  '/styles.css',
+  '/script.js', // Add other assets to be cached
 ];
 
-self.addEventListener("install", (event) => {
-  console.log("Hello world from the Service Worker 🤙");
+// Listen for the 'install' event to install the service worker 
+self.addEventListener('install', (event) => {
+  console.log('Service Worker installed');
+  
+  // Cache essential assets during installation
   event.waitUntil(
-    caches.open(cacheName).then((cache) => {
-      console.log('[Service Worker] Caching all: app shell and content');
-      return cache.addAll(contentToCache);
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS_TO_CACHE);
     })
   );
+  
+  // Skip waiting and activate the service worker immediately
+  self.skipWaiting();
 });
 
-self.addEventListener("activate", (event) => {
+// Listen for the 'activate' event to activate the service worker
+self.addEventListener('activate', (event) => {
+  console.log('Service Worker activated');
+  
+  // Clean up old caches during activation
   event.waitUntil(
-    caches.keys().then((keyList) => {
+    caches.keys().then((cacheNames) => {
       return Promise.all(
-        keyList.map((key) => {
-          if (key !== cacheName) {
-            console.log('[Service Worker] Removing old cache', key);
-            return caches.delete(key);
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
           }
         })
       );
     })
   );
+  
+  // Take control of the clients immediately
+  self.clients.claim();
 });
 
+// Listen for the 'fetch' event to serve cached assets or fetch from network
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      if (response) {
-        console.log(`[Service Worker] Fetching resource from cache: ${event.request.url}`);
-        return response;
+    caches.match(event.request).then((cachedResponse) => {
+      // If we have a cached response, return it, otherwise fetch from network
+      if (cachedResponse) {
+        return cachedResponse;
       }
-      console.log(`[Service Worker] Fetching resource from network: ${event.request.url}`);
       return fetch(event.request).then((response) => {
-        if (!response || response.status !== 200 || response.type !== 'basic') {
+        // Cache the newly fetched response
+        return caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, response.clone());
           return response;
-        }
-        const responseToCache = response.clone();
-        caches.open(cacheName).then((cache) => {
-          console.log(`[Service Worker] Caching new resource: ${event.request.url}`);
-          cache.put(event.request, responseToCache);
         });
-        return response;
+      }).catch(() => {
+        // If both network and cache fail, serve an offline page
+        return caches.match('/offline.html');
       });
-    }).catch(() => {
-      return caches.match('/offline.html');
     })
   );
 });
