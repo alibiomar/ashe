@@ -6,7 +6,7 @@ export default class MyDocument extends Document {
       <Html lang="en" className="scroll-smooth">
         <Head>
           {/* Progressive Web App */}
-          <link rel="manifest" href="/manifest.json" />
+          <link rel="manifest" href="/public/manifest.json" />
           <meta name="application-name" content="ASHE™" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="default" />
