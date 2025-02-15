@@ -1,45 +1,8 @@
 const withPWA = require('next-pwa')({
   dest: 'public',
   register: true,
-  skipWaiting: true,
-  runtimeCaching: [
-    {
-      urlPattern: /^\/_next\/.*/, // Cache all Next.js assets
-      handler: 'NetworkFirst', // Avoid 404 errors on dynamic assets
-      options: {
-        cacheName: 'next-static-cache',
-        expiration: {
-          maxEntries: 100, // Increased from 50
-          maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
-        },
-      },
-    },
-    {
-      urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/,
-      handler: 'CacheFirst',
-      options: {
-        cacheName: 'google-fonts',
-        expiration: {
-          maxEntries: 20, // Increased from 10
-          maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
-        },
-      },
-    },
-    {
-      urlPattern: /^https:\/\/firebasestorage\.googleapis\.com\/.*/,
-      handler: 'CacheFirst',
-      options: {
-        cacheName: 'firebase-storage',
-        expiration: {
-          maxEntries: 100, // Increased from 50
-          maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
-        },
-      },
-    },
-  ],
-  exclude: [/\_next\/dynamic-css-manifest\.json$/],
-});
-
+  skipWaiting: true,});
+  
 module.exports = withPWA({
   async headers() {
     return [
