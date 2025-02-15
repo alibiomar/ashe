@@ -21,7 +21,6 @@ self.addEventListener('install', (event) => {
         console.log('Opened cache');
         return cache.addAll(ASSETS_TO_CACHE);
       })
-      .then(() => self.skipWaiting()) // Remove this line if you don't want to force immediate activation
   );
 });
 
