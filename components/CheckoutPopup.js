@@ -317,8 +317,11 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
       setPlacedOrder(orderWithId);
       setUserDataForInvoice(userDoc.data());
       onPlaceOrder(orderWithId);
-      // Optionally, remove or delay closing the popup so that the user can download the invoice
-      // onClose();
+      await fetch('/api/sendNotification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId: docRef.id, orderData }),
+      });
     } catch (error) {
       toast.error(error.message || 'Failed to place order. Please try again.');
     } finally {
