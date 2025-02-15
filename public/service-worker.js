@@ -3,31 +3,21 @@ const CACHE_NAME = 'my-cache-v1';
 const ASSETS_TO_CACHE = [
   '/',
   '/offline.html',
-  '/styles.css',
-  '/script.js', // Add other assets to be cached
 ];
 
-// Listen for the 'install' event to install the service worker 
 self.addEventListener('install', (event) => {
   console.log('Service Worker installed');
-  
-  // Cache essential assets during installation
-  event.waitUntil(
+    event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
-  
-  // Skip waiting and activate the service worker immediately
-  self.skipWaiting();
+    self.skipWaiting();
 });
 
-// Listen for the 'activate' event to activate the service worker
 self.addEventListener('activate', (event) => {
   console.log('Service Worker activated');
-  
-  // Clean up old caches during activation
-  event.waitUntil(
+    event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
@@ -38,12 +28,8 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
-  
-  // Take control of the clients immediately
-  self.clients.claim();
+    self.clients.claim();
 });
-
-// Listen for the 'fetch' event to serve cached assets or fetch from network
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {

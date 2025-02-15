@@ -6,7 +6,9 @@ import Head from 'next/head';
 import Layout from '../components/Layout';
 import Image from 'next/image';
 import AnimatedNumber from '../components/AnimatedNumber';
-
+import { FaInstagram, FaTiktok,FaRegEdit } from 'react-icons/fa';
+import { BiBrain } from "react-icons/bi";
+import { SiStylelint } from "react-icons/si";
 // Lazy load the LoadingSpinner component with suspense
 const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
   suspense: true,
@@ -276,7 +278,7 @@ export default function About() {
                   {['Define', 'Empower', 'Transform'].map((item, index) => (
                     <motion.div
                       key={item}
-                      className="p-6 border border-gray-200 rounded-lg hover:shadow-xl transition-shadow cursor-pointer"
+                      className="p-6 border border-gray-200 rounded-lg hover:shadow-xl transition-shadow cursor-pointer flex flex-col items-center"
                       whileHover={{ y: -4 }}
                       variants={{
                         hidden: { opacity: 0, y: 20 },
@@ -287,7 +289,11 @@ export default function About() {
                         },
                       }}
                     >
-                      <div className="text-3xl mb-4">{['🔥', '⚡', '🌟'][index]}</div>
+                      <div className="text-3xl mb-4 ">{[
+          <FaRegEdit className="w-8 h-8" />,  // Define - Edit icon
+          <BiBrain className="w-8 h-8" />,  // Empower - Up arrow
+          <SiStylelint className="w-8 h-8" />  // Transform - Exchange
+        ][index]}</div>
                       <h3 className="text-xl font-bold mb-2">{item}</h3>
                       <p className="text-gray-600 text-sm">
                         {[
@@ -337,18 +343,41 @@ export default function About() {
                 </motion.div>
 
                 <motion.div
-                  className="mt-8 text-gray-600 flex flex-col sm:flex-row justify-center items-center gap-2"
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={fadeIn}
-                >
-                  <span className="text-sm">Join</span>
-                  <div className="text-2xl font-bold text-black">
-                    <AnimatedNumber value={12456} duration={2} />
-                  </div>
-                  <span className="text-sm">fashion trailblazers</span>
-                </motion.div>
+  className="mt-8 text-gray-600 flex flex-col items-center gap-3"
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true }}
+  variants={fadeIn}
+>
+  <div className="flex flex-col sm:flex-row items-center gap-2">
+    <span className="text-sm">Join</span>
+    <div className="text-2xl font-bold text-black">
+      <AnimatedNumber value={+800} duration={2} />
+    </div>
+    <span className="text-sm">fashion trailblazers</span>
+  </div>
+
+  {/* Social Icons - Centered below the text */}
+  <div className="flex gap-10 justify-center mt-5">
+    <a 
+      href="https://www.instagram.com/ashe.tn/" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="text-gray-600 hover:text-gray-900 transition-colors"
+    >
+      <FaInstagram className="h-7 w-7" />
+    </a>
+    <a 
+      href="https://www.tiktok.com/@ashe.tn" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="text-gray-600 hover:text-gray-900 transition-colors"
+    >
+      <FaTiktok className="h-7 w-7" />
+    </a>
+  </div>
+</motion.div>
+                
               </div>
             </section>
           </main>

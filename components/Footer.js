@@ -43,9 +43,9 @@ export default function Footer() {
           <motion.div variants={itemVariants} className="space-y-4">
             <h3 className="text-sm font-bold uppercase tracking-wider text-gray-300">Collections</h3>
             <ul className="space-y-3">
-              {['New In', 'Winter Essentials', 'Limited Series'].map((products) => (
+              {['New In', 'Winter Essentials'].map((products) => (
                 <li key={products}>
-                  <Link href="#" className="text-gray-400 hover:text-white transition-all duration-300 text-sm font-medium flex items-center group">
+                  <Link href="/products" className="text-gray-400 hover:text-white transition-all duration-300 text-sm font-medium flex items-center group">
                     <span className="w-2 h-px bg-transparent mr-2 group-hover:bg-white transition-all duration-300" />
                     {products}
                   </Link>
