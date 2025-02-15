@@ -317,11 +317,7 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
       setPlacedOrder(orderWithId);
       setUserDataForInvoice(userDoc.data());
       onPlaceOrder(orderWithId);
-      await fetch('/api/sendNotification', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId: docRef.id, orderData }),
-      });
+      toast.success('Order placed successfully!');
     } catch (error) {
       toast.error(error.message || 'Failed to place order. Please try again.');
     } finally {
