@@ -1,6 +1,17 @@
-// Enhanced Service Worker with Stale-While-Revalidate strategy
+import {precacheAndRoute} from 'workbox-precaching';
 
-// Cache configuration
+// Filter out problematic manifests
+const manifest = self.__WB_MANIFEST.filter(entry => {
+  return !entry.url.includes('dynamic-css-manifest.json');
+});
+
+precacheAndRoute(manifest);
+
+// Add fallback network-first strategy for CSS
+registerRoute(
+  ({request}) => request.destination === 'style',
+  new NetworkFirst()
+);
 const CACHE_PREFIX = 'my-app';
 const CACHE_VERSION = 'v2';
 const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VERSION}`;
