@@ -4,7 +4,7 @@ import { doc, addDoc, collection, getDoc, updateDoc, increment } from 'firebase/
 import { auth, db } from '../lib/firebase';
 import { toast, Toaster } from 'sonner';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable'; 
+import 'jspdf-autotable';
 
 // PDF generation helper function
 const generateInvoice = (order, userData) => {
@@ -28,7 +28,7 @@ const generateInvoice = (order, userData) => {
     doc.setFontSize(16);
     doc.setTextColor(255, 255, 255);
     doc.text("ASHE™", pageWidth - 20, 25, { align: 'right' });
-    
+
     // Decorative line under header
     doc.setDrawColor(200, 200, 200);
     doc.setLineWidth(0.5);
@@ -40,7 +40,7 @@ const generateInvoice = (order, userData) => {
     doc.setTextColor(...accentColor);
     doc.setFont(undefined, 'bold');
     doc.text(`INVOICE #${order.id}`, 15, yPosition);
-    
+
     // Styled Date Formatting
     doc.setFontSize(12);
     doc.setTextColor(100);
@@ -53,7 +53,7 @@ const generateInvoice = (order, userData) => {
     // From/To Cards with Background
     yPosition += 25;
     const columnWidth = (pageWidth - 40) / 2;
-    
+
     // Company Info Card
     doc.setFillColor(245, 245, 245);
     doc.rect(15, yPosition - 5, columnWidth, 45, 'F');
@@ -62,9 +62,9 @@ const generateInvoice = (order, userData) => {
     doc.setFont(undefined, 'bold');
     doc.text("From:", 20, yPosition);
     doc.setFont(undefined, 'normal');
-    doc.text(`ASHE™\nTunisia\nPhone: +216 20 986 015\nEmail: contact@ashe.tn`, 
+    doc.text(`ASHE™\nTunisia\nPhone: +216 20 986 015\nEmail: contact@ashe.tn`,
       20, yPosition + 5, { lineHeightFactor: 1.5 });
-    
+
     // Client Info Card
     doc.setFillColor(245, 245, 245);
     doc.rect(25 + columnWidth, yPosition - 5, columnWidth, 45, 'F');
@@ -77,8 +77,8 @@ const generateInvoice = (order, userData) => {
       `Phone: ${userData.phone}`,
       `Client: ${userData.firstName} ${userData.lastName}`
     ].join('\n');
-    doc.text(clientInfo, pageWidth - columnWidth - 10, yPosition + 5, { 
-      lineHeightFactor: 1.5 
+    doc.text(clientInfo, pageWidth - columnWidth - 10, yPosition + 5, {
+      lineHeightFactor: 1.5
     });
 
     // Enhanced Items Table
@@ -91,7 +91,7 @@ const generateInvoice = (order, userData) => {
       { content: `${item.price.toFixed(2)} TND`, styles: { halign: 'right' }},
       { content: `${(item.quantity * item.price).toFixed(2)} TND`, styles: { halign: 'right' }}
     ]);
-    
+
     // Calculate total amount
     const totalAmount = order.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
     const shippingFee = 8.00;  // Shipping fee in TND
@@ -105,19 +105,19 @@ const generateInvoice = (order, userData) => {
 
     // Styled Total Row
     itemsData.push([
-      { 
-        content: 'TOTAL', 
-        colSpan: 4, 
-        styles: { 
-          fontStyle: 'bold', 
+      {
+        content: 'TOTAL',
+        colSpan: 4,
+        styles: {
+          fontStyle: 'bold',
           halign: 'right',
           fillColor: accentColor,
           textColor: [255, 255, 255]
         }
       },
-      { 
-        content: `${grandTotal.toFixed(2)} TND`, 
-        styles: { 
+      {
+        content: `${grandTotal.toFixed(2)} TND`,
+        styles: {
           fontStyle: 'bold',
           fillColor: accentColor,
           textColor: [255, 255, 255],
@@ -131,7 +131,7 @@ const generateInvoice = (order, userData) => {
       head: headers,
       body: itemsData,
       theme: 'striped',
-      headStyles: { 
+      headStyles: {
         fillColor: accentColor,
         textColor: 255,
         fontSize: 12,
@@ -159,8 +159,8 @@ const generateInvoice = (order, userData) => {
         const pageCount = doc.internal.getNumberOfPages();
         doc.setFontSize(10);
         doc.setTextColor(150);
-        doc.text(`Page ${data.pageNumber} of ${pageCount}`, pageWidth - 20, 280, { 
-          align: 'right' 
+        doc.text(`Page ${data.pageNumber} of ${pageCount}`, pageWidth - 20, 280, {
+          align: 'right'
         });
       }
     });
@@ -176,7 +176,7 @@ const generateInvoice = (order, userData) => {
       "2. You may request an exchange within 7 days of receiving the product.",
       "3. Items that have been worn, washed, or damaged cannot be returned or exchanged."
     ].join('\n');
-    doc.text(terms, 15, 265, { 
+    doc.text(terms, 15, 265, {
       maxWidth: 180,
       lineHeightFactor: 1.4
     });
@@ -291,27 +291,37 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
       const docRef = await addDoc(collection(db, 'orders'), orderData);
       const orderWithId = { ...orderData, id: docRef.id };
 
+      // Send email notification to admin
+      try {
+        await fetch('/api/send-order-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order: orderWithId })
+        });
+      } catch (emailError) {
+        toast.error('Admin failed to recieve notification, but your order was placed successfully');
+      }
+
       // Update the stock for each ordered product
       await Promise.all(
         basket.map(async (item) => {
           const productRef = doc(db, 'products', item.id);
           const productDoc = await getDoc(productRef);
-      
+
           if (productDoc.exists()) {
             const productData = productDoc.data();
-      
-            // Vérifier si la taille existe
+
+            // Check if size exists
             if (productData.stock && productData.stock[item.size] !== undefined) {
               await updateDoc(productRef, {
                 [`stock.${item.size}`]: increment(-item.quantity)
               });
             } else {
-              toast.warn(`Taille ${item.size} non trouvée pour le produit ${item.id}`);
+              toast.warn(`Size ${item.size} not found for product ${item.id}`);
             }
           }
         })
       );
-      
 
       // Save order details in state instead of generating the PDF immediately
       setPlacedOrder(orderWithId);
