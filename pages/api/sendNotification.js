@@ -1,5 +1,6 @@
-// pages/api/sendNotification.js
 import { admin } from '../../lib/firebaseAdmin';
+import { db } from "../../lib/firebaseAdmin";
+import { doc, getDoc } from "firebase/firestore";
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -9,9 +10,15 @@ export default async function handler(req, res) {
   try {
     const { orderId, orderData } = req.body;
 
-    // In a real app, you might look up the admin’s FCM tokens from your database.
-    const adminFcmToken = process.env.ADMIN_FCM_TOKEN;
-    
+    // Fetch admin's FCM token from Firestore
+    const adminDoc = await getDoc(doc(db, "adminTokens", "adminUser"));
+
+    if (!adminDoc.exists()) {
+      return res.status(400).json({ error: "Admin FCM token not found" });
+    }
+
+    const adminFcmToken = adminDoc.data().fcmToken;
+
     const message = {
       notification: {
         title: 'New Order Received',
@@ -19,11 +26,11 @@ export default async function handler(req, res) {
       },
       token: adminFcmToken,
     };
-    
+
     const response = await admin.messaging().send(message);
-    res.status(200).json({ message: 'Notification sent', response });
+    return res.status(200).json({ message: 'Notification sent', response });
   } catch (error) {
     console.error('Error sending notification:', error);
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 }
