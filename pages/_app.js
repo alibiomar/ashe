@@ -7,13 +7,18 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function MyApp({ Component, pageProps }) {
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(() => console.log('✅ Service Worker Registered'))
-        .catch((err) => console.error('❌ SW Registration Failed', err));
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then((registration) => {
+          console.log("Service Worker registered with scope:", registration.scope);
+        })
+        .catch((err) => {
+          console.error("Service Worker registration failed:", err);
+        });
     }
   }, []);
-
+  
   return (
     <AuthProvider>
       <BasketProvider>
