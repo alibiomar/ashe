@@ -284,7 +284,7 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
         })),
         totalAmount,
         createdAt: new Date().toISOString(),
-        status: 'Pending',
+        status: 'New',
       };
 
       // Create the order document
