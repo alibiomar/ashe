@@ -227,6 +227,8 @@ export default function Basket() {
       } else {
         Cookies.remove('basket');
       }
+      toast.success('Order placed successfully!');
+
     } catch (error) {
       toast.error('There was an error placing your order. Please try again.');
     }
