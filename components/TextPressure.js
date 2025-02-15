@@ -4,7 +4,7 @@ const TextPressure = ({
   text = 'Compressa',
   fontFamily = 'Compressa VF',
   // This font is just an example, you should not use it in commercial projects.
-  fontUrl = 'https://res.cloudinary.com/dr6lvwubh/raw/upload/v1529908256/CompressaPRO-GX.woff2',
+  fontUrl = '/fonts/CompressaVF.woff2',
 
   width = true,
   weight = true,

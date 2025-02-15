@@ -19,8 +19,10 @@ function MyApp({ Component, pageProps }) {
   return (
     <AuthProvider>
       <BasketProvider>
+      <div translate="yes">
         <Component {...pageProps} />
         <AcceptCookiesPopup />
+        </div>
       </BasketProvider>
     </AuthProvider>
   );

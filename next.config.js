@@ -101,8 +101,8 @@ module.exports = withPWA({
   async rewrites() {
     return [
       {
-        source: '/service-worker.js',
-        destination: '/_next/static/service-worker.js',
+        source: '/sw.js',
+        destination: '/_next/static/sw.js',
       },
     ];
   },
