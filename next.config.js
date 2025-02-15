@@ -4,6 +4,11 @@ const withPWA = require('next-pwa')({
   skipWaiting: true,});
   
 module.exports = withPWA({
+  generateBuildId: async () => {
+    return 'build-' + Date.now();
+  },
+  // Add proper asset prefixes if needed
+  assetPrefix: process.env.NODE_ENV === 'production' ? 'https://test.ashe.tn' : '',
   async headers() {
     return [
       {
