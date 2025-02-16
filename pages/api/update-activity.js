@@ -1,6 +1,6 @@
 // utils/updateActivity.js
 import { doc, updateDoc, onSnapshot } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { db } from '../../lib/firebase';
 
 export const updateUserActivity = async (uid) => {
   if (!uid) return;
