@@ -15,39 +15,49 @@ function AppContent({ Component, pageProps }) {
   useEffect(() => {
     let unsubscribe = () => {};
 
-    const setupActivity = async () => {
+    const initializeActivity = async () => {
       if (user?.uid) {
         try {
+          // Set up real-time listener
           unsubscribe = setupRealTimeActivityListener(user.uid);
+          
+          // Update initial activity
           await updateUserActivity(user.uid);
         } catch (error) {
-          console.error('Error setting up activity tracking:', error);
+          console.error('Failed to initialize activity tracking:', error);
         }
       }
     };
 
-    setupActivity();
+    initializeActivity();
 
+    // Route change handler
     const handleRouteChange = async () => {
       if (user?.uid) {
         try {
           await updateUserActivity(user.uid);
         } catch (error) {
-          console.error('Error updating activity on route change:', error);
+          console.error('Failed to update activity on route change:', error);
         }
       }
     };
 
+    // Subscribe to route changes
     router.events.on('routeChangeComplete', handleRouteChange);
 
+    // Cleanup function
     return () => {
-      unsubscribe();
+      unsubscribe(); // Remove real-time listener
       router.events.off('routeChangeComplete', handleRouteChange);
     };
   }, [router.events, user]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div>Loading...</div>
+      </div>
+    );
   }
 
   return (
