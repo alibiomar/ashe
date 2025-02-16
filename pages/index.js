@@ -7,8 +7,9 @@ import Layout from '../components/Layout';
 import TextPressure from '../components/TextPressure';
 import Image from 'next/image';
 import ErrorBoundary from '../components/ErrorBoundary';
-import LoadingSpinner from '../components/LoadingScreen';
-import { motion, AnimatePresence } from 'framer-motion';
+const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
+  suspense: true,
+});import { motion, AnimatePresence } from 'framer-motion';
 
 // Lazy-loaded components for improved performance
 const Testimonial = lazy(() => import('../components/Testimonial'));

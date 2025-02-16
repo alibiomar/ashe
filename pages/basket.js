@@ -5,8 +5,9 @@ import Layout from '../components/Layout';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import { toast } from 'sonner';
-import LoadingSpinner from '../components/LoadingScreen';
-import Head from 'next/head';
+const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
+  suspense: true,
+});import Head from 'next/head';
 
 // Lazy-load CheckoutPopup component
 const CheckoutPopup = lazy(() => import('../components/CheckoutPopup'));

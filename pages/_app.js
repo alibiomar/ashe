@@ -7,7 +7,9 @@ import AcceptCookiesPopup from '../components/AcceptCookiesPopup';
 import '../styles/globals.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { setupRealTimeActivityListener, updateUserActivity } from '../utils/updateActivity';
-
+const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
+  suspense: true,
+});
 function AppContent({ Component, pageProps }) {
   const router = useRouter();
   const { user, loading } = useAuth();
@@ -53,11 +55,7 @@ function AppContent({ Component, pageProps }) {
   }, [router.events, user]);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div>Loading...</div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
