@@ -21,18 +21,8 @@ const config = withPWA({
       },
     ];
   },
-
   async headers() {
     return [
-      {
-        source: '/manifest.json',
-        headers: [
-          {
-            key: 'Content-Type',
-            value: 'application/manifest+json',
-          },
-        ],
-      },
       {
         source: '/:path*',
         headers: [
@@ -40,7 +30,7 @@ const config = withPWA({
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "connect-src 'self' https://picsum.photos/ https://fonts.gstatic.com/ https://auth.ashe.tn https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://apis.google.com https://picsum.photos",
+              "connect-src 'self' https://auth.ashe.tn/auth/verify-email https://auth.ashe.tn/auth/send-password-reset https://auth.ashe.tn https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://apis.google.com",
               "script-src 'self' 'unsafe-eval' https://www.gstatic.com https://apis.google.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: https://*.googleusercontent.com https://dl.dropboxusercontent.com https://firebasestorage.googleapis.com https://picsum.photos https://fastly.picsum.photos",
@@ -48,19 +38,19 @@ const config = withPWA({
               "form-action 'self'",
               "font-src 'self' https://fonts.gstatic.com https://res.cloudinary.com data:",
               "media-src 'self' https://*.firebaseio.com"
-            ].join('; '),
+            ].join('; ')
           },
           {
             key: 'X-Frame-Options',
-            value: 'DENY',
+            value: 'DENY'
           },
           {
             key: 'X-Content-Type-Options',
-            value: 'nosniff',
+            value: 'nosniff'
           },
           {
             key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
+            value: 'strict-origin-when-cross-origin'
           },
           {
             key: 'Permissions-Policy',
@@ -69,13 +59,13 @@ const config = withPWA({
               'geolocation=()',
               'microphone=()',
               'camera=()'
-            ].join(', '),
-          },
-        ],
-      },
-    ];
+            ].join(', ')
+          }
+        ]
+      }
+    ]
   },
-
+  
   devIndicators: {
     buildActivity: false,
   },
@@ -107,9 +97,9 @@ const config = withPWA({
       {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
-      },
+      }
     ],
-  },
+  },  
 
   poweredByHeader: false,
   reactStrictMode: true,
