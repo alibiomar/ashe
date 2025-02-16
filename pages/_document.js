@@ -3,7 +3,7 @@ import Document, { Html, Head, Main, NextScript } from 'next/document';
 export default class MyDocument extends Document {
   render() {
     return (
-      <Html lang="ar" className="scroll-smooth">
+      <Html lang="fr" className="scroll-smooth">
         <Head>
           {/* Progressive Web App */}
           <link rel="manifest" href="/manifest.json" />

@@ -215,34 +215,25 @@ export default function Signup() {
 
                 {/* Gender Selection */}
                 <div>
-                  <div className="text-sm mb-2">Gender</div>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="gender"
-                        value="male"
-                        checked={gender === 'male'}
-                        onChange={(e) => setGender(e.target.value)}
-                        className="form-radio h-4 w-4 text-black border-gray-300 focus:ring-black"
-                        required
-                      />
-                      <span className="text-sm">Male</span>
-                    </label>
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="gender"
-                        value="female"
-                        checked={gender === 'female'}
-                        onChange={(e) => setGender(e.target.value)}
-                        className="form-radio h-4 w-4 text-black border-gray-300 focus:ring-black"
-                        required
-                      />
-                      <span className="text-sm">Female</span>
-                    </label>
-                  </div>
-                </div>
+  <div className="text-sm font-medium text-gray-700 mb-2">Gender</div>
+  <div className="flex gap-3">
+    {["male", "female"].map((option) => (
+      <label key={option} className="flex items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="gender"
+          value={option}
+          checked={gender === option}
+          onChange={(e) => setGender(e.target.value)}
+          className="h-4 w-4 text-gray-900 border-gray-300 focus:ring-2 focus:ring-black"
+          required
+        />
+        <span className="text-sm text-gray-700 capitalize">{option}</span>
+      </label>
+    ))}
+  </div>
+</div>
+
 
                 <button
                   type="submit"
