@@ -15,21 +15,33 @@ function AppContent({ Component, pageProps }) {
   useEffect(() => {
     let unsubscribe = () => {};
 
-    if (user) {
-      unsubscribe = setupRealTimeActivityListener(user.uid);
-      updateUserActivity(user.uid); // Update initially
-    }
+    const setupActivity = async () => {
+      if (user?.uid) {
+        try {
+          unsubscribe = setupRealTimeActivityListener(user.uid);
+          await updateUserActivity(user.uid);
+        } catch (error) {
+          console.error('Error setting up activity tracking:', error);
+        }
+      }
+    };
 
-    const handleRouteChange = () => {
-      if (user) {
-        updateUserActivity(user.uid);
+    setupActivity();
+
+    const handleRouteChange = async () => {
+      if (user?.uid) {
+        try {
+          await updateUserActivity(user.uid);
+        } catch (error) {
+          console.error('Error updating activity on route change:', error);
+        }
       }
     };
 
     router.events.on('routeChangeComplete', handleRouteChange);
-    
+
     return () => {
-      unsubscribe(); // Cleanup listener
+      unsubscribe();
       router.events.off('routeChangeComplete', handleRouteChange);
     };
   }, [router.events, user]);

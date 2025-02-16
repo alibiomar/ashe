@@ -1,34 +1,35 @@
 // utils/updateActivity.js
-import { db } from '../../lib/firebase'; // Import the client-side Firebase instance
 import { doc, updateDoc, onSnapshot } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 export const updateUserActivity = async (uid) => {
   if (!uid) return;
-  
+
   try {
     const userRef = doc(db, 'users', uid);
     await updateDoc(userRef, {
-      lastActivity: new Date(),
-      lastUpdated: new Date()
+      lastActivity: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Error updating user activity:', error);
+    console.error('Error updating activity:', error);
   }
 };
 
 export const setupRealTimeActivityListener = (uid) => {
   if (!uid) return () => {};
 
+  const userRef = doc(db, 'users', uid);
+  
   try {
-    const userRef = doc(db, 'users', uid);
-    return onSnapshot(userRef, (doc) => {
-      if (doc.exists()) {
-        // You can handle real-time updates here if needed
-        console.log('User activity updated:', doc.data().lastActivity);
+    const unsubscribe = onSnapshot(userRef, (snapshot) => {
+      if (snapshot.exists()) {
+        console.log('Activity updated:', snapshot.data().lastActivity);
       }
     });
+
+    return unsubscribe;
   } catch (error) {
-    console.error('Error setting up activity listener:', error);
+    console.error('Error setting up listener:', error);
     return () => {};
   }
 };
