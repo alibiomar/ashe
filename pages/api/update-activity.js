@@ -1,5 +1,5 @@
 // utils/updateActivity.js
-import { db } from '../lib/firebase'; // Import the client-side Firebase instance
+import { db } from '../../lib/firebase'; // Import the client-side Firebase instance
 import { doc, updateDoc, onSnapshot } from 'firebase/firestore';
 
 export const updateUserActivity = async (uid) => {
