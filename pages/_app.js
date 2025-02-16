@@ -1,3 +1,4 @@
+// pages/_app.js
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { AuthProvider } from '../contexts/AuthContext';
@@ -5,7 +6,7 @@ import { BasketProvider } from '../contexts/BasketContext';
 import AcceptCookiesPopup from '../components/AcceptCookiesPopup';
 import '../styles/globals.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { updateUserActivity } from '../utils/updateActivity';
+import { setupRealTimeActivityListener } from '../utils/updateActivity';
 import { useAuth } from '../contexts/AuthContext'; // Assuming you have a useAuth hook
 
 function MyApp({ Component, pageProps }) {
@@ -13,6 +14,10 @@ function MyApp({ Component, pageProps }) {
   const { user } = useAuth(); // Get the current user from the auth context
 
   useEffect(() => {
+    if (user) {
+      setupRealTimeActivityListener(user.uid);
+    }
+
     const handleRouteChange = (url) => {
       if (user) {
         updateUserActivity(user.uid);

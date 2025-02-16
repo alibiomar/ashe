@@ -1,5 +1,5 @@
 // utils/updateActivity.js
-import { db } from '../lib/firebaseClient';
+import { db } from '../lib/firebase';
 
 export async function updateUserActivity(uid) {
   try {
