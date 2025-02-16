@@ -136,87 +136,84 @@ export default function Home() {
         variants={containerVariants}
         className="overflow-hidden"
       >
-<section className="relative h-screen w-full overflow-hidden bg-neutral-950">
-  {/* Vertical Text Marquee */}
+<section className="relative h-screen w-full overflow-hidden bg-ivory-100">
+  {/* Vertical Heritage Marker */}
   <motion.div 
-    className="absolute left-8 top-1/2 -translate-y-1/2 hidden md:flex flex-col gap-8 text-6xl font-light text-neutral-700 z-20"
+    className="absolute left-8 top-1/2 -translate-y-1/2 hidden md:flex flex-col gap-6 text-xl font-serif text-gold-800 z-20"
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
     transition={{ duration: 1.5 }}
   >
-    {['A', 'S', 'H', 'E'].map((letter, index) => (
+    {['Est. 1923', 'Savile Row', 'Bespoke', 'Haberdashery'].map((text, index) => (
       <motion.span
         key={index}
-        whileHover={{ color: '#ffffff', x: 10 }}
-        className="cursor-default transition-colors duration-300"
+        className="cursor-default border-l-2 border-gold-800/20 pl-4 tracking-wider transition-all duration-500 hover:border-gold-800/50"
+        whileHover={{ x: 8 }}
       >
-        {letter}
+        {text}
       </motion.span>
     ))}
   </motion.div>
 
   {/* Main Content */}
   <div className="container mx-auto h-full flex items-center justify-center">
-    <div className="relative z-10 text-center">
+    <div className="relative z-10 text-left max-w-4xl">
       <motion.div
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="font-display text-5xl md:text-8xl tracking-tighter text-white"
+        transition={{ duration: 0.8, delay: 0.2 }}
+        className="font-serif text-4xl md:text-6xl text-charcoal-900 leading-tight"
       >
-        <div className="overflow-hidden">
-          <motion.span className="block">Be the best version of yourself.</motion.span>
-          <motion.span className="block text-neutral-400">Be Distinct</motion.span>
-          <motion.span className="block bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
-            Be <TextPressure
-        text='ASHE'
-        flex={true}
-        alpha={false}
-        stroke={false}
-        width={true}
-        weight={true}
-        slant={false}
-        minFontSize={32}
-        className="block bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent"
-      />
-          </motion.span>
-        </div>
-      </motion.div>
-
-      {/* Animated Counter */}
-      <motion.div
-        className="mt-12 flex justify-center items-center gap-4 text-4xl"
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-      >
-        <div className="flex items-center gap-2">
-          <span className="font-mono text-cyan-400"></span>
-          <span className="text-sm text-neutral-400 max-w-[120px] text-left">
-          {user ? `Welcome, ${firstName}!` : 'Welcome to ASHE'}
-          </span>
+        <div className="space-y-6">
+          <div className="overflow-hidden">
+            <motion.span className="block font-light tracking-wide">
+              Crafting Legacy Through
+            </motion.span>
+          </div>
+          <div className="relative">
+            <span className="absolute -left-12 top-1/2 -translate-y-1/2 text-2xl text-gold-800">
+              ●
+            </span>
+            <TextPressure
+              text='Elegance'
+              flex={true}
+              alpha={false}
+              stroke={false}
+              width={true}
+              weight={true}
+              minFontSize={48}
+              className="font-medium italic text-charcoal-900"
+            />
+          </div>
+          <div className="mt-8 border-t border-charcoal-900/20 pt-6 w-2/3">
+            <p className="text-lg font-sans font-light text-charcoal-900/80">
+              {user ? `${firstName}, your sartorial journey awaits` : 'London ∙ Milan ∙ Tokyo'}
+            </p>
+          </div>
         </div>
       </motion.div>
     </div>
   </div>
 
-  {/* Grid Distortion Effect */}
-  <Suspense fallback={<div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 to-emerald-900/20" />}>
-    <GridDistortion
-      gridSize={24}
-      strength={0.15}
-      className="absolute inset-0 opacity-20 mix-blend-soft-light"
+  {/* Heritage Pattern Overlay */}
+  <div className="absolute inset-0 z-0 opacity-10 mix-blend-multiply">
+    <Image
+      src="/herringbone-pattern.png"
+      alt="Heritage texture"
+      fill
+      priority
+      className="object-cover"
+      unoptimized
     />
-  </Suspense>
+  </div>
 
-  {/* Scrolling Indicator */}
+  {/* Discrete Scrolling Indicator */}
   <motion.div
-    className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-neutral-400"
-    animate={{ y: [0, 20, 0] }}
-    transition={{ repeat: Infinity, duration: 2 }}
+    className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center"
+    animate={{ opacity: [0, 1, 0] }}
+    transition={{ repeat: Infinity, duration: 3 }}
   >
-    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-    </svg>
+    <div className="w-px h-16 bg-gradient-to-b from-charcoal-900/80 to-transparent" />
   </motion.div>
 </section>
 
