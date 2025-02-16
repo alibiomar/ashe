@@ -2,44 +2,11 @@ const withPWA = require('next-pwa')({
   dest: 'public',
   register: true,
   skipWaiting: true,
-  // Exclude dynamic-css-manifest.json from precaching
   publicExcludes: ['!dynamic-css-manifest.json'],
   disable: process.env.NODE_ENV === 'development',
-  runtimeCaching: [
-    {
-      urlPattern: ({ request }) => request.mode === 'navigate',
-      handler: 'NetworkFirst',
-      options: {
-        cacheName: 'pages-cache',
-        networkTimeoutSeconds: 3,
-        expiration: { maxEntries: 50, maxAgeSeconds: 7 * 24 * 60 * 60 }, // Cache for 7 days
-        fallback: {
-          document: '/offline.html', // Ensure you have this file in /public
-        },
-      },
-    },
-  ],
 });
 
 module.exports = withPWA({
-  // Generate a unique build ID
-  generateBuildId: async () => {
-    return 'build-' + Date.now();
-  },
-
-  // Set asset prefix for production
-  assetPrefix: process.env.NODE_ENV === 'production' ? 'https://test.ashe.tn' : '',
-
-  // Custom rewrites
-  async rewrites() {
-    return [
-      {
-        source: '/_next/dynamic-css-manifest.json',
-        destination: '/dynamic-css-manifest.json',
-      },
-    ];
-  },
-  // Security headers
   async headers() {
     return [
       {
@@ -85,12 +52,10 @@ module.exports = withPWA({
     ]
   },
 
-  // Disable build activity indicator
   devIndicators: {
     buildActivity: false,
   },
 
-  // Image optimization
   images: {
     domains: [
       'via.placeholder.com',
@@ -122,19 +87,14 @@ module.exports = withPWA({
     ],
   },
 
-  // Disable "Powered by Next.js" header
   poweredByHeader: false,
 
-  // Enable React Strict Mode
   reactStrictMode: true,
 
-  // Disable source maps in production
   productionBrowserSourceMaps: false,
 
-  // Enable compression
   compress: true,
 
-  // Environment variables
   env: {
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
     FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
@@ -144,9 +104,22 @@ module.exports = withPWA({
     FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
   },
 
-  // On-demand entries configuration
   onDemandEntries: {
     maxInactiveAge: 1000 * 60 * 60, // 1 hour
     pagesBufferLength: 10,
   },
+
+  // Enable webpack 5
+  future: {
+    webpack5: true,
+  },
+
+  // Custom webpack configuration
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback.fs = false;
+    }
+    return config;
+  },
+
 });
