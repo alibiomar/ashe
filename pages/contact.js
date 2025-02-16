@@ -172,27 +172,7 @@ export default function ContactForm() {
             </h2>
 
             {/* Contact Information */}
-            <div className="mb-10 text-center space-y-4">
-              <h3 className="text-xl font-semibold text-neutral-700">Direct Channels</h3>
-              <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-neutral-600">
-                <a href="mailto:contact@ashe.com" className="hover:text-neutral-900 transition-colors">
-                  contact@ashe.com
-                </a>
-                <span className="text-neutral-400">•</span>
-                <a href="tel:+21620986015" className="hover:text-neutral-900 transition-colors">
-                  +216 20 986 015
-                </a>
-                <span className="text-neutral-400">•</span>
-                <div className="flex gap-4">
-                  <a href="https://tiktok.com/@ashe" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 transition-colors">
-                    TikTok
-                  </a>
-                  <a href="https://instagram.com/ashe" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 transition-colors">
-                    Instagram
-                  </a>
-                </div>
-              </div>
-            </div>
+
 
             {/* Form Block Status */}
             {isBlocked && (
@@ -265,6 +245,27 @@ export default function ContactForm() {
               </button>
             </form>
           </div>
+          <div className="mb-10 text-center space-y-4">
+              <h3 className="text-xl font-semibold text-neutral-700">Direct Channels</h3>
+              <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-neutral-600">
+                <a href="mailto:contact@ashe.com" className="hover:text-neutral-900 transition-colors">
+                  contact@ashe.com
+                </a>
+                <span className="text-neutral-400">•</span>
+                <a href="tel:+21620986015" className="hover:text-neutral-900 transition-colors">
+                  +216 20 986 015
+                </a>
+                <span className="text-neutral-400">•</span>
+                <div className="flex gap-4">
+                  <a href="https://tiktok.com/@ashe" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 transition-colors">
+                    TikTok
+                  </a>
+                  <a href="https://instagram.com/ashe" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 transition-colors">
+                    Instagram
+                  </a>
+                </div>
+              </div>
+            </div>
         </div>
       </Layout>
     </>

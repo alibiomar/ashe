@@ -1,35 +1,23 @@
-// utils/updateActivity.js
-import { doc, updateDoc, onSnapshot } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
+// pages/api/update-activity.js
+import { adminDb, admin } from '../../lib/firebaseAdmin';
 
-export const updateUserActivity = async (uid) => {
-  if (!uid) return;
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method not allowed' });
+  }
+
+  const { uid } = req.body; // Assume uid is passed in the request body
 
   try {
-    const userRef = doc(db, 'users', uid);
-    await updateDoc(userRef, {
-      lastActivity: new Date().toISOString(),
-    });
-  } catch (error) {
-    console.error('Error updating activity:', error);
-  }
-};
-
-export const setupRealTimeActivityListener = (uid) => {
-  if (!uid) return () => {};
-
-  const userRef = doc(db, 'users', uid);
-  
-  try {
-    const unsubscribe = onSnapshot(userRef, (snapshot) => {
-      if (snapshot.exists()) {
-        console.log('Activity updated:', snapshot.data().lastActivity);
-      }
+    const userDoc = adminDb.collection('users').doc(uid);
+    await userDoc.update({
+      // Use the serverTimestamp from the admin SDK
+      lastActivity: admin.firestore.FieldValue.serverTimestamp()
     });
 
-    return unsubscribe;
+    res.status(200).json({ message: 'User activity updated' });
   } catch (error) {
-    console.error('Error setting up listener:', error);
-    return () => {};
+    console.error('Error updating user activity:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
-};
+}
