@@ -4,7 +4,6 @@ const withPWA = require('next-pwa')({
   skipWaiting: true,
   // Exclude dynamic-css-manifest.json from precaching
   publicExcludes: ['!dynamic-css-manifest.json'],
-  // Disable PWA in development
   disable: process.env.NODE_ENV === 'development',
 });
 
@@ -17,6 +16,19 @@ module.exports = withPWA({
   // Set asset prefix for production
   assetPrefix: process.env.NODE_ENV === 'production' ? 'https://test.ashe.tn' : '',
 
+  // Custom rewrites
+  async rewrites() {
+    return [
+      {
+        source: '/_next/dynamic-css-manifest.json',
+        destination: '/dynamic-css-manifest.json',
+      },
+      {
+        source: '/sw.js',
+        destination: '/_next/static/sw.js',
+      },
+    ];
+  },
   // Security headers
   async headers() {
     return [
