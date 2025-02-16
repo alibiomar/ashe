@@ -171,6 +171,47 @@ export default function ContactForm() {
               CONTACT US
             </h2>
 
+            {/* Motivational Section */}
+            <div className="mb-8 text-center">
+              <h3 className="text-2xl font-bold tracking-wide">Be part of the journey</h3>
+              <p className="mt-4">
+                <span className="block">
+                  Email:{' '}
+                  <a href="mailto:contact@ashe.com" className="underline">
+                    contact@ashe.com
+                  </a>
+                </span>
+                <span className="block">
+                  Phone:{' '}
+                  <a href="tel:+21620986015" className="underline">
+                    +216 20 986 015
+                  </a>
+                </span>
+                <span className="block">
+                  TikTok:{' '}
+                  <a
+                    href="https://www.tiktok.com/@ashe"
+                    className="underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    @ashe
+                  </a>
+                </span>
+                <span className="block">
+                  Instagram:{' '}
+                  <a
+                    href="https://www.instagram.com/ashe"
+                    className="underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    @ashe
+                  </a>
+                </span>
+              </p>
+            </div>
+
             {isBlocked && (
               <div className="mb-8 bg-yellow-50 border border-yellow-200 p-6 rounded-sm">
                 <h3 className="text-xl font-semibold mb-2 text-yellow-800">Form Temporarily Blocked</h3>
@@ -184,20 +225,22 @@ export default function ContactForm() {
               <div className="mb-8 border border-gray-200 p-6 rounded-sm">
                 <h3 className="text-xl font-semibold mb-4">Submitted Information</h3>
                 <div className="space-y-2">
-                  <p><span className="font-medium">Name:</span> {submittedData.name}</p>
-                  <p><span className="font-medium">Email:</span> {submittedData.email}</p>
-                  <p><span className="font-medium">Message:</span> {submittedData.message}</p>
+                  <p>
+                    <span className="font-medium">Name:</span> {submittedData.name}
+                  </p>
+                  <p>
+                    <span className="font-medium">Email:</span> {submittedData.email}
+                  </p>
+                  <p>
+                    <span className="font-medium">Message:</span> {submittedData.message}
+                  </p>
                 </div>
               </div>
             )}
 
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10" encType="multipart/form-data">
               <div className="hidden">
-                <input
-                  {...form.register('website')}
-                  tabIndex="-1"
-                  autoComplete="off"
-                />
+                <input {...form.register('website')} tabIndex="-1" autoComplete="off" />
               </div>
 
               {['name', 'email', 'message'].map((field) => (
