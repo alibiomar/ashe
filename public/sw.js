@@ -58,19 +58,6 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET' || event.request.url.startsWith('chrome-extension:')) {
     return;
   }
-
-  // Handle .woff2 requests separately
-  if (event.request.url.endsWith('.woff2')) {
-    event.respondWith(
-      caches.match(event.request).then(response => {
-        return response || fetch(event.request).catch(() => {
-          return new Response(null, { status: 404 });
-        });
-      })
-    );
-    return;
-  }
-
   event.respondWith(
     (async () => {
       const cache = await caches.open(CACHE_NAME);

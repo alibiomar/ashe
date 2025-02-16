@@ -4,6 +4,9 @@ const withPWA = require('next-pwa')({
   skipWaiting: true,});
   
 module.exports = withPWA({
+  publicRuntimeConfig: {
+    dynamicCSSManifest: require('./public/dynamic-css-manifest.json')
+  },
   generateBuildId: async () => {
     return 'build-' + Date.now();
   },
