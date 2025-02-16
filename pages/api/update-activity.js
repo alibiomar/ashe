@@ -1,5 +1,5 @@
 // pages/api/update-activity.js
-import { adminDb } from '../../lib/firebaseAdmin';
+import { db } from '../../lib/firebaseAdmin';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   const { uid } = req.body; // Assume uid is passed in the request body
 
   try {
-    const userDoc = adminDb.collection('users').doc(uid);
+    const userDoc = db.collection('users').doc(uid);
     await userDoc.update({
       lastActivity: new Date()
     });
