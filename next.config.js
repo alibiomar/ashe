@@ -2,22 +2,24 @@ const withPWA = require('next-pwa')({
   dest: 'public',
   register: true,
   skipWaiting: true,
-  // Exclude dynamic-css-manifest.json from precaching
-  publicExcludes: ['!dynamic-css-manifest.json'],
   disable: process.env.NODE_ENV === 'development',
-  runtimeCaching: [
-    {
-      urlPattern: ({ request }) => request.mode === 'navigate',
-      handler: 'NetworkFirst',
-      options: {
-        cacheName: 'pages-cache',
-        networkTimeoutSeconds: 3,
-        fallback: {
-          document: '/offline.html', // Ensure this file exists in /public
+  publicExcludes: ['!dynamic-css-manifest.json'],
+  workboxOptions: {
+    runtimeCaching: [
+      {
+        urlPattern: ({ request }) => request.mode === 'navigate',
+        handler: 'NetworkFirst',
+        options: {
+          cacheName: 'pages-cache',
+          networkTimeoutSeconds: 3,
+          expiration: { maxEntries: 50, maxAgeSeconds: 7 * 24 * 60 * 60 }, // Cache for 7 days
+          fallback: {
+            document: '/offline.html', // Ensure you have this file in /public
+          },
         },
       },
-    },
-  ],
+    ],
+  },
 });
 
 module.exports = withPWA({
@@ -26,20 +28,12 @@ module.exports = withPWA({
     return 'build-' + Date.now();
   },
 
-  // Set asset prefix for production
   assetPrefix: process.env.NODE_ENV === 'production' ? 'https://test.ashe.tn' : '',
 
-  // Custom rewrites
   async rewrites() {
-    return [
-      {
-        source: '/_next/dynamic-css-manifest.json',
-        destination: '/dynamic-css-manifest.json',
-      },
-    ];
+    return [{ source: '/_next/dynamic-css-manifest.json', destination: '/dynamic-css-manifest.json' }];
   },
 
-  // Security headers
   async headers() {
     return [
       {
@@ -59,38 +53,20 @@ module.exports = withPWA({
               "media-src 'self' https://*.firebaseio.com",
             ].join('; '),
           },
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           {
             key: 'Permissions-Policy',
-            value: [
-              'accelerometer=()',
-              'geolocation=()',
-              'microphone=()',
-              'camera=()',
-            ].join(', '),
+            value: ['accelerometer=()', 'geolocation=()', 'microphone=()', 'camera=()'].join(', '),
           },
         ],
       },
     ];
   },
 
-  // Disable build activity indicator
-  devIndicators: {
-    buildActivity: false,
-  },
+  devIndicators: { buildActivity: false },
 
-  // Image optimization
   images: {
     domains: [
       'via.placeholder.com',
@@ -99,42 +75,19 @@ module.exports = withPWA({
       'lh3.googleusercontent.com',
     ],
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**.dropbox.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'via.placeholder.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'dl.dropboxusercontent.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'firebasestorage.googleapis.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'lh3.googleusercontent.com',
-      },
+      { protocol: 'https', hostname: '**.dropbox.com' },
+      { protocol: 'https', hostname: 'via.placeholder.com' },
+      { protocol: 'https', hostname: 'dl.dropboxusercontent.com' },
+      { protocol: 'https', hostname: 'firebasestorage.googleapis.com' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
     ],
   },
 
-  // Disable "Powered by Next.js" header
   poweredByHeader: false,
-
-  // Enable React Strict Mode
   reactStrictMode: true,
-
-  // Disable source maps in production
   productionBrowserSourceMaps: false,
-
-  // Enable compression
   compress: true,
 
-  // Environment variables
   env: {
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
     FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
@@ -144,7 +97,6 @@ module.exports = withPWA({
     FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
   },
 
-  // On-demand entries configuration
   onDemandEntries: {
     maxInactiveAge: 1000 * 60 * 60, // 1 hour
     pagesBufferLength: 10,
