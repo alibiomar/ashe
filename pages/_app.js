@@ -6,12 +6,12 @@ import { BasketProvider } from '../contexts/BasketContext';
 import AcceptCookiesPopup from '../components/AcceptCookiesPopup';
 import '../styles/globals.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { setupRealTimeActivityListener } from '../utils/updateActivity';
+import { setupRealTimeActivityListener, updateUserActivity } from '../utils/updateActivity';
 import { useAuth } from '../contexts/AuthContext'; // Assuming you have a useAuth hook
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
-  const { user } = useAuth(); // Get the current user from the auth context
+  const { user, loading } = useAuth(); // Get the current user and loading state from the auth context
 
   useEffect(() => {
     if (user) {
@@ -29,6 +29,10 @@ function MyApp({ Component, pageProps }) {
       router.events.off('routeChangeComplete', handleRouteChange);
     };
   }, [router.events, user]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Show a loading state while checking authentication
+  }
 
   return (
     <AuthProvider>
