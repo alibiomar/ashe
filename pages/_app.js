@@ -7,11 +7,11 @@ import AcceptCookiesPopup from '../components/AcceptCookiesPopup';
 import '../styles/globals.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { setupRealTimeActivityListener, updateUserActivity } from '../utils/updateActivity';
-import { useAuth } from '../contexts/AuthContext'; // Assuming you have a useAuth hook
 
-function MyApp({ Component, pageProps }) {
+// Create a wrapper component to use hooks
+function AppContent({ Component, pageProps }) {
   const router = useRouter();
-  const { user, loading } = useAuth(); // Get the current user and loading state from the auth context
+  const { user, loading } = useAuth(); // Now this is used within the AuthProvider context
 
   useEffect(() => {
     if (user) {
@@ -31,16 +31,23 @@ function MyApp({ Component, pageProps }) {
   }, [router.events, user]);
 
   if (loading) {
-    return <div>Loading...</div>; // Show a loading state while checking authentication
+    return <div>Loading...</div>;
   }
 
   return (
+    <div translate="yes">
+      <Component {...pageProps} />
+      <AcceptCookiesPopup />
+    </div>
+  );
+}
+
+// Main App component
+function MyApp({ Component, pageProps }) {
+  return (
     <AuthProvider>
       <BasketProvider>
-        <div translate="yes">
-          <Component {...pageProps} />
-          <AcceptCookiesPopup />
-        </div>
+        <AppContent Component={Component} pageProps={pageProps} />
       </BasketProvider>
     </AuthProvider>
   );
