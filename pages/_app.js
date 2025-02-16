@@ -8,24 +8,28 @@ import '../styles/globals.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { setupRealTimeActivityListener, updateUserActivity } from '../utils/updateActivity';
 
-// Create a wrapper component to use hooks
 function AppContent({ Component, pageProps }) {
   const router = useRouter();
   const { user, loading } = useAuth();
 
   useEffect(() => {
+    let unsubscribe = () => {};
+
     if (user) {
-      setupRealTimeActivityListener(user.uid);
+      unsubscribe = setupRealTimeActivityListener(user.uid);
+      updateUserActivity(user.uid); // Update initially
     }
 
-    const handleRouteChange = (url) => {
+    const handleRouteChange = () => {
       if (user) {
         updateUserActivity(user.uid);
       }
     };
 
     router.events.on('routeChangeComplete', handleRouteChange);
+    
     return () => {
+      unsubscribe(); // Cleanup listener
       router.events.off('routeChangeComplete', handleRouteChange);
     };
   }, [router.events, user]);
@@ -42,7 +46,6 @@ function AppContent({ Component, pageProps }) {
   );
 }
 
-// Main App component
 function MyApp({ Component, pageProps }) {
   return (
     <AuthProvider>
