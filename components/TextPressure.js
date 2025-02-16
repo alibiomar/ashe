@@ -4,7 +4,7 @@ const TextPressure = ({
   text = 'Compressa',
   fontFamily = 'Compressa VF',
   // This font is just an example, you should not use it in commercial projects.
-  fontUrl = 'https://test.ashe.tn/CompressaVF.woff2',
+  fontUrl = 'https://test.ashe.tn/CompressaPRO-GX.woff2',
 
   width = true,
   weight = true,
