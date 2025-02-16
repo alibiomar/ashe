@@ -1,6 +1,5 @@
 // pages/_app.js
 import { useEffect } from 'react';
-import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import { BasketProvider } from '../contexts/BasketContext';
@@ -8,12 +7,10 @@ import AcceptCookiesPopup from '../components/AcceptCookiesPopup';
 import '../styles/globals.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { setupRealTimeActivityListener, updateUserActivity } from '../utils/updateActivity';
-const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
-  suspense: true,
-});
+
 function AppContent({ Component, pageProps }) {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user} = useAuth();
 
   useEffect(() => {
     let unsubscribe = () => {};
@@ -54,10 +51,6 @@ function AppContent({ Component, pageProps }) {
       router.events.off('routeChangeComplete', handleRouteChange);
     };
   }, [router.events, user]);
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
 
   return (
     <div translate="yes">
