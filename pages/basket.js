@@ -5,6 +5,8 @@ import Layout from '../components/Layout';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import { toast } from 'sonner';
+import dynamic from 'next/dynamic';
+
 const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
   suspense: true,
 });import Head from 'next/head';

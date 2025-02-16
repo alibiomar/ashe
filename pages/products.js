@@ -3,6 +3,8 @@ import Head from 'next/head';
 import { collection, getDocs, query, orderBy, limit, startAfter, doc, getDoc, setDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Layout from '../components/Layout';
+import dynamic from 'next/dynamic';
+
 const LoadingScreen = dynamic(() => import('../components/LoadingScreen'), {
   suspense: true,
 });import { app, db } from '../lib/firebase';

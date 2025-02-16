@@ -7,6 +7,8 @@ import Layout from '../components/Layout';
 import TextPressure from '../components/TextPressure';
 import Image from 'next/image';
 import ErrorBoundary from '../components/ErrorBoundary';
+import dynamic from 'next/dynamic';
+
 const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
   suspense: true,
 });import { motion, AnimatePresence } from 'framer-motion';

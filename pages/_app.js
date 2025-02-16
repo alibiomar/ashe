@@ -1,5 +1,6 @@
 // pages/_app.js
 import { useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import { BasketProvider } from '../contexts/BasketContext';
