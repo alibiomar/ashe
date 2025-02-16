@@ -1,17 +1,23 @@
 const withPWA = require('next-pwa')({
   dest: 'public',
   register: true,
-  skipWaiting: true,});
-  
+  skipWaiting: true,
+  // Exclude dynamic-css-manifest.json from precaching
+  publicExcludes: ['!dynamic-css-manifest.json'],
+  // Disable PWA in development
+  disable: process.env.NODE_ENV === 'development',
+});
+
 module.exports = withPWA({
-  publicRuntimeConfig: {
-    dynamicCSSManifest: require('./public/dynamic-css-manifest.json')
-  },
+  // Generate a unique build ID
   generateBuildId: async () => {
     return 'build-' + Date.now();
   },
-  // Add proper asset prefixes if needed
+
+  // Set asset prefix for production
   assetPrefix: process.env.NODE_ENV === 'production' ? 'https://test.ashe.tn' : '',
+
+  // Security headers
   async headers() {
     return [
       {
@@ -21,7 +27,7 @@ module.exports = withPWA({
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "connect-src 'self' https://auth.ashe.tn/auth/verify-email https://auth.ashe.tn/auth/send-password-reset https://auth.ashe.tn https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://apis.google.com",
+              "connect-src 'self' https://auth.ashe.tn https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://apis.google.com",
               "script-src 'self' 'unsafe-eval' https://www.gstatic.com https://apis.google.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: https://*.googleusercontent.com https://dl.dropboxusercontent.com https://firebasestorage.googleapis.com https://picsum.photos https://fastly.picsum.photos",
@@ -56,11 +62,13 @@ module.exports = withPWA({
       }
     ]
   },
-  
+
+  // Disable build activity indicator
   devIndicators: {
     buildActivity: false,
   },
 
+  // Image optimization
   images: {
     domains: [
       'via.placeholder.com',
@@ -90,14 +98,21 @@ module.exports = withPWA({
         hostname: 'lh3.googleusercontent.com',
       }
     ],
-  },  
+  },
 
+  // Disable "Powered by Next.js" header
   poweredByHeader: false,
+
+  // Enable React Strict Mode
   reactStrictMode: true,
+
+  // Disable source maps in production
   productionBrowserSourceMaps: false,
 
-  // Additional Enhancements
-  compress: true, // Enable compression
+  // Enable compression
+  compress: true,
+
+  // Environment variables
   env: {
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
     FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
@@ -106,6 +121,8 @@ module.exports = withPWA({
     FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
     FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
   },
+
+  // Custom rewrites
   async rewrites() {
     return [
       {
@@ -114,6 +131,8 @@ module.exports = withPWA({
       },
     ];
   },
+
+  // On-demand entries configuration
   onDemandEntries: {
     maxInactiveAge: 1000 * 60 * 60, // 1 hour
     pagesBufferLength: 10,
