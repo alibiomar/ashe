@@ -1,7 +1,7 @@
 // pages/_app.js
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { AuthProvider } from '../contexts/AuthContext';
+import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import { BasketProvider } from '../contexts/BasketContext';
 import AcceptCookiesPopup from '../components/AcceptCookiesPopup';
 import '../styles/globals.css';
@@ -11,7 +11,7 @@ import { setupRealTimeActivityListener, updateUserActivity } from '../utils/upda
 // Create a wrapper component to use hooks
 function AppContent({ Component, pageProps }) {
   const router = useRouter();
-  const { user, loading } = useAuth(); // Now this is used within the AuthProvider context
+  const { user, loading } = useAuth();
 
   useEffect(() => {
     if (user) {
