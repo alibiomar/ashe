@@ -165,7 +165,7 @@ export default function ContactForm() {
       </Head>
 
       <Layout>
-        <div className="min-h-screen flex flex-col items-center justify-center  bg-neutral-50 p-20">
+        <div className="min-h-screen flex flex-col items-center justify-center  bg-neutral-50 pt-20">
           <div className="w-full max-w-2xl mx-4 bg-white p-8 md:p-12 rounded-none border border-neutral-200">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-neutral-900 mb-8 tracking-tight">
               Contact Us
@@ -245,7 +245,7 @@ export default function ContactForm() {
               </button>
             </form>
           </div>
-          <div className="mb-10 text-center space-y-5 mt-20 ">
+          <div className="mb-24 text-center space-y-5 mt-20 ">
               <h3 className="text-xl font-semibold text-neutral-700">Direct Channels</h3>
               <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-neutral-600">
                 <a href="mailto:contact@ashe.com" className="hover:text-neutral-900 transition-colors">
@@ -257,10 +257,10 @@ export default function ContactForm() {
                 </a>
                 <span className="text-neutral-400">•</span>
                 <div className="flex gap-4">
-                  <a href="https://tiktok.com/@ashe" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 transition-colors">
+                  <a href="https://www.tiktok.com/@ashe.tn" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 transition-colors">
                     TikTok
                   </a>
-                  <a href="https://instagram.com/ashe" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 transition-colors">
+                  <a href="https://www.instagram.com/ashe.tn" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 transition-colors">
                     Instagram
                   </a>
                 </div>

@@ -136,55 +136,89 @@ export default function Home() {
         variants={containerVariants}
         className="overflow-hidden"
       >
-        {/* Hero Section */}
-        <section className="relative w-full h-[92vh] mb-32 overflow-hidden">
-  <motion.div
-    className="absolute inset-0"
-    initial={{ scale: 1.1 }}
-    animate={{ scale: 1 }}
-    transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+<section className="relative h-screen w-full overflow-hidden bg-neutral-950">
+  {/* Vertical Text Marquee */}
+  <motion.div 
+    className="absolute left-8 top-1/2 -translate-y-1/2 hidden md:flex flex-col gap-8 text-6xl font-light text-neutral-700 z-20"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 1.5 }}
   >
-    <div className="relative w-full  hero-image-container">
-      <Image
-        src="/headerImg.jpeg"
-        alt="Stunning fashion header image"
-        fill
-        priority
-        className="object-cover"
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 3840px"
-        unoptimized={true}
-      />
-    </div>
+    {['A', 'S', 'H', 'E'].map((letter, index) => (
+      <motion.span
+        key={index}
+        whileHover={{ color: '#ffffff', x: 10 }}
+        className="cursor-default transition-colors duration-300"
+      >
+        {letter}
+      </motion.span>
+    ))}
   </motion.div>
 
-  <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30">
-    <motion.div
-      className="container mx-auto px-4 h-[80vh] flex flex-col justify-end items-center text-center"
-      variants={childVariants}
-    >
-      <TextPressure
-        text={user ? `Welcome, ${firstName}!` : 'Welcome to ASHE'}
+  {/* Main Content */}
+  <div className="container mx-auto h-full flex items-center justify-center">
+    <div className="relative z-10 text-center">
+      <motion.div
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="font-display text-5xl md:text-8xl tracking-tighter text-white"
+      >
+        <div className="overflow-hidden">
+          <motion.span className="block">Be the best version of yourself.</motion.span>
+          <motion.span className="block text-neutral-400">Be Distinct</motion.span>
+          <motion.span className="block bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+            Be <TextPressure
+        text='ASHE'
         flex={true}
         alpha={false}
         stroke={false}
         width={true}
         weight={true}
         slant={false}
-        textColor="#ffffff"
-        strokeColor="#ff0000"
         minFontSize={32}
-        className="pt-16"
+        className="block bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent"
       />
-      <motion.p
-        className="text-sm md:text-xl text-white/90 font-light max-w-2xl mb-5"
-        variants={childVariants}
-      >
-        Crafting timeless elegance through refined tailoring and sustainable mastery.
-      </motion.p>
-    </motion.div>
-  </div>
-</section>
+          </motion.span>
+        </div>
+      </motion.div>
 
+      {/* Animated Counter */}
+      <motion.div
+        className="mt-12 flex justify-center items-center gap-4 text-4xl"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+      >
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-cyan-400"></span>
+          <span className="text-sm text-neutral-400 max-w-[120px] text-left">
+          {user ? `Welcome, ${firstName}!` : 'Welcome to ASHE'}
+          </span>
+        </div>
+      </motion.div>
+    </div>
+  </div>
+
+  {/* Grid Distortion Effect */}
+  <Suspense fallback={<div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 to-emerald-900/20" />}>
+    <GridDistortion
+      gridSize={24}
+      strength={0.15}
+      className="absolute inset-0 opacity-20 mix-blend-soft-light"
+    />
+  </Suspense>
+
+  {/* Scrolling Indicator */}
+  <motion.div
+    className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-neutral-400"
+    animate={{ y: [0, 20, 0] }}
+    transition={{ repeat: Infinity, duration: 2 }}
+  >
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+    </svg>
+  </motion.div>
+</section>
 
         {/* Product Sections */}
         <section className="container mx-auto px-4 mb-32 grid grid-cols-1 md:grid-cols-2 gap-8">
