@@ -7,14 +7,14 @@ import { toast } from 'sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Head from 'next/head';
 
-const TIMEOUT_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+const TIMEOUT_DURATION = 5 * 60 * 1000;
 const STORAGE_KEY = 'lastSubmissionTime';
 
 const contactFormSchema = z.object({
   name: z.string().min(2, { message: 'Please Enter Your Name' }),
   email: z.string().email({ message: 'Please Enter a Valid Email Address' }),
   message: z.string().min(10, { message: 'Message must be at least 10 characters' }),
-  website: z.string().optional(), // honeypot field
+  website: z.string().optional(),
 });
 
 export default function ContactForm() {
@@ -165,109 +165,88 @@ export default function ContactForm() {
       </Head>
 
       <Layout>
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="w-full max-w-2xl mx-4 bg-white p-12 rounded-none shadow-[0_0_0_1px_rgba(0,0,0,0.1)]">
-            <h2 className="text-4xl font-bold text-center text-gray-900 mb-12 tracking-tight">
-              CONTACT US
+        <div className="min-h-screen flex items-center justify-center bg-neutral-50">
+          <div className="w-full max-w-2xl mx-4 bg-white p-8 md:p-12 rounded-none border border-neutral-200">
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-neutral-900 mb-8 tracking-tight">
+              Contact Us
             </h2>
 
-            {/* Motivational Section */}
-            <div className="mb-8 text-center">
-              <h3 className="text-2xl font-bold tracking-wide">Be part of the journey</h3>
-              <p className="mt-4">
-                <span className="block">
-                  Email:{' '}
-                  <a href="mailto:contact@ashe.com" className="underline">
-                    contact@ashe.com
+            {/* Contact Information */}
+            <div className="mb-10 text-center space-y-4">
+              <h3 className="text-xl font-semibold text-neutral-700">Direct Channels</h3>
+              <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-neutral-600">
+                <a href="mailto:contact@ashe.com" className="hover:text-neutral-900 transition-colors">
+                  contact@ashe.com
+                </a>
+                <span className="text-neutral-400">•</span>
+                <a href="tel:+21620986015" className="hover:text-neutral-900 transition-colors">
+                  +216 20 986 015
+                </a>
+                <span className="text-neutral-400">•</span>
+                <div className="flex gap-4">
+                  <a href="https://tiktok.com/@ashe" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 transition-colors">
+                    TikTok
                   </a>
-                </span>
-                <span className="block">
-                  Phone:{' '}
-                  <a href="tel:+21620986015" className="underline">
-                    +216 20 986 015
+                  <a href="https://instagram.com/ashe" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 transition-colors">
+                    Instagram
                   </a>
-                </span>
-                <span className="block">
-                  TikTok:{' '}
-                  <a
-                    href="https://www.tiktok.com/@ashe"
-                    className="underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    @ashe
-                  </a>
-                </span>
-                <span className="block">
-                  Instagram:{' '}
-                  <a
-                    href="https://www.instagram.com/ashe"
-                    className="underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    @ashe
-                  </a>
-                </span>
-              </p>
+                </div>
+              </div>
             </div>
 
+            {/* Form Block Status */}
             {isBlocked && (
-              <div className="mb-8 bg-yellow-50 border border-yellow-200 p-6 rounded-sm">
-                <h3 className="text-xl font-semibold mb-2 text-yellow-800">Form Temporarily Blocked</h3>
-                <p className="text-yellow-700">
-                  Please wait {formatTimeRemaining(timeRemaining)} before submitting another message.
+              <div className="mb-8 bg-amber-50 border border-amber-100 p-4 text-center">
+                <p className="text-amber-800 font-medium">
+                  Please wait {formatTimeRemaining(timeRemaining)} before next submission
                 </p>
               </div>
             )}
 
+            {/* Submission Preview */}
             {submittedData && (
-              <div className="mb-8 border border-gray-200 p-6 rounded-sm">
-                <h3 className="text-xl font-semibold mb-4">Submitted Information</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">Name:</span> {submittedData.name}
-                  </p>
-                  <p>
-                    <span className="font-medium">Email:</span> {submittedData.email}
-                  </p>
-                  <p>
-                    <span className="font-medium">Message:</span> {submittedData.message}
-                  </p>
-                </div>
+              <div className="mb-8 border border-neutral-100 p-6 bg-neutral-50">
+                <h3 className="text-lg font-semibold mb-3">Submission Received</h3>
+                <dl className="space-y-1.5 text-neutral-600">
+                  <dt className="font-medium">Name</dt>
+                  <dd>{submittedData.name}</dd>
+                  <dt className="font-medium">Email</dt>
+                  <dd>{submittedData.email}</dd>
+                </dl>
               </div>
             )}
 
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10" encType="multipart/form-data">
+            {/* Form Elements */}
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <div className="hidden">
                 <input {...form.register('website')} tabIndex="-1" autoComplete="off" />
               </div>
 
               {['name', 'email', 'message'].map((field) => (
-                <div key={field} className="relative">
+                <div key={field} className="space-y-1">
                   {field !== 'message' ? (
                     <input
                       {...form.register(field)}
-                      placeholder={field === 'name' ? 'Your Name' : 'Your Email'}
-                      className={`w-full px-0 py-3 border-b-2 border-gray-300 
-                        focus:border-black focus:ring-0 bg-transparent
-                        placeholder-gray-400 text-lg font-medium
+                      placeholder={field === 'name' ? 'Your name' : 'Email address'}
+                      className={`w-full px-0 py-3 border-b border-neutral-300 
+                        focus:border-neutral-900 focus:ring-0 bg-transparent
+                        placeholder-neutral-400 text-base
                         transition-all duration-200 rounded-none`}
                       disabled={isBlocked}
                     />
                   ) : (
                     <textarea
                       {...form.register(field)}
-                      placeholder="Your Message"
-                      className={`w-full px-0 py-3 border-b-2 border-gray-300 
-                        focus:border-black focus:ring-0 bg-transparent
-                        placeholder-gray-400 text-lg font-medium resize-none
-                        transition-all duration-200 rounded-none h-32`}
+                      placeholder="Your message"
+                      className={`w-full px-0 py-3 border-b border-neutral-300 
+                        focus:border-neutral-900 focus:ring-0 bg-transparent
+                        placeholder-neutral-400 text-base resize-none
+                        transition-all duration-200 rounded-none min-h-[120px]`}
                       disabled={isBlocked}
                     />
                   )}
                   {form.formState.errors[field] && (
-                    <p className="absolute -bottom-6 left-0 text-red-600 text-sm font-medium">
+                    <p className="text-red-600 text-sm font-medium mt-1">
                       {form.formState.errors[field].message}
                     </p>
                   )}
@@ -276,10 +255,13 @@ export default function ContactForm() {
 
               <button
                 type="submit"
-                className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-4 bg-neutral-900 text-white font-medium
+                  hover:bg-neutral-800 active:bg-neutral-700 
+                  transition-colors duration-200
+                  disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={loading || isBlocked}
               >
-                {loading ? 'sending...' : isBlocked ? `WAIT ${formatTimeRemaining(timeRemaining)}` : 'Send Message'}
+                {loading ? 'Sending...' : isBlocked ? `Wait ${formatTimeRemaining(timeRemaining)}` : 'Send Message'}
               </button>
             </form>
           </div>
