@@ -5,6 +5,19 @@ const withPWA = require('next-pwa')({
   // Exclude dynamic-css-manifest.json from precaching
   publicExcludes: ['!dynamic-css-manifest.json'],
   disable: process.env.NODE_ENV === 'development',
+  runtimeCaching: [
+    {
+      urlPattern: ({ request }) => request.mode === 'navigate',
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'pages-cache',
+        networkTimeoutSeconds: 3,
+        fallback: {
+          document: '/offline.html', // Ensure this file exists in /public
+        },
+      },
+    },
+  ],
 });
 
 module.exports = withPWA({
@@ -25,6 +38,7 @@ module.exports = withPWA({
       },
     ];
   },
+
   // Security headers
   async headers() {
     return [
@@ -42,20 +56,20 @@ module.exports = withPWA({
               "frame-src 'self' https://securetoken.googleapis.com https://ashe-comm.firebaseapp.com",
               "form-action 'self'",
               "font-src 'self' https://fonts.gstatic.com https://res.cloudinary.com data:",
-              "media-src 'self' https://*.firebaseio.com"
-            ].join('; ')
+              "media-src 'self' https://*.firebaseio.com",
+            ].join('; '),
           },
           {
             key: 'X-Frame-Options',
-            value: 'DENY'
+            value: 'DENY',
           },
           {
             key: 'X-Content-Type-Options',
-            value: 'nosniff'
+            value: 'nosniff',
           },
           {
             key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin'
+            value: 'strict-origin-when-cross-origin',
           },
           {
             key: 'Permissions-Policy',
@@ -63,12 +77,12 @@ module.exports = withPWA({
               'accelerometer=()',
               'geolocation=()',
               'microphone=()',
-              'camera=()'
-            ].join(', ')
-          }
-        ]
-      }
-    ]
+              'camera=()',
+            ].join(', '),
+          },
+        ],
+      },
+    ];
   },
 
   // Disable build activity indicator
@@ -104,7 +118,7 @@ module.exports = withPWA({
       {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
-      }
+      },
     ],
   },
 
