@@ -1,14 +1,38 @@
-const withPWA = require('next-pwa')({
+const withPWA = require('next-pwa');
+
+const config = withPWA({
   dest: 'public',
   register: true,
   skipWaiting: true,
-  publicExcludes: ['!dynamic-css-manifest.json'],
   disable: process.env.NODE_ENV === 'development',
-});
+  publicExcludes: ['!dynamic-css-manifest.json'],
+})({
+  generateBuildId: async () => {
+    return 'build-' + Date.now();
+  },
 
-module.exports = withPWA({
+  assetPrefix: process.env.NODE_ENV === 'production' ? 'https://test.ashe.tn' : '',
+
+  async rewrites() {
+    return [
+      {
+        source: '/_next/dynamic-css-manifest.json',
+        destination: '/dynamic-css-manifest.json',
+      },
+    ];
+  },
+
   async headers() {
     return [
+      {
+        source: '/manifest.json',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/manifest+json',
+          },
+        ],
+      },
       {
         source: '/:path*',
         headers: [
@@ -16,7 +40,7 @@ module.exports = withPWA({
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "connect-src 'self' https://auth.ashe.tn https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://apis.google.com",
+              "connect-src 'self' https://auth.ashe.tn https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://apis.google.com https://picsum.photos",
               "script-src 'self' 'unsafe-eval' https://www.gstatic.com https://apis.google.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: https://*.googleusercontent.com https://dl.dropboxusercontent.com https://firebasestorage.googleapis.com https://picsum.photos https://fastly.picsum.photos",
@@ -24,19 +48,19 @@ module.exports = withPWA({
               "form-action 'self'",
               "font-src 'self' https://fonts.gstatic.com https://res.cloudinary.com data:",
               "media-src 'self' https://*.firebaseio.com"
-            ].join('; ')
+            ].join('; '),
           },
           {
             key: 'X-Frame-Options',
-            value: 'DENY'
+            value: 'DENY',
           },
           {
             key: 'X-Content-Type-Options',
-            value: 'nosniff'
+            value: 'nosniff',
           },
           {
             key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin'
+            value: 'strict-origin-when-cross-origin',
           },
           {
             key: 'Permissions-Policy',
@@ -45,11 +69,11 @@ module.exports = withPWA({
               'geolocation=()',
               'microphone=()',
               'camera=()'
-            ].join(', ')
-          }
-        ]
-      }
-    ]
+            ].join(', '),
+          },
+        ],
+      },
+    ];
   },
 
   devIndicators: {
@@ -83,16 +107,13 @@ module.exports = withPWA({
       {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
-      }
+      },
     ],
   },
 
   poweredByHeader: false,
-
   reactStrictMode: true,
-
   productionBrowserSourceMaps: false,
-
   compress: true,
 
   env: {
@@ -108,18 +129,6 @@ module.exports = withPWA({
     maxInactiveAge: 1000 * 60 * 60, // 1 hour
     pagesBufferLength: 10,
   },
-
-  // Enable webpack 5
-  future: {
-    webpack5: true,
-  },
-
-  // Custom webpack configuration
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback.fs = false;
-    }
-    return config;
-  },
-
 });
+
+module.exports = config;
