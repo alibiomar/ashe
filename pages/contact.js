@@ -1,68 +1,81 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+'use client';
+import { useState, useEffect } from 'react';
+import Layout from '../components/Layout';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { toast } from 'sonner';
+import { zodResolver } from '@hookform/resolvers/zod';
 import Head from 'next/head';
 
-const ContactForm = () => {
+const TIMEOUT_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+const STORAGE_KEY = 'lastSubmissionTime';
+
+const contactFormSchema = z.object({
+  name: z.string().min(2, { message: 'Please Enter Your Name' }),
+  email: z.string().email({ message: 'Please Enter a Valid Email Address' }),
+  message: z.string().min(10, { message: 'Message must be at least 10 characters' }),
+  website: z.string().optional(), // honeypot field
+});
+
+export default function ContactForm() {
   const [loading, setLoading] = useState(false);
   const [submittedData, setSubmittedData] = useState(null);
   const [formStartTime, setFormStartTime] = useState(Date.now());
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: '',
-    website: '', // honeypot field
-  });
-  const [errors, setErrors] = useState({});
+  const [timeRemaining, setTimeRemaining] = useState(0);
+  const [isBlocked, setIsBlocked] = useState(false);
 
   useEffect(() => {
     setFormStartTime(Date.now());
+    checkSubmissionTimeout();
+
+    const interval = setInterval(() => {
+      checkSubmissionTimeout();
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
-  const validateForm = () => {
-    const newErrors = {};
-    
-    if (!formData.name || formData.name.length < 2) {
-      newErrors.name = 'Please Enter Your Name';
+  const checkSubmissionTimeout = () => {
+    const lastSubmission = localStorage.getItem(STORAGE_KEY);
+    if (lastSubmission) {
+      const timePassed = Date.now() - parseInt(lastSubmission);
+      if (timePassed < TIMEOUT_DURATION) {
+        setIsBlocked(true);
+        setTimeRemaining(Math.ceil((TIMEOUT_DURATION - timePassed) / 1000));
+      } else {
+        setIsBlocked(false);
+        localStorage.removeItem(STORAGE_KEY);
+      }
     }
-    
-    if (!formData.email || !/^\S+@\S+\.\S+$/.test(formData.email)) {
-      newErrors.email = 'Please Enter a Valid Email Address';
-    }
-    
-    if (!formData.message || formData.message.length < 10) {
-      newErrors.message = 'Message must be at least 10 characters';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  const formatTimeRemaining = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
+  
+  const form = useForm({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: { name: '', email: '', message: '', website: '' },
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    // Time limitation check (minimum 5 seconds)
-    const timeElapsed = Date.now() - formStartTime;
-    if (timeElapsed < 5000) {
-      setErrors({ submit: 'Please take your time to fill out the form.' });
+  const onSubmit = async (values) => {
+    if (isBlocked) {
+      toast.error(`Please wait ${formatTimeRemaining(timeRemaining)} before submitting again.`);
       return;
     }
 
-    // Honeypot check
-    if (formData.website) {
-      // Silently reject if honeypot is filled
+    const timeElapsed = Date.now() - formStartTime;
+    if (timeElapsed < 5000) {
+      toast.error('Please take your time to fill out the form.');
+      return;
+    }
+
+    if (values.website) {
       console.log('Spam detected');
       return;
     }
-
-    if (!validateForm()) return;
 
     setLoading(true);
 
@@ -122,7 +135,7 @@ const ContactForm = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: formData.email,
+          email: values.email,
           subject: 'New Contact Us Form',
           text: mailText,
         }),
@@ -130,15 +143,15 @@ const ContactForm = () => {
 
       if (!response.ok) throw new Error('Failed to send message');
 
-      setSubmittedData(formData);
-      setFormData({
-        name: '',
-        email: '',
-        message: '',
-        website: '',
-      });
+      localStorage.setItem(STORAGE_KEY, Date.now().toString());
+      setIsBlocked(true);
+      setTimeRemaining(TIMEOUT_DURATION / 1000);
+      
+      setSubmittedData(values);
+      toast.success('Message sent successfully! Please wait 5 minutes before submitting again.');
+      form.reset();
     } catch (error) {
-      setErrors({ submit: error.message || 'An error occurred' });
+      toast.error(error.message || 'An error occurred');
     } finally {
       setLoading(false);
     }
@@ -151,87 +164,84 @@ const ContactForm = () => {
         <meta name="description" content="Get in touch with ASHE for inquiries, support, and more. We're here to assist you!" />
       </Head>
 
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-full max-w-2xl mx-4 bg-white p-12 rounded-none shadow-[0_0_0_1px_rgba(0,0,0,0.1)]">
-          <h2 className="text-4xl font-bold text-center text-gray-900 mb-12 tracking-tight">
-            CONTACT US
-          </h2>
+      <Layout>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="w-full max-w-2xl mx-4 bg-white p-12 rounded-none shadow-[0_0_0_1px_rgba(0,0,0,0.1)]">
+            <h2 className="text-4xl font-bold text-center text-gray-900 mb-12 tracking-tight">
+              CONTACT US
+            </h2>
 
-          {submittedData ? (
-            <Card className="mb-8">
-              <CardContent className="p-6">
+            {isBlocked && (
+              <div className="mb-8 bg-yellow-50 border border-yellow-200 p-6 rounded-sm">
+                <h3 className="text-xl font-semibold mb-2 text-yellow-800">Form Temporarily Blocked</h3>
+                <p className="text-yellow-700">
+                  Please wait {formatTimeRemaining(timeRemaining)} before submitting another message.
+                </p>
+              </div>
+            )}
+
+            {submittedData && (
+              <div className="mb-8 border border-gray-200 p-6 rounded-sm">
                 <h3 className="text-xl font-semibold mb-4">Submitted Information</h3>
                 <div className="space-y-2">
                   <p><span className="font-medium">Name:</span> {submittedData.name}</p>
                   <p><span className="font-medium">Email:</span> {submittedData.email}</p>
                   <p><span className="font-medium">Message:</span> {submittedData.message}</p>
                 </div>
-              </CardContent>
-            </Card>
-          ) : null}
-
-          <form onSubmit={handleSubmit} className="space-y-10">
-            {/* Honeypot field - hidden from regular users */}
-            <div className="hidden">
-              <input
-                type="text"
-                name="website"
-                value={formData.website}
-                onChange={handleChange}
-                tabIndex="-1"
-                autoComplete="off"
-              />
-            </div>
-
-            {['name', 'email', 'message'].map((field) => (
-              <div key={field} className="relative">
-                {field !== 'message' ? (
-                  <input
-                    name={field}
-                    value={formData[field]}
-                    onChange={handleChange}
-                    placeholder={field === 'name' ? 'Your Name' : 'Your Email'}
-                    className={`w-full px-0 py-3 border-b-2 border-gray-300 
-                      focus:border-black focus:ring-0 bg-transparent
-                      placeholder-gray-400 text-lg font-medium
-                      transition-all duration-200 rounded-none`}
-                  />
-                ) : (
-                  <textarea
-                    name={field}
-                    value={formData[field]}
-                    onChange={handleChange}
-                    placeholder="Your Message"
-                    className={`w-full px-0 py-3 border-b-2 border-gray-300 
-                      focus:border-black focus:ring-0 bg-transparent
-                      placeholder-gray-400 text-lg font-medium resize-none
-                      transition-all duration-200 rounded-none h-32`}
-                  />
-                )}
-                {errors[field] && (
-                  <p className="absolute -bottom-6 left-0 text-red-600 text-sm font-medium">
-                    {errors[field]}
-                  </p>
-                )}
               </div>
-            ))}
-
-            {errors.submit && (
-              <p className="text-red-600 text-sm font-medium">{errors.submit}</p>
             )}
 
-            <button
-              type="submit"
-              className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none"
-              disabled={loading}
-            >
-              {loading ? 'sending...' : 'Send Message'}
-            </button>
-          </form>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10" encType="multipart/form-data">
+              <div className="hidden">
+                <input
+                  {...form.register('website')}
+                  tabIndex="-1"
+                  autoComplete="off"
+                />
+              </div>
+
+              {['name', 'email', 'message'].map((field) => (
+                <div key={field} className="relative">
+                  {field !== 'message' ? (
+                    <input
+                      {...form.register(field)}
+                      placeholder={field === 'name' ? 'Your Name' : 'Your Email'}
+                      className={`w-full px-0 py-3 border-b-2 border-gray-300 
+                        focus:border-black focus:ring-0 bg-transparent
+                        placeholder-gray-400 text-lg font-medium
+                        transition-all duration-200 rounded-none`}
+                      disabled={isBlocked}
+                    />
+                  ) : (
+                    <textarea
+                      {...form.register(field)}
+                      placeholder="Your Message"
+                      className={`w-full px-0 py-3 border-b-2 border-gray-300 
+                        focus:border-black focus:ring-0 bg-transparent
+                        placeholder-gray-400 text-lg font-medium resize-none
+                        transition-all duration-200 rounded-none h-32`}
+                      disabled={isBlocked}
+                    />
+                  )}
+                  {form.formState.errors[field] && (
+                    <p className="absolute -bottom-6 left-0 text-red-600 text-sm font-medium">
+                      {form.formState.errors[field].message}
+                    </p>
+                  )}
+                </div>
+              ))}
+
+              <button
+                type="submit"
+                className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={loading || isBlocked}
+              >
+                {loading ? 'sending...' : isBlocked ? `WAIT ${formatTimeRemaining(timeRemaining)}` : 'Send Message'}
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
+      </Layout>
     </>
   );
-};
-
-export default ContactForm;
+}
