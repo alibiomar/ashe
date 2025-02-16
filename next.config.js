@@ -23,10 +23,6 @@ module.exports = withPWA({
         source: '/_next/dynamic-css-manifest.json',
         destination: '/dynamic-css-manifest.json',
       },
-      {
-        source: '/sw.js',
-        destination: '/_next/static/sw.js',
-      },
     ];
   },
   // Security headers
@@ -132,16 +128,6 @@ module.exports = withPWA({
     FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET,
     FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
     FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
-  },
-
-  // Custom rewrites
-  async rewrites() {
-    return [
-      {
-        source: '/sw.js',
-        destination: '/_next/static/sw.js',
-      },
-    ];
   },
 
   // On-demand entries configuration

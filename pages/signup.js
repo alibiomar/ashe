@@ -13,6 +13,7 @@ export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [gender, setGender] = useState(''); // Added gender state
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -39,6 +40,12 @@ export default function Signup() {
       return;
     }
 
+    if (!gender) { // Gender validation
+      toast.error('Please select your gender.');
+      setLoading(false);
+      return;
+    }
+
     try {
       // Create user with Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -50,6 +57,7 @@ export default function Signup() {
         lastName,
         phone,
         email,
+        gender, // Added to Firestore document
         createdAt: new Date().toISOString(),
         role: 'user',
       });
@@ -76,6 +84,7 @@ export default function Signup() {
       setEmail('');
       setPassword('');
       setConfirmPassword('');
+      setGender(''); // Reset gender state
 
       // Log out the user immediately after signup
       await signOut(auth);
@@ -111,7 +120,7 @@ export default function Signup() {
       <div className="min-h-screen flex flex-col items-center justify-center">
         <Toaster position="bottom-center" />
 
-        <div className="w-full max-w-lg mx-auto bg-white -lg shadow-lg overflow-hidden">
+        <div className="w-full max-w-lg mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
           {/* Image section for mobile */}
           <div className="md:hidden">
             <img
@@ -147,7 +156,7 @@ export default function Signup() {
                     <input
                       type="text"
                       placeholder="First Name"
-                      className="w-full p-2 border -md placeholder-sm"
+                      className="w-full p-2 border rounded-md placeholder-sm"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       required
@@ -157,7 +166,7 @@ export default function Signup() {
                     <input
                       type="text"
                       placeholder="Last Name"
-                      className="w-full p-2 border -md placeholder-sm"
+                      className="w-full p-2 border rounded-md placeholder-sm"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       required
@@ -168,7 +177,7 @@ export default function Signup() {
                   <input
                     type="tel"
                     placeholder="Phone Number"
-                    className="w-full p-2 border -md placeholder-sm"
+                    className="w-full p-2 border rounded-md placeholder-sm"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                   />
@@ -177,7 +186,7 @@ export default function Signup() {
                   <input
                     type="email"
                     placeholder="Email"
-                    className="w-full p-2 border -md placeholder-sm"
+                    className="w-full p-2 border rounded-md placeholder-sm"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -187,7 +196,7 @@ export default function Signup() {
                   <input
                     type="password"
                     placeholder="Password"
-                    className="w-full p-2 border -md placeholder-sm"
+                    className="w-full p-2 border rounded-md placeholder-sm"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -197,12 +206,44 @@ export default function Signup() {
                   <input
                     type="password"
                     placeholder="Confirm Password"
-                    className="w-full p-2 border -md placeholder-sm"
+                    className="w-full p-2 border rounded-md placeholder-sm"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                   />
                 </div>
+
+                {/* Gender Selection */}
+                <div>
+                  <div className="text-sm mb-2">Gender</div>
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="male"
+                        checked={gender === 'male'}
+                        onChange={(e) => setGender(e.target.value)}
+                        className="form-radio h-4 w-4 text-black border-gray-300 focus:ring-black"
+                        required
+                      />
+                      <span className="text-sm">Male</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="female"
+                        checked={gender === 'female'}
+                        onChange={(e) => setGender(e.target.value)}
+                        className="form-radio h-4 w-4 text-black border-gray-300 focus:ring-black"
+                        required
+                      />
+                      <span className="text-sm">Female</span>
+                    </label>
+                  </div>
+                </div>
+
                 <button
                   type="submit"
                   className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none"
