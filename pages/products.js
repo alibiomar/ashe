@@ -188,23 +188,6 @@ export default function Products() {
                 <title>Products | ASHE™</title>
                 <meta name="description" content="Browse our collection of products." />
             </Head>
-
-            {/* Fixed height header */}
-            <header className="bg-gradient-to-b from-white to-gray-50 py-20 mb-16 border-b">
-                <div className="container mx-auto px-4 text-center">
-                    <div className="min-h-[120px] flex flex-col justify-center">
-                        <h1 className="text-5xl font-black text-gray-900 mb-4 tracking-tight">
-                            Our Collection
-                        </h1>
-                        {user && (
-                            <p className="text-xl text-gray-600 font-medium">
-                                Welcome back, {firstName} <span className="wave">👋</span>
-                            </p>
-                        )}
-                    </div>
-                </div>
-            </header>
-
             <main className="container mx-auto px-4 mb-24">
                 <div className="grid grid-cols-1 gap-12">
                     {products.map((product, index) => (
