@@ -120,7 +120,7 @@ export default function Signup() {
       <div className="min-h-screen flex flex-col items-center justify-center">
         <Toaster position="bottom-center" />
 
-        <div className="w-full max-w-lg mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="w-full max-w-2xl mx-auto   bg-white shadow-lg overflow-hidden">
           {/* Image section for mobile */}
           <div className="md:hidden">
             <img
@@ -141,7 +141,7 @@ export default function Signup() {
             </div>
 
             {/* Signup form */}
-            <div className="p-8 relative">
+            <div className="p-8 relative ">
               <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
               <button
                 className="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-xl font-bold"
@@ -215,24 +215,32 @@ export default function Signup() {
 
                 {/* Gender Selection */}
                 <div>
-  <div className="text-sm font-medium text-gray-700 mb-2">Gender</div>
-  <div className="flex gap-3">
-    {["male", "female"].map((option) => (
-      <label key={option} className="flex items-center gap-2 cursor-pointer">
-        <input
-          type="radio"
-          name="gender"
-          value={option}
-          checked={gender === option}
-          onChange={(e) => setGender(e.target.value)}
-          className="h-4 w-4 text-gray-900 border-gray-300 focus:ring-2 focus:ring-black"
-          required
-        />
-        <span className="text-sm text-gray-700 capitalize">{option}</span>
-      </label>
-    ))}
-  </div>
-</div>
+                  <div className="text-sm font-medium text-gray-700 mb-2">Gender</div>
+                  <div className="flex gap-3">
+                    {["male", "female"].map((option) => (
+                      <label key={option} className="flex items-center gap-2 cursor-pointer group">
+                        <input
+                          type="radio"
+                          name="gender"
+                          value={option}
+                          checked={gender === option}
+                          onChange={(e) => setGender(e.target.value)}
+                          className="peer hidden"
+                          required
+                        />
+                        <div className="w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center
+                          group-hover:border-gray transition-colors duration-200
+                          peer-checked:border-black peer-checked:bg-black
+                          peer-focus-visible:ring-4 peer-focus-visible:ring-gray">
+                          <div className="w-1.5 h-1.5 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity" />
+                        </div>
+                        <span className="text-sm text-gray-700 group-hover:text-gray-900 capitalize transition-colors">
+                          {option}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
 
 
                 <button
