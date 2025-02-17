@@ -10,6 +10,9 @@
 :root {
   --swiper-theme-color: #46c7c7; /* This changes both navigation and pagination color */
 }
+::-webkit-scrollbar {
+  display: none; /* Hides scrollbar in Safari and Chrome */
+}
 
 .swiper-button-next,
 .swiper-button-prev {
@@ -81,8 +84,7 @@ h1, h2, h3, h4 {
   height: 100vh; /* Full screen height */
   background-color: #fff; /* Optional background */
 }
-/* HTML: <div class="loader"></div> */
-/* Updated, smaller loader using filter invert for negative effect */
+
 .loading {
   width: 50px;
   height: 28px;
@@ -102,7 +104,7 @@ h1, h2, h3, h4 {
   height: 12px;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: #000;
+  background: #fff;
   left:0;
   top:0;
   animation: 
@@ -167,3 +169,20 @@ h1, h2, h3, h4 {
   height: 92vh; /* Adjust as needed */
   max-width: 3840px; /* Ensure no over-stretching */
 }
+
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.6;
+  }
+}
+
+.pulse {
+  animation: pulse 1s infinite ease-in-out;
+}
+

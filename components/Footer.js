@@ -34,14 +34,14 @@ export default function Footer() {
           <motion.div variants={{
     hidden: { opacity: 0 },
     visible: { opacity: 1 }
-  }} className="space-y-6 flex flex-col items-center">
+  }} className="space-y-6 flex flex-col items-left mt-[-5vh]">
             <CircularText
               text="ASHE♦ASHE♦ASHE♦"
               onHover="speedUp"
               spinDuration={10}
               className="block"
             />
-            <p className="text-gray-400 leading-relaxed text-sm max-w-xs">
+            <p className="text-gray-400 leading-relaxed text-sm max-w-44 md:max-w-44 text-left">
               Redefining fashion through the whispers of legacy.
             </p>
           </motion.div>

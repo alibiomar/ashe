@@ -245,7 +245,7 @@ export default function Signup() {
 
                 <button
                   type="submit"
-                  className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none"
+                  className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white  focus:bg-white focus:text-black focus:outline-none"
                   disabled={loading}
                 >
                   {loading ? <div className="loading"></div> : 'Sign Up'}

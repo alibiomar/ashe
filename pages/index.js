@@ -157,12 +157,48 @@ export default function Home() {
   );
 }
 
+const AnimatedArrow = () => {
+  return (
+    <div className="flex flex-col items-center mb-[-5vh]">
+      {[...Array(3)].map((_, index) => (
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, y: -5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 1,
+            delay: index * 0.2,
+            repeat: Infinity,
+            repeatType: 'loop',
+            ease: 'easeInOut',
+          }}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            className="w-4 h-4 text-white"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </motion.div>
+      ))}
+    </div>
+  );
+};
+
 const HeroSection = ({ user, firstName }) => (
-  <section className="relative w-full h-[92vh] mb-32 overflow-hidden">
+  <section className="relative w-full h-[92vh] mb-32 overflow-hidden"> 
     <motion.div
       className="absolute inset-0"
-      initial={{ scale: 1.1 }}
-      animate={{ scale: 1 }}
+      initial={{ scale: 1.1, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
       transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="relative w-full hero-image-container">
@@ -178,9 +214,9 @@ const HeroSection = ({ user, firstName }) => (
       </div>
     </motion.div>
 
-    <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30 ">
+    <div className="relative inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30">
       <motion.div
-        className="container mx-auto px-4 h-[80vh] flex flex-col justify-end items-center text-center"
+        className="container mx-auto px-4 h-[80vh] gap-5 flex flex-col items-center text-center"
         variants={{
           hidden: { y: 40, opacity: 0 },
           visible: {
@@ -203,22 +239,22 @@ const HeroSection = ({ user, firstName }) => (
           minFontSize={32}
           className="pt-16"
         />
-<motion.a
-  href="/products"
-  className="border-2 border-white text-white px-8 py-4 rounded-full font-medium hover:bg-white hover:text-black transition-all absolute top-1/2 -translate-y-1/2 flex items-center gap-2"
-  whileHover={{ scale: 1.05 }}
-  whileTap={{ scale: 0.95 }}
->
-  Shop Now
-  <motion.span
-    initial={{ x: 0 }}
-    whileHover={{ x: 5 }}
-    transition={{ type: 'spring', stiffness: 300 }}
-    className="inline-block"
-  >
-    →
-  </motion.span>
-</motion.a>
+        <motion.a
+          href="/products"
+          className="border-2 border-white text-white px-8 py-4 rounded-full font-medium hover:bg-white hover:text-black absolute top-1/2 flex items-center gap-2"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          Shop Now
+          <motion.span
+            initial={{ x: 0 }}
+            whileHover={{ x: 5 }}
+            transition={{ type: 'spring', stiffness: 300 }}
+            className="inline-block"
+          >
+            →
+          </motion.span>
+        </motion.a>
         <motion.p
           className="text-sm md:text-xl text-white/90 font-light max-w-2xl mb-5"
           variants={{
@@ -232,15 +268,7 @@ const HeroSection = ({ user, firstName }) => (
         >
           Crafting timeless elegance through refined tailoring and sustainable mastery.
         </motion.p>
-        <motion.div
-    className="absolute bottom-8 left-1/2 -translate-x-1/2"
-    animate={{ y: [0, 15, 0] }}
-    transition={{ repeat: Infinity, duration: 2 }}
-  >
-    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-    </svg>
-  </motion.div>
+          <AnimatedArrow />
       </motion.div>
     </div>
   </section>
@@ -317,7 +345,7 @@ const TestimonialsSection = ({ testimonials }) => (
   <div className="relative">
     <Carousel
       items={testimonials}
-      baseWidth={400}
+      baseWidth={360}
       autoplay={true}
       autoplayDelay={3000}
       pauseOnHover={true}
