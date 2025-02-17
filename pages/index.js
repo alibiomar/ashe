@@ -17,6 +17,7 @@ const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
 const Testimonial = lazy(() => import('../components/Testimonial'));
 const GridDistortion = lazy(() => import('../components/GridDistortion'));
 const NewsletterSignup = lazy(() => import('../components/NewsletterSignup'));
+const CircularGallery = lazy(() => import('../components/CircularGallery'));
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -234,13 +235,9 @@ export default function Home() {
             className="relative h-[80vh] mb-24"
           >
             <Suspense fallback={<div className="absolute inset-0 bg-gray-100 animate-pulse" />}>
-              <GridDistortion
-                imageSrc="https://picsum.photos/1920/1080?grayscale"
-                grid={12}
-                mouse={0.05}
-                strength={0.12}
-                relaxation={0.95}
-              />
+            <div style={{ height: '600px', position: 'relative' }}>
+                <CircularGallery bend={3} textColor="#ffffff" borderRadius={0.05} />
+              </div>
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <h3 className="text-4xl md:text-6xl font-bold text-white mix-blend-difference">
                   Beyond Fashion
