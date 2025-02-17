@@ -214,7 +214,7 @@ const HeroSection = ({ user, firstName }) => (
       </div>
     </motion.div>
 
-    <div className="relative inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30">
+    <div className="relative inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30 h-screen flex items-center justify-center">
       <motion.div
         className="container mx-auto px-4 h-[80vh] gap-5 flex flex-col items-center text-center"
         variants={{
