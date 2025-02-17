@@ -136,86 +136,55 @@ export default function Home() {
         variants={containerVariants}
         className="overflow-hidden"
       >
-<section className="relative h-screen w-full overflow-hidden bg-ivory-100">
-  {/* Vertical Heritage Marker */}
-  <motion.div 
-    className="absolute left-8 top-1/2 -translate-y-1/2 hidden md:flex flex-col gap-6 text-xl font-serif text-gold-800 z-20"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ duration: 1.5 }}
-  >
-    {['Est. 1923', 'Savile Row', 'Bespoke', 'Haberdashery'].map((text, index) => (
-      <motion.span
-        key={index}
-        className="cursor-default border-l-2 border-gold-800/20 pl-4 tracking-wider transition-all duration-500 hover:border-gold-800/50"
-        whileHover={{ x: 8 }}
-      >
-        {text}
-      </motion.span>
-    ))}
-  </motion.div>
-
-  {/* Main Content */}
-  <div className="container mx-auto h-full flex items-center justify-center">
-    <div className="relative z-10 text-left max-w-4xl">
-      <motion.div
-        initial={{ y: 50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="font-serif text-4xl md:text-6xl text-charcoal-900 leading-tight"
-      >
-        <div className="space-y-6">
-          <div className="overflow-hidden">
-            <motion.span className="block font-light tracking-wide">
-              Crafting Legacy Through
-            </motion.span>
-          </div>
-          <div className="relative">
-            <span className="absolute -left-12 top-1/2 -translate-y-1/2 text-2xl text-gold-800">
-              ●
-            </span>
-            <TextPressure
-              text='Elegance'
-              flex={true}
-              alpha={false}
-              stroke={false}
-              width={true}
-              weight={true}
-              minFontSize={48}
-              className="font-medium italic text-charcoal-900"
-            />
-          </div>
-          <div className="mt-8 border-t border-charcoal-900/20 pt-6 w-2/3">
-            <p className="text-lg font-sans font-light text-charcoal-900/80">
-              {user ? `${firstName}, your sartorial journey awaits` : 'London ∙ Milan ∙ Tokyo'}
-            </p>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  </div>
-
-  {/* Heritage Pattern Overlay */}
-  <div className="absolute inset-0 z-0 opacity-10 mix-blend-multiply">
-    <Image
-      src="/herringbone-pattern.png"
-      alt="Heritage texture"
-      fill
-      priority
-      className="object-cover"
-      unoptimized
-    />
-  </div>
-
-  {/* Discrete Scrolling Indicator */}
+        {/* Hero Section */}
+        <section className="relative w-full min-h-[92vh] mb-32 overflow-hidden">
   <motion.div
-    className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center"
-    animate={{ opacity: [0, 1, 0] }}
-    transition={{ repeat: Infinity, duration: 3 }}
+    className="absolute inset-0"
+    initial={{ scale: 1.1 }}
+    animate={{ scale: 1 }}
+    transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
   >
-    <div className="w-px h-16 bg-gradient-to-b from-charcoal-900/80 to-transparent" />
+    <div className="relative w-full  hero-image-container">
+      <Image
+        src="/headerImg.jpeg"
+        alt="Stunning fashion header image"
+        fill
+        priority
+        className="object-cover"
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 3840px"
+        unoptimized={true}
+      />
+    </div>
   </motion.div>
+
+  <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30">
+    <motion.div
+      className="container mx-auto px-4 h-[80vh] flex flex-col justify-end items-center text-center"
+      variants={childVariants}
+    >
+      <TextPressure
+        text={user ? `Welcome, ${firstName}!` : 'Welcome to ASHE'}
+        flex={true}
+        alpha={false}
+        stroke={false}
+        width={true}
+        weight={true}
+        slant={false}
+        textColor="#ffffff"
+        strokeColor="#ff0000"
+        minFontSize={32}
+        className="pt-16"
+      />
+      <motion.p
+        className="text-sm md:text-xl text-white/90 font-light max-w-2xl mb-5"
+        variants={childVariants}
+      >
+        Crafting timeless elegance through refined tailoring and sustainable mastery.
+      </motion.p>
+    </motion.div>
+  </div>
 </section>
+
 
         {/* Product Sections */}
         <section className="container mx-auto px-4 mb-32 grid grid-cols-1 md:grid-cols-2 gap-8">
