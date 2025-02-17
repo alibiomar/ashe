@@ -159,7 +159,7 @@ export default function Home() {
 
 const AnimatedArrow = () => {
   return (
-    <div className="flex flex-col items-center mb-[-5vh]">
+    <div className="flex flex-col items-center ">
       {[...Array(3)].map((_, index) => (
         <motion.div
           key={index}
@@ -214,9 +214,9 @@ const HeroSection = ({ user, firstName }) => (
       </div>
     </motion.div>
 
-    <div className="relative inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30 h-screen flex items-center justify-center">
+    <div className="relative inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30 h-[92vh] flex items-center justify-center pb-16">
       <motion.div
-        className="container mx-auto px-4 h-[80vh] gap-5 flex flex-col items-center text-center"
+        className="container h-[92vh] gap-5 flex flex-col items-center text-center"
         variants={{
           hidden: { y: 40, opacity: 0 },
           visible: {
