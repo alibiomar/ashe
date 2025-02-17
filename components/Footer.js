@@ -31,12 +31,15 @@ export default function Footer() {
       >
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
           {/* Brand Section */}
-          <motion.div variants={itemVariants} className="space-y-6 flex flex-col items-center">
+          <motion.div variants={{
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 }
+  }} className="space-y-6 flex flex-col items-center">
             <CircularText
               text="ASHE♦ASHE♦ASHE♦"
               onHover="speedUp"
               spinDuration={10}
-              className=""
+              className="block"
             />
             <p className="text-gray-400 leading-relaxed text-sm max-w-xs">
               Redefining fashion through the whispers of legacy.
