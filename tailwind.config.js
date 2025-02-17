@@ -13,11 +13,7 @@ module.exports = {
         montserrat: ['Montserrat', 'sans-serif'],
       },
       colors: {
-        stone: {
-          50: '#fafaf9',
-          100: '#f5f5f4',
-          800: '#292524',
-        },
+
         primary: '#1a202c',
         secondary: '#2d3748',
         accent: '#4a5568',
@@ -25,9 +21,7 @@ module.exports = {
         dark: '#1a202c',
         highlight: '#46c7c7',
       },
-      spacing: {
-        '128': '32rem',
-      },
+
      }
    },
    plugins: []

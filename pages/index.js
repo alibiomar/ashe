@@ -178,7 +178,7 @@ const HeroSection = ({ user, firstName }) => (
       </div>
     </motion.div>
 
-    <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30">
+    <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30 ">
       <motion.div
         className="container mx-auto px-4 h-[80vh] flex flex-col justify-end items-center text-center"
         variants={{
@@ -203,6 +203,22 @@ const HeroSection = ({ user, firstName }) => (
           minFontSize={32}
           className="pt-16"
         />
+<motion.a
+  href="/products"
+  className="border-2 border-white text-white px-8 py-4 rounded-full font-medium hover:bg-white hover:text-black transition-all absolute top-1/2 -translate-y-1/2 flex items-center gap-2"
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+>
+  Shop Now
+  <motion.span
+    initial={{ x: 0 }}
+    whileHover={{ x: 5 }}
+    transition={{ type: 'spring', stiffness: 300 }}
+    className="inline-block"
+  >
+    →
+  </motion.span>
+</motion.a>
         <motion.p
           className="text-sm md:text-xl text-white/90 font-light max-w-2xl mb-5"
           variants={{
@@ -216,6 +232,15 @@ const HeroSection = ({ user, firstName }) => (
         >
           Crafting timeless elegance through refined tailoring and sustainable mastery.
         </motion.p>
+        <motion.div
+    className="absolute bottom-8 left-1/2 -translate-x-1/2"
+    animate={{ y: [0, 15, 0] }}
+    transition={{ repeat: Infinity, duration: 2 }}
+  >
+    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+    </svg>
+  </motion.div>
       </motion.div>
     </div>
   </section>
