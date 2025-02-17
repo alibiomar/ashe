@@ -105,7 +105,7 @@ const CircularText = ({
         return (
           <span
             key={i}
-            className="absolute inline-block inset-0 text-2xl transition-all duration-500 ease-[cubic-bezier(0,0,0,1)] bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent font-black text-center"
+            className="absolute inline-block inset-0 text-2xl transition-all duration-500 ease-[cubic-bezier(0,0,0,1)] text-[#46c7c7] font-bold text-center"
             style={{ transform, WebkitTransform: transform }}
           >
             {letter}
