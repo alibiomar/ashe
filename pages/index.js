@@ -8,51 +8,55 @@ import TextPressure from '../components/TextPressure';
 import Image from 'next/image';
 import ErrorBoundary from '../components/ErrorBoundary';
 import dynamic from 'next/dynamic';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
   suspense: true,
-});import { motion, AnimatePresence } from 'framer-motion';
+});
 
 // Lazy-loaded components for improved performance
 const Testimonial = lazy(() => import('../components/Testimonial'));
 const GridDistortion = lazy(() => import('../components/GridDistortion'));
 const NewsletterSignup = lazy(() => import('../components/NewsletterSignup'));
-const CircularGallery = lazy(() => import('../components/CircularGallery'));
 
 export default function Home() {
-  const [user, setUser] = useState(null);
-  const [firstName, setFirstName] = useState('');
-  const [testimonials, setTestimonials] = useState([]);
-  const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [state, setState] = useState({
+    user: null,
+    firstName: '',
+    testimonials: [],
+    currentTestimonialIndex: 0,
+    loading: true,
+    error: null,
+    showScrollTop: false,
+  });
 
-  // Animation variants for Framer Motion
-  const containerVariants = {
+  const {
+    user,
+    firstName,
+    testimonials,
+    currentTestimonialIndex,
+    loading,
+    error,
+    showScrollTop,
+  } = state;
+ const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
         staggerChildren: 0.2,
-        when: 'beforeChildren'
-      }
-    }
+        when: 'beforeChildren',
+      },
+    },
   };
 
-  const childVariants = {
-    hidden: { y: 40, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { type: 'spring', stiffness: 120, damping: 20 }
-    }
-  };
+
+
   useEffect(() => {
     const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300);
+      setState((prev) => ({ ...prev, showScrollTop: window.scrollY > 300 }));
     };
-  
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -61,18 +65,19 @@ export default function Home() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        setUser(currentUser);
+        setState((prev) => ({ ...prev, user: currentUser }));
         try {
           const userDocRef = doc(db, 'users', currentUser.uid);
           const userDoc = await getDoc(userDocRef);
-          setFirstName(userDoc.exists() ? userDoc.data().firstName || 'Valued User' : 'Valued User');
+          setState((prev) => ({
+            ...prev,
+            firstName: userDoc.exists() ? userDoc.data().firstName || 'Valued User' : 'Valued User',
+          }));
         } catch (err) {
-          setError('Failed to load user data');
-          setFirstName('Valued User');
+          setState((prev) => ({ ...prev, error: 'Failed to load user data', firstName: 'Valued User' }));
         }
       } else {
-        setUser(null);
-        setFirstName('');
+        setState((prev) => ({ ...prev, user: null, firstName: '' }));
       }
     });
     return () => unsubscribe();
@@ -81,7 +86,7 @@ export default function Home() {
   // Fetch testimonials from Firestore
   useEffect(() => {
     const fetchTestimonials = async () => {
-      setLoading(true);
+      setState((prev) => ({ ...prev, loading: true }));
       try {
         const testimonialsCollection = collection(db, 'testimonials');
         const querySnapshot = await getDocs(testimonialsCollection);
@@ -91,11 +96,11 @@ export default function Home() {
           review: doc.data().review || 'No review provided',
           rating: Number(doc.data().rating) || 0,
         }));
-        setTestimonials(testimonialsList);
+        setState((prev) => ({ ...prev, testimonials: testimonialsList }));
       } catch (err) {
-        setError('Failed to load testimonials');
+        setState((prev) => ({ ...prev, error: 'Failed to load testimonials' }));
       } finally {
-        setLoading(false);
+        setState((prev) => ({ ...prev, loading: false }));
       }
     };
     fetchTestimonials();
@@ -105,7 +110,10 @@ export default function Home() {
   useEffect(() => {
     if (testimonials.length > 1) {
       const interval = setInterval(() => {
-        setCurrentTestimonialIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
+        setState((prev) => ({
+          ...prev,
+          currentTestimonialIndex: (prev.currentTestimonialIndex + 1) % testimonials.length,
+        }));
       }, 5000);
       return () => clearInterval(interval);
     }
@@ -138,196 +146,241 @@ export default function Home() {
         className="overflow-hidden"
       >
         {/* Hero Section */}
-        <section className="relative w-full min-h-[92vh] mb-32 overflow-hidden">
-  <motion.div
-    className="absolute inset-0"
-    initial={{ scale: 1.1 }}
-    animate={{ scale: 1 }}
-    transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-  >
-    <div className="relative w-full  hero-image-container">
-      <Image
-        src="/headerImg.jpeg"
-        alt="Stunning fashion header image"
-        fill
-        priority
-        className="object-cover"
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 3840px"
-        unoptimized={true}
-      />
-    </div>
-  </motion.div>
-
-  <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30">
-    <motion.div
-      className="container mx-auto px-4 h-[80vh] flex flex-col justify-end items-center text-center"
-      variants={childVariants}
-    >
-      <TextPressure
-        text={user ? `Welcome, ${firstName}!` : 'Welcome to ASHE'}
-        flex={true}
-        alpha={false}
-        stroke={false}
-        width={true}
-        weight={true}
-        slant={false}
-        textColor="#ffffff"
-        strokeColor="#ff0000"
-        minFontSize={32}
-        className="pt-16"
-      />
-      <motion.p
-        className="text-sm md:text-xl text-white/90 font-light max-w-2xl mb-5"
-        variants={childVariants}
-      >
-        Crafting timeless elegance through refined tailoring and sustainable mastery.
-      </motion.p>
-    </motion.div>
-  </div>
-</section>
-
+        <HeroSection user={user} firstName={firstName} />
 
         {/* Product Sections */}
-        <section className="container mx-auto px-4 mb-32 grid grid-cols-1 md:grid-cols-2 gap-8">
-          {['Featured', 'New Arrivals'].map((section, idx) => (
-            <motion.div
-              key={section}
-              className={`group relative p-8 overflow-hidden ${idx === 0 ? 'bg-white' : 'bg-black text-white'}`}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '0px 0px -100px 0px' }}
-              transition={{ duration: 0.6, delay: idx * 0.1 }}
-            >
-              <div className="relative h-80 mb-8 overflow-hidden">
-                <Image
-                  src={idx === 0 ? '/11425.png' : '/xsc.png'}
-                  alt={`${section} products image`}
-                  fill
-                  unoptimized={true}
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-              </div>
-
-              <h2 className="text-4xl font-semibold mb-4">{section}</h2>
-              <p className={`text-lg mb-6 ${idx === 0 ? 'text-gray-600' : 'text-gray-300'}`}>
-                {idx === 0 
-                  ? 'Curated selection of signature pieces' 
-                  : 'Discover our latest seasonal offerings'}
-              </p>
-              <a
-                href="/products"
-                className="inline-flex items-center gap-2 text-lg font-medium hover:gap-3 transition-all"
-                aria-label={`Explore our ${section.toLowerCase()} collection`}
-              >
-                Explore Collection
-                <span aria-hidden="true" className="text-xl">→</span>
-              </a>
-            </motion.div>
-          ))}
-        </section>
+        <ProductSections />
 
         {/* Grid Distortion Section */}
-        <ErrorBoundary fallback={<p className="text-center text-red-500">Failed to load visual experience</p>}>
-          <motion.section
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: '0px 0px -200px 0px' }}
-            className="relative h-[80vh] mb-24"
-          >
-            <Suspense fallback={<div className="absolute inset-0 bg-gray-100 animate-pulse" />}>
-            <div style={{ height: '600px', position: 'relative' }}>
-                <CircularGallery bend={3} textColor="#ffffff" borderRadius={0.05} />
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <h3 className="text-4xl md:text-6xl font-bold text-white mix-blend-difference">
-                  Beyond Fashion
-                </h3>
-              </div>
-            </Suspense>
-          </motion.section>
-        </ErrorBoundary>
+        <GridDistortionSection />
 
         {/* Testimonials Section */}
-        <section className="px-4 mb-24 flex flex-col justify-center items-center">
-          <motion.h2
-            className="text-4xl font-bold text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            Voices of Elegance
-          </motion.h2>
-
-          <div className="relative w-full max-w-3xl min-h-[50vh]">
-            <AnimatePresence mode="wait">
-              {testimonials.map(
-                (testimonial, index) =>
-                  currentTestimonialIndex === index && (
-                    <motion.div
-                      key={testimonial.id}
-                      initial={{ opacity: 0, x: 50 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -50 }}
-                      transition={{ duration: 0.5 }}
-                      className="w-full"
-                    >
-                      <ErrorBoundary fallback={<div className="h-full flex items-center justify-center text-red-500">Failed to load testimonial</div>}>
-                        <Suspense fallback={<div className="h-full bg-gray-50 animate-pulse rounded-2xl" />}>
-                          <Testimonial testimonial={testimonial} />
-                        </Suspense>
-                      </ErrorBoundary>
-                    </motion.div>
-                  )
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Navigation Dots */}
-          <div className="flex justify-center gap-3 mt-8">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentTestimonialIndex(index)}
-                className={`w-3 h-3 rounded-full transition-colors ${index === currentTestimonialIndex ? 'bg-black' : 'bg-gray-300'}`}
-                aria-label={`View testimonial ${index + 1}`}
-              />
-            ))}
-          </div>
-        </section>
+        <TestimonialsSection
+          testimonials={testimonials}
+          currentTestimonialIndex={currentTestimonialIndex}
+          setCurrentTestimonialIndex={(index) => setState((prev) => ({ ...prev, currentTestimonialIndex: index }))}
+        />
 
         {/* Newsletter Signup Section */}
-        <motion.section
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-        >
-          <Suspense fallback={<div className="h-96 bg-white animate-pulse rounded-2xl" />}>
-            <NewsletterSignup />
-          </Suspense>
-        </motion.section>
-        {showScrollTop && (
-          <motion.button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="fixed bottom-8 right-8 bg-[#46c7c7] text-white rounded-full p-3 shadow-lg hover:bg-gray-800 transition"
-          whileHover={{ scale: 1.1 }}
-          aria-label="Back to Top"
-        >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 15l7-7 7 7"
-            />
-          </svg>
-        </motion.button>
-          )}
+        <NewsletterSignupSection />
+
+        {/* Scroll to Top Button */}
+        {showScrollTop && <ScrollToTopButton />}
       </motion.div>
     </Layout>
   );
 }
+
+const HeroSection = ({ user, firstName }) => (
+  <section className="relative w-full h-[92vh] mb-32 overflow-hidden">
+    <motion.div
+      className="absolute inset-0"
+      initial={{ scale: 1.1 }}
+      animate={{ scale: 1 }}
+      transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <div className="relative w-full hero-image-container">
+        <Image
+          src="/headerImg.jpeg"
+          alt="Stunning fashion header image"
+          fill
+          priority
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 3840px"
+          unoptimized={true}
+        />
+      </div>
+    </motion.div>
+
+    <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30">
+    <motion.div
+  className="container mx-auto px-4 h-[80vh] flex flex-col justify-end items-center text-center"
+  variants={{
+    hidden: { y: 40, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: 'spring', stiffness: 120, damping: 20 },
+    },
+  }}
+>
+        <TextPressure
+          text={user ? `Welcome, ${firstName}!` : 'Welcome to ASHE'}
+          flex={true}
+          alpha={false}
+          stroke={false}
+          width={true}
+          weight={true}
+          slant={false}
+          textColor="#ffffff"
+          strokeColor="#ff0000"
+          minFontSize={32}
+          className="pt-16"
+        />
+        <motion.p
+          className="text-sm md:text-xl text-white/90 font-light max-w-2xl mb-5"
+          variants={{
+            hidden: { y: 40, opacity: 0 },
+            visible: {
+              y: 0,
+              opacity: 1,
+              transition: { type: 'spring', stiffness: 120, damping: 20 },
+            },
+          }}
+        >
+          Crafting timeless elegance through refined tailoring and sustainable mastery.
+        </motion.p>
+      </motion.div>
+    </div>
+  </section>
+);
+
+const ProductSections = () => (
+  <section className="container mx-auto px-4 mb-32 grid grid-cols-1 md:grid-cols-2 gap-8">
+    {['Featured', 'New Arrivals'].map((section, idx) => (
+      <motion.div
+        key={section}
+        className={`group relative p-8 overflow-hidden ${idx === 0 ? 'bg-white' : 'bg-black text-white'}`}
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '0px 0px -100px 0px' }}
+        transition={{ duration: 0.6, delay: idx * 0.1 }}
+      >
+        <div className="relative h-80 mb-8 overflow-hidden">
+          <Image
+            src={idx === 0 ? '/11425.png' : '/xsc.png'}
+            alt={`${section} products image`}
+            fill
+            unoptimized={true}
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        </div>
+
+        <h2 className="text-4xl font-semibold mb-4">{section}</h2>
+        <p className={`text-lg mb-6 ${idx === 0 ? 'text-gray-600' : 'text-gray-300'}`}>
+          {idx === 0
+            ? 'Curated selection of signature pieces'
+            : 'Discover our latest seasonal offerings'}
+        </p>
+        <a
+          href="/products"
+          className="inline-flex items-center gap-2 text-lg font-medium hover:gap-3 transition-all"
+          aria-label={`Explore our ${section.toLowerCase()} collection`}
+        >
+          Explore Collection
+          <span aria-hidden="true" className="text-xl">→</span>
+        </a>
+      </motion.div>
+    ))}
+  </section>
+);
+
+const GridDistortionSection = () => (
+  <ErrorBoundary fallback={<p className="text-center text-red-500">Failed to load visual experience</p>}>
+    <motion.section
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: '0px 0px -200px 0px' }}
+      className="relative h-[80vh] mb-24"
+    >
+      <Suspense fallback={<div className="absolute inset-0 bg-gray-100 animate-pulse" />}>
+        <GridDistortion
+          imageSrc="https://picsum.photos/1920/1080?grayscale"
+          grid={12}
+          mouse={0.05}
+          strength={0.12}
+          relaxation={0.95}
+        />
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <h3 className="text-4xl md:text-6xl font-bold text-white mix-blend-difference">
+            Beyond Fashion
+          </h3>
+        </div>
+      </Suspense>
+    </motion.section>
+  </ErrorBoundary>
+);
+
+const TestimonialsSection = ({ testimonials, currentTestimonialIndex, setCurrentTestimonialIndex }) => (
+  <section className="px-4 mb-24 flex flex-col justify-center items-center">
+    <motion.h2
+      className="text-4xl font-bold text-center mb-16"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+    >
+      Voices of Elegance
+    </motion.h2>
+
+    <div className="relative w-full max-w-3xl min-h-[50vh]">
+      <AnimatePresence mode="wait">
+        {testimonials.map(
+          (testimonial, index) =>
+            currentTestimonialIndex === index && (
+              <motion.div
+                key={testimonial.id}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.5 }}
+                className="w-full"
+              >
+                <ErrorBoundary fallback={<div className="h-full flex items-center justify-center text-red-500">Failed to load testimonial</div>}>
+                  <Suspense fallback={<div className="h-full bg-gray-50 animate-pulse rounded-2xl" />}>
+                    <Testimonial testimonial={testimonial} />
+                  </Suspense>
+                </ErrorBoundary>
+              </motion.div>
+            )
+        )}
+      </AnimatePresence>
+    </div>
+
+    {/* Navigation Dots */}
+    <div className="flex justify-center gap-3 mt-8">
+      {testimonials.map((_, index) => (
+        <button
+          key={index}
+          onClick={() => setCurrentTestimonialIndex(index)}
+          className={`w-3 h-3 rounded-full transition-colors ${index === currentTestimonialIndex ? 'bg-black' : 'bg-gray-300'}`}
+          aria-label={`View testimonial ${index + 1}`}
+        />
+      ))}
+    </div>
+  </section>
+);
+
+const NewsletterSignupSection = () => (
+  <motion.section
+    initial={{ opacity: 0 }}
+    whileInView={{ opacity: 1 }}
+    viewport={{ once: true }}
+  >
+    <Suspense fallback={<div className="h-96 bg-white animate-pulse rounded-2xl" />}>
+      <NewsletterSignup />
+    </Suspense>
+  </motion.section>
+);
+
+const ScrollToTopButton = () => (
+  <motion.button
+    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+    className="fixed bottom-8 right-8 bg-[#46c7c7] text-white rounded-full p-3 shadow-lg hover:bg-gray-800 transition"
+    whileHover={{ scale: 1.1 }}
+    aria-label="Back to Top"
+  >
+    <svg
+      className="w-6 h-6"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M5 15l7-7 7 7"
+      />
+    </svg>
+  </motion.button>
+);
