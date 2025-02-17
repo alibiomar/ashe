@@ -8,14 +8,14 @@ import TextPressure from '../components/TextPressure';
 import Image from 'next/image';
 import ErrorBoundary from '../components/ErrorBoundary';
 import dynamic from 'next/dynamic';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import Carousel from '../components/Carousel'; // Import the Carousel component
 
 const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
   suspense: true,
 });
 
 // Lazy-loaded components for improved performance
-const Testimonial = lazy(() => import('../components/Testimonial'));
 const GridDistortion = lazy(() => import('../components/GridDistortion'));
 const NewsletterSignup = lazy(() => import('../components/NewsletterSignup'));
 
@@ -39,7 +39,8 @@ export default function Home() {
     error,
     showScrollTop,
   } = state;
- const containerVariants = {
+
+  const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -49,8 +50,6 @@ export default function Home() {
       },
     },
   };
-
-
 
   useEffect(() => {
     const handleScroll = () => {
@@ -105,19 +104,6 @@ export default function Home() {
     };
     fetchTestimonials();
   }, []);
-
-  // Auto-rotate testimonials every 5 seconds
-  useEffect(() => {
-    if (testimonials.length > 1) {
-      const interval = setInterval(() => {
-        setState((prev) => ({
-          ...prev,
-          currentTestimonialIndex: (prev.currentTestimonialIndex + 1) % testimonials.length,
-        }));
-      }, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [testimonials.length]);
 
   // Handle loading and error states
   if (loading) {
@@ -193,17 +179,17 @@ const HeroSection = ({ user, firstName }) => (
     </motion.div>
 
     <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30">
-    <motion.div
-  className="container mx-auto px-4 h-[80vh] flex flex-col justify-end items-center text-center"
-  variants={{
-    hidden: { y: 40, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { type: 'spring', stiffness: 120, damping: 20 },
-    },
-  }}
->
+      <motion.div
+        className="container mx-auto px-4 h-[80vh] flex flex-col justify-end items-center text-center"
+        variants={{
+          hidden: { y: 40, opacity: 0 },
+          visible: {
+            y: 0,
+            opacity: 1,
+            transition: { type: 'spring', stiffness: 120, damping: 20 },
+          },
+        }}
+      >
         <TextPressure
           text={user ? `Welcome, ${firstName}!` : 'Welcome to ASHE'}
           flex={true}
@@ -301,53 +287,29 @@ const GridDistortionSection = () => (
   </ErrorBoundary>
 );
 
-const TestimonialsSection = ({ testimonials, currentTestimonialIndex, setCurrentTestimonialIndex }) => (
-  <section className="px-4 mb-24 flex flex-col justify-center items-center">
-    <motion.h2
-      className="text-4xl font-bold text-center mb-16"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-    >
-      Voices of Elegance
-    </motion.h2>
+const TestimonialsSection = ({ testimonials }) => (
+<section className="px-8 mb-48 flex flex-col-reverse md:flex-row justify-around items-center">
+  <div className="relative">
+    <Carousel
+      items={testimonials}
+      baseWidth={400}
+      autoplay={true}
+      autoplayDelay={3000}
+      pauseOnHover={true}
+      loop={true}
+      round={true}
+    />
+  </div>
+  <motion.h2
+    className="text-6xl font-black text-center mb-16 md:mb-0"
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+  >
+    Voices of Elegance
+  </motion.h2>
+</section>
 
-    <div className="relative w-full max-w-3xl min-h-[50vh]">
-      <AnimatePresence mode="wait">
-        {testimonials.map(
-          (testimonial, index) =>
-            currentTestimonialIndex === index && (
-              <motion.div
-                key={testimonial.id}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.5 }}
-                className="w-full"
-              >
-                <ErrorBoundary fallback={<div className="h-full flex items-center justify-center text-red-500">Failed to load testimonial</div>}>
-                  <Suspense fallback={<div className="h-full bg-gray-50 animate-pulse rounded-2xl" />}>
-                    <Testimonial testimonial={testimonial} />
-                  </Suspense>
-                </ErrorBoundary>
-              </motion.div>
-            )
-        )}
-      </AnimatePresence>
-    </div>
-
-    {/* Navigation Dots */}
-    <div className="flex justify-center gap-3 mt-8">
-      {testimonials.map((_, index) => (
-        <button
-          key={index}
-          onClick={() => setCurrentTestimonialIndex(index)}
-          className={`w-3 h-3 rounded-full transition-colors ${index === currentTestimonialIndex ? 'bg-black' : 'bg-gray-300'}`}
-          aria-label={`View testimonial ${index + 1}`}
-        />
-      ))}
-    </div>
-  </section>
 );
 
 const NewsletterSignupSection = () => (
