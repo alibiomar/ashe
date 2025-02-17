@@ -167,7 +167,7 @@ const HeroSection = ({ user, firstName }) => (
     >
       <div className="relative w-full hero-image-container">
         <Image
-          src="/headerImg.jpeg"
+          src="/bg.jpg"
           alt="Stunning fashion header image"
           fill
           priority
