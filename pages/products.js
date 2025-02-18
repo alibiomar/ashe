@@ -191,7 +191,7 @@ export default function Products() {
                 <title>Products | ASHE™</title>
                 <meta name="description" content="Browse our collection of products." />
             </Head>
-                  <Suspense fallback={<LoadingSpinner />}>
+                  <Suspense fallback={<LoadingScreen />}>
             
             <main className="container mx-auto px-4 mb-24">
                 <div className="grid grid-cols-1 gap-12">
