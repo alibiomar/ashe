@@ -321,9 +321,9 @@ const GridDistortionSection = memo(() => (
         <GridDistortion
           imageSrc="https://picsum.photos/1920/1080?grayscale"
           grid={12}
-          mouse={0.05}
-          strength={0.12}
-          relaxation={0.95}
+          mouse={0.1}
+          strength={0.23}
+          relaxation={0.8}
         />
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <h3 className="text-4xl md:text-6xl font-bold text-white mix-blend-difference">
