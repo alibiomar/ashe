@@ -191,6 +191,8 @@ export default function Products() {
                 <title>Products | ASHE™</title>
                 <meta name="description" content="Browse our collection of products." />
             </Head>
+                  <Suspense fallback={<LoadingSpinner />}>
+            
             <main className="container mx-auto px-4 mb-24">
                 <div className="grid grid-cols-1 gap-12">
                     {products.map((product, index) => (
@@ -198,20 +200,12 @@ export default function Products() {
                             key={product.id || `product-${index}`}
                             className="group relative"
                         >
-                            <Suspense fallback={
-                                <div className="space-y-4">
-                                    <div className="aspect-square bg-gray-100 animate-pulse rounded-lg" />
-                                    <div className="h-5 bg-gray-100 animate-pulse w-3/4" />
-                                    <div className="h-5 bg-gray-100 animate-pulse w-1/3" />
-                                    <div className="h-12 bg-gray-100 animate-pulse w-full rounded-lg" />
-                                </div>
-                            }>
+
                                 <ProductCard
                                     product={product}
                                     getBasketQuantity={getBasketQuantity}
                                     onAddToBasket={addToBasket}
                                 />
-                            </Suspense>
                         </div>
                     ))}
                 </div>
@@ -231,6 +225,8 @@ export default function Products() {
                 )}
             </main>
             <Toaster position="bottom-center" richColors />
+            </Suspense>
+
         </Layout>
     );
 }
