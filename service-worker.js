@@ -1,5 +1,6 @@
 self.__WB_MANIFEST = []; // This is required by next-pwa
-self.addEventListener('install', (event) => {
+
+  self.addEventListener('install', (event) => {
     event.waitUntil(
       caches.open('offline-cache').then((cache) => {
         return cache.addAll([
