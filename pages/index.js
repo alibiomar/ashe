@@ -112,6 +112,8 @@ export default function Home() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-100 px-6 text-center">
+                <img src="logo.png" alt="ASHE™ Logo" className="w-32 mb-8" />
+
         <div className="bg-white p-8 rounded-lg shadow-lg max-w-md">
           <h2 className="text-2xl font-semibold text-red-600 mb-4">Oops! Something went wrong</h2>
           <p className="text-gray-700">{error}</p>
