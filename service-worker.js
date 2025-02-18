@@ -1,4 +1,4 @@
-// service-worker.js
+self.__WB_MANIFEST = []; // This is required by next-pwa
 self.addEventListener('install', (event) => {
     event.waitUntil(
       caches.open('offline-cache').then((cache) => {

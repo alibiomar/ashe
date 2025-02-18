@@ -1,13 +1,13 @@
-const withPWA = require('next-pwa');
-
-const config = withPWA({
+const withPWA = require('next-pwa')({
   dest: 'public',
   register: true,
   skipWaiting: true,
   swSrc: 'service-worker.js',
   disable: process.env.NODE_ENV === 'development',
   publicExcludes: ['!dynamic-css-manifest.json'],
-})({
+});
+
+module.exports = withPWA({
   generateBuildId: async () => {
     return 'build-' + Date.now();
   },
@@ -122,4 +122,3 @@ const config = withPWA({
   },
 });
 
-module.exports = config;
