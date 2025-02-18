@@ -32,7 +32,7 @@ function StarRating({ rating, onChange, disabled }) {
         disabled={disabled}
         className="focus:outline-none"
       >
-        <PiStarFourFill size={24} color={starNumber <= rating ? "#FFD700" : "#ccc"} />
+        <PiStarFourFill size={24} color={starNumber <= rating ? "#000" : "#ccc"} />
       </button>
     );
   });
@@ -262,13 +262,16 @@ export default function ContactForm() {
 
               {/* Rating Field */}
               <div className="space-y-1">
-                <label className="block text-sm font-medium text-neutral-400 mb-1">Rating</label>
-                <StarRating
-                  rating={form.watch('rate')}
-                  onChange={(value) => form.setValue('rate', value)}
-                  disabled={isBlocked}
-                  className="text-neutral-900"
-                />
+                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  Rating
+                </label>
+                <div className="w-full px-0 py-3 border-b border-neutral-300">
+                  <StarRating
+                    rating={form.watch('rate')}
+                    onChange={(value) => form.setValue('rate', value)}
+                    disabled={isBlocked}
+                  />
+                </div>
                 {form.formState.errors.rate && (
                   <p className="text-red-600 text-sm font-medium mt-1">
                     {form.formState.errors.rate.message}
