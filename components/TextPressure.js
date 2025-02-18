@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 const TextPressure = ({
   text = 'Compressa',
   fontFamily = 'Compressa VF',
-  // This font is just an example, you should not use it in commercial projects.
   fontUrl = '/CompressaPRO-GX.woff2',
 
   width = true,
@@ -126,8 +125,8 @@ const TextPressure = ({
             return Math.max(minVal, val + minVal);
           };
 
-          const wdth = width ? Math.floor(getAttr(d, 5, 600)) : 300;
-          const wght = weight ? Math.floor(getAttr(d, 100, 800)) : 600;
+          const wdth = width ? Math.floor(getAttr(d, 5, 200)) : 100;
+          const wght = weight ? Math.floor(getAttr(d, 200, 900)) : 500;
           const italVal = italic ? getAttr(d, 0, 1).toFixed(2) : 0;
           const alphaVal = alpha ? getAttr(d, 0, 1).toFixed(2) : 1;
 
@@ -181,7 +180,7 @@ const TextPressure = ({
           transform: `scale(1, ${scaleY})`,
           transformOrigin: 'center top',
           margin: 0,
-          fontWeight: 700,
+          fontWeight: 100,
           color: stroke ? undefined : textColor,
         }}
       >

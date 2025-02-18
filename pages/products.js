@@ -7,7 +7,8 @@ import dynamic from 'next/dynamic';
 
 const LoadingScreen = dynamic(() => import('../components/LoadingScreen'), {
   suspense: true,
-});import { app, db } from '../lib/firebase';
+});
+import { app, db } from '../lib/firebase';
 import Cookies from 'js-cookie';
 import { toast, Toaster } from 'sonner';
 

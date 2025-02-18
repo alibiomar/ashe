@@ -85,9 +85,6 @@ const GridDistortion = ({
       THREE.RGBAFormat,
       THREE.FloatType
     );
-    dataTexture.generateMipmaps = false;
-dataTexture.minFilter = THREE.LinearFilter;
-dataTexture.magFilter = THREE.LinearFilter;
     dataTexture.needsUpdate = true;
     uniforms.uDataTexture.value = dataTexture;
 
