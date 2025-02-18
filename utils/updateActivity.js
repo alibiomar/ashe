@@ -19,9 +19,7 @@ export const updateUserActivity = async (uid) => {
     await updateDoc(userDocRef, {
       lastActivity: serverTimestamp()
     });
-    
-    console.log('Activity updated successfully');
-  } catch (error) {
+      } catch (error) {
     console.error('Error updating activity:', error);
     throw error; // Rethrow to handle in the component
   }
