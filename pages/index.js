@@ -233,11 +233,11 @@ const HeroSection = ({ user, firstName }) => (
           stroke={false}
           width={true}
           weight={true}
-          slant={false}
+          italic={true}
           textColor="#ffffff"
           strokeColor="#ff0000"
           minFontSize={32}
-          className="pt-16"
+          className="pt-24"
         />
         <motion.a
           href="/products"

@@ -6,16 +6,38 @@ import { z } from 'zod';
 import { toast } from 'sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Head from 'next/head';
+import { PiStarFourFill } from "react-icons/pi";
 
 const TIMEOUT_DURATION = 5 * 60 * 1000;
 const STORAGE_KEY = 'lastSubmissionTime';
 
+// Updated schema with a new "rate" field
 const contactFormSchema = z.object({
   name: z.string().min(2, { message: 'Please Enter Your Name' }),
   email: z.string().email({ message: 'Please Enter a Valid Email Address' }),
+  rate: z.number().min(1, { message: 'Please provide a rating' }).max(5, { message: 'Rating cannot exceed 5' }),
   message: z.string().min(10, { message: 'Message must be at least 10 characters' }),
   website: z.string().optional(),
 });
+
+// Custom star rating component
+function StarRating({ rating, onChange, disabled }) {
+  const stars = Array.from({ length: 5 }, (_, index) => {
+    const starNumber = index + 1;
+    return (
+      <button
+        type="button"
+        key={starNumber}
+        onClick={() => onChange(starNumber)}
+        disabled={disabled}
+        className="focus:outline-none"
+      >
+        <PiStarFourFill size={24} color={starNumber <= rating ? "#FFD700" : "#ccc"} />
+      </button>
+    );
+  });
+  return <div className="flex space-x-1">{stars}</div>;
+}
 
 export default function ContactForm() {
   const [loading, setLoading] = useState(false);
@@ -54,10 +76,10 @@ export default function ContactForm() {
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
-  
+
   const form = useForm({
     resolver: zodResolver(contactFormSchema),
-    defaultValues: { name: '', email: '', message: '', website: '' },
+    defaultValues: { name: '', email: '', rate: 0, message: '', website: '' },
   });
 
   const onSubmit = async (values) => {
@@ -109,7 +131,10 @@ export default function ContactForm() {
     <!-- Message Content -->
     <div style="border-left: 3px solid #000; padding-left: 24px; margin-bottom: 40px;">
       <p style="font-size: 18px; line-height: 1.6; margin: 0; color: #444;">
-        ${values.message}
+        ${values.message} 
+      </p>
+      <p style="font-size: 18px; line-height: 1.6; margin: 0; color: #444;">
+        with RATE: ${values.rate}
       </p>
     </div>
 
@@ -165,14 +190,11 @@ export default function ContactForm() {
       </Head>
 
       <Layout>
-        <div className="min-h-screen flex flex-col items-center justify-center  bg-neutral-50 pt-20">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-neutral-50 pt-20">
           <div className="w-full max-w-2xl mx-4 bg-white p-8 md:p-12 rounded-none border border-neutral-200">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-neutral-900 mb-8 tracking-tight">
               Contact Us
             </h2>
-
-            {/* Contact Information */}
-
 
             {/* Form Block Status */}
             {isBlocked && (
@@ -202,36 +224,74 @@ export default function ContactForm() {
                 <input {...form.register('website')} tabIndex="-1" autoComplete="off" />
               </div>
 
-              {['name', 'email', 'message'].map((field) => (
-                <div key={field} className="space-y-1">
-                  {field !== 'message' ? (
-                    <input
-                      {...form.register(field)}
-                      placeholder={field === 'name' ? 'Your name' : 'Email address'}
-                      className={`w-full px-0 py-3 border-b border-neutral-300 
-                        focus:border-neutral-900 focus:ring-0 bg-transparent
-                        placeholder-neutral-400 text-base
-                        transition-all duration-200 rounded-none`}
-                      disabled={isBlocked}
-                    />
-                  ) : (
-                    <textarea
-                      {...form.register(field)}
-                      placeholder="Your message"
-                      className={`w-full px-0 py-3 border-b border-neutral-300 
-                        focus:border-neutral-900 focus:ring-0 bg-transparent
-                        placeholder-neutral-400 text-base resize-none
-                        transition-all duration-200 rounded-none min-h-[120px]`}
-                      disabled={isBlocked}
-                    />
-                  )}
-                  {form.formState.errors[field] && (
-                    <p className="text-red-600 text-sm font-medium mt-1">
-                      {form.formState.errors[field].message}
-                    </p>
-                  )}
-                </div>
-              ))}
+              {/* Name Field */}
+              <div className="space-y-1">
+                <input
+                  {...form.register('name')}
+                  placeholder="Your name"
+                  className="w-full px-0 py-3 border-b border-neutral-300 
+                    focus:border-neutral-900 focus:ring-0 bg-transparent
+                    placeholder-neutral-400 text-base
+                    transition-all duration-200 rounded-none"
+                  disabled={isBlocked}
+                />
+                {form.formState.errors.name && (
+                  <p className="text-red-600 text-sm font-medium mt-1">
+                    {form.formState.errors.name.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Email Field */}
+              <div className="space-y-1">
+                <input
+                  {...form.register('email')}
+                  placeholder="Email address"
+                  className="w-full px-0 py-3 border-b border-neutral-300 
+                    focus:border-neutral-900 focus:ring-0 bg-transparent
+                    placeholder-neutral-400 text-base
+                    transition-all duration-200 rounded-none"
+                  disabled={isBlocked}
+                />
+                {form.formState.errors.email && (
+                  <p className="text-red-600 text-sm font-medium mt-1">
+                    {form.formState.errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Rating Field */}
+              <div className="space-y-1">
+                <label className="block text-sm font-medium text-neutral-700 mb-1">Rating</label>
+                <StarRating
+                  rating={form.watch('rate')}
+                  onChange={(value) => form.setValue('rate', value)}
+                  disabled={isBlocked}
+                />
+                {form.formState.errors.rate && (
+                  <p className="text-red-600 text-sm font-medium mt-1">
+                    {form.formState.errors.rate.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Message Field */}
+              <div className="space-y-1">
+                <textarea
+                  {...form.register('message')}
+                  placeholder="Your message"
+                  className="w-full px-0 py-3 border-b border-neutral-300 
+                    focus:border-neutral-900 focus:ring-0 bg-transparent
+                    placeholder-neutral-400 text-base resize-none
+                    transition-all duration-200 rounded-none min-h-[120px]"
+                  disabled={isBlocked}
+                />
+                {form.formState.errors.message && (
+                  <p className="text-red-600 text-sm font-medium mt-1">
+                    {form.formState.errors.message.message}
+                  </p>
+                )}
+              </div>
 
               <button
                 type="submit"
@@ -245,27 +305,27 @@ export default function ContactForm() {
               </button>
             </form>
           </div>
-          <div className="mb-24 text-center space-y-5 mt-20 ">
-              <h3 className="text-xl font-semibold text-neutral-700">Direct Channels</h3>
-              <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-neutral-600">
-                <a href="mailto:contact@ashe.com" className="hover:text-neutral-900 transition-colors">
-                  contact@ashe.com
+          <div className="mb-24 text-center space-y-5 mt-20">
+            <h3 className="text-xl font-semibold text-neutral-700">Direct Channels</h3>
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-neutral-600">
+              <a href="mailto:contact@ashe.com" className="hover:text-neutral-900 transition-colors">
+                contact@ashe.com
+              </a>
+              <span className="text-neutral-400">•</span>
+              <a href="tel:+21620986015" className="hover:text-neutral-900 transition-colors">
+                +216 20 986 015
+              </a>
+              <span className="text-neutral-400">•</span>
+              <div className="flex gap-4">
+                <a href="https://www.tiktok.com/@ashe.tn" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 transition-colors">
+                  TikTok
                 </a>
-                <span className="text-neutral-400">•</span>
-                <a href="tel:+21620986015" className="hover:text-neutral-900 transition-colors">
-                  +216 20 986 015
+                <a href="https://www.instagram.com/ashe.tn" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 transition-colors">
+                  Instagram
                 </a>
-                <span className="text-neutral-400">•</span>
-                <div className="flex gap-4">
-                  <a href="https://www.tiktok.com/@ashe.tn" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 transition-colors">
-                    TikTok
-                  </a>
-                  <a href="https://www.instagram.com/ashe.tn" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 transition-colors">
-                    Instagram
-                  </a>
-                </div>
               </div>
             </div>
+          </div>
         </div>
       </Layout>
     </>
