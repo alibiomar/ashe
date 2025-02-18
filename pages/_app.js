@@ -58,6 +58,16 @@ function AppContent({ Component, pageProps }) {
   if (loading) {
     return <LoadingSpinner />;
   }
+
+  return (
+    <div translate="yes">
+      <Component {...pageProps} />
+      <AcceptCookiesPopup />
+    </div>
+  );
+}
+
+function MyApp({ Component, pageProps }) {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js')
@@ -70,15 +80,6 @@ function AppContent({ Component, pageProps }) {
     });
   }
   
-  return (
-    <div translate="yes">
-      <Component {...pageProps} />
-      <AcceptCookiesPopup />
-    </div>
-  );
-}
-
-function MyApp({ Component, pageProps }) {
   return (
     <AuthProvider>
       <BasketProvider>
