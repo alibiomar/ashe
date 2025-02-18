@@ -1,4 +1,4 @@
-import { useEffect, useState, Suspense, lazy } from 'react';
+import React, { useEffect, useState, Suspense, lazy, memo } from 'react';
 import Head from 'next/head';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
@@ -157,7 +157,7 @@ export default function Home() {
   );
 }
 
-const AnimatedArrow = () => {
+const AnimatedArrow = memo(() => {
   return (
     <div className="flex flex-col items-center ">
       {[...Array(3)].map((_, index) => (
@@ -191,10 +191,10 @@ const AnimatedArrow = () => {
       ))}
     </div>
   );
-};
+});
 
-const HeroSection = ({ user, firstName }) => (
-  <section className="relative w-full h-[92vh] mb-32 overflow-hidden"> 
+const HeroSection = memo(({ user, firstName }) => (
+  <section className="relative w-full h-[92vh] mb-32 overflow-hidden">
     <motion.div
       className="absolute inset-0"
       initial={{ scale: 1.1, opacity: 0 }}
@@ -272,9 +272,9 @@ const HeroSection = ({ user, firstName }) => (
       </motion.div>
     </div>
   </section>
-);
+));
 
-const ProductSections = () => (
+const ProductSections = memo(() => (
   <section className="container mx-auto px-4 mb-32 grid grid-cols-1 md:grid-cols-2 gap-8">
     {['Featured', 'New Arrivals'].map((section, idx) => (
       <motion.div
@@ -312,9 +312,9 @@ const ProductSections = () => (
       </motion.div>
     ))}
   </section>
-);
+));
 
-const GridDistortionSection = () => (
+const GridDistortionSection = memo(() => (
   <ErrorBoundary fallback={<p className="text-center text-red-500">Failed to load visual experience</p>}>
     <motion.section
       initial={{ opacity: 0 }}
@@ -338,9 +338,9 @@ const GridDistortionSection = () => (
       </Suspense>
     </motion.section>
   </ErrorBoundary>
-);
+));
 
-const TestimonialsSection = ({ testimonials }) => (
+const TestimonialsSection = memo(({ testimonials }) => (
 <section className="px-8 mb-48 flex flex-col-reverse md:flex-row justify-around items-center">
   <div className="relative">
     <Carousel
@@ -363,9 +363,9 @@ const TestimonialsSection = ({ testimonials }) => (
   </motion.h2>
 </section>
 
-);
+));
 
-const NewsletterSignupSection = () => (
+const NewsletterSignupSection = memo(() => (
   <motion.section
     initial={{ opacity: 0 }}
     whileInView={{ opacity: 1 }}
@@ -375,9 +375,9 @@ const NewsletterSignupSection = () => (
       <NewsletterSignup />
     </Suspense>
   </motion.section>
-);
+));
 
-const ScrollToTopButton = () => (
+const ScrollToTopButton = memo(() => (
   <motion.button
     onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
     className="fixed bottom-8 right-8 bg-[#46c7c7] text-white rounded-full p-3 shadow-lg hover:bg-gray-800 transition"
@@ -398,4 +398,4 @@ const ScrollToTopButton = () => (
       />
     </svg>
   </motion.button>
-);
+));

@@ -219,8 +219,8 @@ export default function ContactForm() {
             )}
 
             {/* Form Elements */}
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <div className="hidden">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8" encType="application/x-www-form-urlencoded">
+            <div className="hidden">
                 <input {...form.register('website')} tabIndex="-1" autoComplete="off" />
               </div>
 
