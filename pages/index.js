@@ -213,7 +213,7 @@ const HeroSection = memo(({ user, firstName }) => (
 
     <div className="relative inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30 h-[92vh] flex items-center justify-center pb-16">
       <motion.div
-        className="container h-[92vh] gap-5 flex flex-col items-center text-center"
+        className="container h-[92vh] gap-5 flex flex-col items-center text-center justify-center"
         variants={{
           hidden: { y: 40, opacity: 0 },
           visible: {
@@ -234,23 +234,26 @@ const HeroSection = memo(({ user, firstName }) => (
           textColor="#ffffff"
           strokeColor="#ff0000"
           minFontSize={36}
+          className='pt-[20vh] h-fit md:minFontSize={48}'
         />
-        <motion.a
-          href="/products"
-          className="border-2 border-white text-white px-8 py-4 rounded-full font-medium hover:bg-white hover:text-black absolute top-1/2 flex items-center gap-2"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          Shop Now
-          <motion.span
-            initial={{ x: 0 }}
-            whileHover={{ x: 5 }}
-            transition={{ type: 'spring', stiffness: 300 }}
-            className="inline-block"
+        <div className="flex flex-col items-center mb-14">
+          <motion.a
+            href="/products"
+            className="border-2 border-white text-white px-8 py-4 rounded-full font-medium hover:bg-white hover:text-black flex items-center gap-2 md:px-10 md:py-5 md:text-lg"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            →
-          </motion.span>
-        </motion.a>
+            Shop Now
+            <motion.span
+              initial={{ x: 0 }}
+              whileHover={{ x: 5 }}
+              transition={{ type: 'spring', stiffness: 300 }}
+              className="inline-block"
+            >
+              →
+            </motion.span>
+          </motion.a>
+        </div>
         <motion.p
           className="text-sm md:text-xl text-white/90 font-light max-w-2xl mb-5"
           variants={{
@@ -264,11 +267,12 @@ const HeroSection = memo(({ user, firstName }) => (
         >
           Crafting timeless elegance through refined tailoring and sustainable mastery.
         </motion.p>
-          <AnimatedArrow />
+        <AnimatedArrow />
       </motion.div>
     </div>
   </section>
 ));
+
 
 const ProductSections = memo(() => (
   <section className="container mx-auto px-4 mb-32 grid grid-cols-1 md:grid-cols-2 gap-8">
