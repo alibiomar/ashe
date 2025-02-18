@@ -1,5 +1,5 @@
 // pages/api/update-activity.js
-import { adminDb, admin } from '../../lib/firebaseAdmin';
+import { db, admin } from '../../lib/firebaseAdmin';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   const { uid } = req.body; // Assume uid is passed in the request body
 
   try {
-    const userDoc = adminDb.collection('users').doc(uid);
+    const userDoc = db.collection('users').doc(uid);
     await userDoc.update({
       // Use the serverTimestamp from the admin SDK
       lastActivity: admin.firestore.FieldValue.serverTimestamp()
