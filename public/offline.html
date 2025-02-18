@@ -64,7 +64,16 @@
         <img src="logo.png" alt="ASHE™ Logo" class="logo">
         <h1>You're Offline</h1>
         <p><span class="status-indicator"></span>Please check your internet connection and try again.</p>
-        <button class="button" onclick="location.reload();">Retry Connection</button>
-    </div>
+        <button type="button" class="button" id="retryBtn">
+            Retry Connection
+          </button>
+
+              </div>
 </body>
+          
+<script>
+    document.getElementById('retryBtn').addEventListener('click', function() {
+      location.reload();
+    });
+  </script>
 </html>
