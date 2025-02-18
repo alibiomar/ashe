@@ -105,54 +105,49 @@ export default function Home() {
     fetchTestimonials();
   }, []);
 
-  // Handle loading and error states
   if (loading) {
     return <LoadingSpinner />;
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-red-500 text-xl">{error}</p>
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-100 px-6 text-center">
+        <div className="bg-white p-8 rounded-lg shadow-lg max-w-md">
+          <h2 className="text-2xl font-semibold text-red-600 mb-4">Oops! Something went wrong</h2>
+          <p className="text-gray-700">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
+  
 
   return (
     <Layout>
       <Head>
         <title>ASHE™</title>
-        <meta name="description" content="Crafting timeless elegance through refined tailoring and sustainable mastery." />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-        className="overflow-hidden"
-      >
-        {/* Hero Section */}
-        <HeroSection user={user} firstName={firstName} />
-
-        {/* Product Sections */}
-        <ProductSections />
-
-        {/* Grid Distortion Section */}
-        <GridDistortionSection />
-
-        {/* Testimonials Section */}
-        <TestimonialsSection
-          testimonials={testimonials}
-          currentTestimonialIndex={currentTestimonialIndex}
-          setCurrentTestimonialIndex={(index) => setState((prev) => ({ ...prev, currentTestimonialIndex: index }))}
-        />
-
-        {/* Newsletter Signup Section */}
-        <NewsletterSignupSection />
-
-        {/* Scroll to Top Button */}
-        {showScrollTop && <ScrollToTopButton />}
-      </motion.div>
+      
+      <Suspense fallback={<LoadingSpinner />}>
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+          className="overflow-hidden"
+        >
+          <HeroSection user={user} firstName={firstName} />
+          <ProductSections />
+          <GridDistortionSection />
+          <TestimonialsSection testimonials={testimonials} />
+          <NewsletterSignupSection />
+          {showScrollTop && <ScrollToTopButton />}
+        </motion.div>
+      </Suspense>
     </Layout>
   );
 }

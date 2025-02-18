@@ -66,28 +66,7 @@ export default class MyDocument extends Document {
           <link rel="dns-prefetch" href="https://www.ashe.tn" />
           <meta httpEquiv="x-dns-prefetch-control" content="on" />
           
-          {/* Structured Data */}
-          <script 
-            type="application/ld+json" 
-            dangerouslySetInnerHTML={{ 
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "Organization",
-                "name": "ASHE™",
-                "url": "https://www.ashe.tn",
-                "logo": "https://www.ashe.tn/logo.svg",
-                "sameAs": [
-                  "https://www.instagram.com/ashe.tn",
-                  "https://www.tiktok.com/@ashe.tn"
-                ],
-                "contactPoint": {
-                  "@type": "ContactPoint",
-                  "telephone": "+216 20 986 015",
-                  "contactType": "customer service"
-                }
-              })
-            }} 
-          />
+
         </Head>
         
         <body className="font-montserrat antialiased">
