@@ -1,3 +1,5 @@
+self.__WB_MANIFEST = []; // This is required by next-pwa
+
 
   self.addEventListener('fetch', (event) => {
     if (event.request.mode === 'navigate') {
