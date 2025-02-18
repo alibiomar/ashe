@@ -262,11 +262,12 @@ export default function ContactForm() {
 
               {/* Rating Field */}
               <div className="space-y-1">
-                <label className="block text-sm font-medium text-neutral-700 mb-1">Rating</label>
+                <label className="block text-sm font-medium text-neutral-400 mb-1">Rating</label>
                 <StarRating
                   rating={form.watch('rate')}
                   onChange={(value) => form.setValue('rate', value)}
                   disabled={isBlocked}
+                  className="text-neutral-900"
                 />
                 {form.formState.errors.rate && (
                   <p className="text-red-600 text-sm font-medium mt-1">
