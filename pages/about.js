@@ -73,7 +73,7 @@ export default function About() {
       </Head>
               <Suspense fallback={<LoadingSpinner />}> 
         
-        <div className="min-h-screen bg-white relative">
+        <div className="min-h-screen bg-white relative md:-mt-16">
           {/* Heritage Header */}
           <header className="h-screen flex items-center justify-center p-8 relative">
             <div className="absolute inset-0 z-0">
