@@ -37,7 +37,8 @@ export default function Layout({ children }) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
-        className="flex-1 sm:px-0 w-full"
+        className="flex-1 sm:px-0 w-full "
+        style={{ marginTop: router.pathname === "/" ? 0 : navbarHeight }}
       >
         <AnimatePresence>
           {children}

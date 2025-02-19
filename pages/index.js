@@ -24,7 +24,6 @@ export default function Home() {
     user: null,
     firstName: '',
     testimonials: [],
-    currentTestimonialIndex: 0,
     loading: true,
     error: null,
     showScrollTop: false,
@@ -34,7 +33,6 @@ export default function Home() {
     user,
     firstName,
     testimonials,
-    currentTestimonialIndex,
     loading,
     error,
     showScrollTop,
@@ -113,7 +111,7 @@ export default function Home() {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-100 px-6 text-center">
 
-        <div className="bg-white p-8  shadow-lg max-w-md">
+        <div className="bg-white p-8  shadow-lg max-w-md flex flex-col items-center justify-center ">
         <img src="logo.png" alt="ASHE™ Logo" className="w-32 mb-8" />
           <h2 className="text-2xl font-semibold text-red-600 mb-4">Oops! Something went wrong</h2>
           <p className="text-gray-700">{error}</p>
@@ -140,7 +138,7 @@ export default function Home() {
           initial="hidden"
           animate="visible"
           variants={containerVariants}
-          className="overflow-hidden"
+          className="overflow-hidden "
         >
           <HeroSection user={user} firstName={firstName} />
           <ProductSections />
