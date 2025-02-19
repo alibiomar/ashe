@@ -113,7 +113,7 @@ export default function About() {
 
           {/* Legacy Story */}
           <main>
-            <section className="min-h-screen py-32 px-8 border-t border-black/10">
+            <section className="py-32 px-8 border-t border-black/10">
               <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
                 <motion.div
                   className="space-y-8"
@@ -157,7 +157,7 @@ export default function About() {
             </section>
 
             {/* Value Pillars */}
-            <section className="min-h-screen py-32 px-8 bg-black text-white">
+            <section className="py-32 px-8 bg-black text-white">
               <div className="max-w-6xl mx-auto">
                 <motion.h2
                   className="text-4xl md:text-6xl font-black mb-16 text-center"
@@ -214,7 +214,7 @@ export default function About() {
             </section>
 
             {/* Modern Manifesto */}
-            <section className="min-h-screen py-32 px-8 bg-gray-50">
+            <section className="py-32 px-8 bg-gray-50">
               <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
               <motion.div
   className="relative aspect-square bg-black text-white flex items-center justify-center text-center p-12"
@@ -256,7 +256,7 @@ export default function About() {
             </section>
 
             {/* Community Connection Section */}
-            <section className="min-h-screen py-32 px-8 bg-gradient-to-b from-white to-gray-100">
+            <section className="py-32 px-8 bg-gradient-to-b from-white to-gray-100">
               <div className="max-w-6xl mx-auto text-center">
                 <motion.div
                   className="text-4xl md:text-6xl font-extrabold mb-16 tracking-tight"
