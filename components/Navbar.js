@@ -292,9 +292,9 @@ export default function Navbar({ onHeightChange }) {
               clipPath: 'circle(0% at 100% 0%)',
               transition: { duration: 0.5, ease: [0.33, 1, 0.68, 1] }
             }}
-            className="fixed inset-0 bg-black z-40 pt-20 px-4 flex flex-col justify-center items-center "
+            className="fixed inset-0 bg-black z-40  flex flex-col justify-center items-center "
           >
-            <div className="space-y-10 ">
+            <div className="space-y-6 ">
               {menuItems.map((item) => (
                 <motion.div
                   key={item.path}
@@ -305,7 +305,7 @@ export default function Navbar({ onHeightChange }) {
                   <Link
                     href={item.path}
                     onClick={() => setIsMenuOpen(false)}
-                    className={`flex items-center justify-center space-x-3 text-3xl ${
+                    className={`flex items-center justify-center space-x-3 text-2xl ${
                       isActive(item.path)
                         ? 'text-teal-400'
                         : 'text-gray-300 hover:text-teal-300'
@@ -320,7 +320,7 @@ export default function Navbar({ onHeightChange }) {
 
               <div className="w-full border-t border-gray-800">
                 {!user ? (
-                  <div className="flex flex-col items-start space-y-5">
+                  <div className="flex flex-col mt-4 items-start space-y-5">
                     <Link
                       href="/login"
                       onClick={() => setIsMenuOpen(false)}
