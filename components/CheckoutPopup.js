@@ -327,6 +327,7 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
       setPlacedOrder(orderWithId);
       setUserDataForInvoice(userDoc.data());
       onPlaceOrder(orderWithId);
+      toast.success('Order placed successfully!');
     } catch (error) {
       toast.error(error.message || 'Failed to place order. Please try again.');
     } finally {
@@ -338,7 +339,6 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
   if (placedOrder) {
     return (
       <div className="fixed inset-0 bg-white backdrop-blur-sm flex flex-col justify-center items-center z-50 p-4">
-        <Toaster position="top-center" richColors />
         <div className="bg-white w-full max-w-md p-8 shadow-xl rounded">
           <h2 className="text-2xl font-bold mb-4">Order Confirmation</h2>
           <p className="mb-6">Your order <span className="font-bold">#{placedOrder.id}</span> has been placed successfully.</p>
