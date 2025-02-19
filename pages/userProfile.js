@@ -6,6 +6,7 @@ import { FaUserCircle, FaSignOutAlt, FaKey, FaBox, FaTimes } from "react-icons/f
 import { toast } from "sonner";
 import { useRouter } from "next/router";
 import Layout from "../components/Layout";
+import Head from 'next/head';
 
 const UserProfile = () => {
   const [orders, setOrders] = useState([]);
