@@ -294,7 +294,7 @@ export default function Navbar({ onHeightChange }) {
             }}
             className="fixed inset-0 bg-black z-40 pt-20 px-4 flex flex-col justify-center items-center "
           >
-            <div className="absolute top-[20vh] space-y-10 ">
+            <div className="space-y-10 ">
               {menuItems.map((item) => (
                 <motion.div
                   key={item.path}
@@ -318,7 +318,7 @@ export default function Navbar({ onHeightChange }) {
                 </motion.div>
               ))}
 
-              <div className="w-full border-t border-gray-800 pt-6 mt-6">
+              <div className="w-full border-t border-gray-800">
                 {!user ? (
                   <div className="flex flex-col items-start space-y-5">
                     <Link
