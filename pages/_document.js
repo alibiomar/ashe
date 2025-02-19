@@ -6,6 +6,7 @@ export default class MyDocument extends Document {
       <Html lang="fr" className="scroll-smooth">
         <Head>
           {/* Progressive Web App */}
+          <title>ASHE™</title>
           <link rel="manifest" href="/manifest.json" />
           <meta name="application-name" content="ASHE™" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -51,7 +52,7 @@ export default class MyDocument extends Document {
           <meta property="og:url" content="https://www.ashe.tn" />
           <meta property="og:title" content="ASHE™ - Be Distinct" />
           <meta property="og:description" content="Shop the latest in fashion with ASHE™. Find high-quality clothing for every style." />
-          <meta property="og:image" content="https://www.ashe.tn/og-image.jpg" />
+          <meta property="og:image" content="/og-image.jpg" />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
           
