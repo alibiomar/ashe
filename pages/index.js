@@ -191,7 +191,7 @@ const AnimatedArrow = memo(() => {
 });
 
 const HeroSection = memo(({ user, firstName }) => (
-  <section className="relative w-full h-[92vh] mb-32 overflow-hidden">
+  <section className="relative w-full h-screen mb-32 overflow-hidden">
     <motion.div
       className="absolute inset-0"
       initial={{ scale: 1.1, opacity: 0 }}
@@ -211,9 +211,9 @@ const HeroSection = memo(({ user, firstName }) => (
       </div>
     </motion.div>
 
-    <div className="relative inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30 h-[92vh] flex items-center justify-center pb-16">
+    <div className="relative inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/30 h-screen flex items-center justify-center pb-16">
       <motion.div
-        className="container h-[92vh] gap-5 flex flex-col items-center text-center justify-center"
+        className="container h-screen gap-5 flex flex-col items-center text-center justify-center"
         variants={{
           hidden: { y: 40, opacity: 0 },
           visible: {

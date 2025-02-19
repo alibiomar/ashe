@@ -79,6 +79,8 @@ const config = withPWA({
       'dl.dropboxusercontent.com',
       'firebasestorage.googleapis.com',
       'lh3.googleusercontent.com',
+      'test.ashe.tn',
+      'fastly.picsum.photos',
     ],
     remotePatterns: [
       {
