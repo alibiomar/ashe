@@ -36,7 +36,7 @@
   "display": "standalone",
   "display_override": ["standalone", "window-controls-overlay"],
   "orientation": "any",
-  "theme_color": "#ffffff",
+  "theme_color": "#000000",
   "background_color": "#ffffff",
   "scope": "/",
   "related_applications": [],

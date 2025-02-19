@@ -67,7 +67,7 @@ export default function Home() {
     return () => {
       unsubscribe(); // Remove real-time listener
     };
-  }, [user]); // Re-run when user changes
+  }, [user]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -131,7 +131,10 @@ export default function Home() {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-100 px-6 text-center">
         <div className="bg-white p-8 shadow-lg max-w-md flex flex-col items-center justify-center">
-          <img src="logo.png" alt="ASHE™ Logo" className="w-32 mb-8" />
+          {/* Converted to Next Image for caching and optimization */}
+          <div className="w-32 mb-8 relative h-32">
+            <Image src="/logo.png" alt="ASHE™ Logo" layout="fill" objectFit="contain" />
+          </div>
           <h2 className="text-2xl font-semibold text-red-600 mb-4">Oops! Something went wrong</h2>
           <p className="text-gray-700">{error}</p>
           <button
@@ -218,7 +221,7 @@ const HeroSection = memo(({ user, firstName }) => (
         <Image
           src="/bg.avif"
           alt="Stunning fashion header image"
-          fill
+          layout="fill"
           priority
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 3840px"
@@ -250,7 +253,7 @@ const HeroSection = memo(({ user, firstName }) => (
           textColor="#ffffff"
           strokeColor="#ff0000"
           minFontSize={36}
-          className='pt-[20vh] h-fit md:minFontSize={48}'
+          className="pt-[20vh] h-fit md:minFontSize={48}"
         />
         <div className="flex flex-col items-center mb-14">
           <motion.a
@@ -289,7 +292,6 @@ const HeroSection = memo(({ user, firstName }) => (
   </section>
 ));
 
-
 const ProductSections = memo(() => (
   <section className="container mx-auto px-4 mb-32 grid grid-cols-1 md:grid-cols-2 gap-8">
     {['Featured', 'New Arrivals'].map((section, idx) => (
@@ -305,9 +307,9 @@ const ProductSections = memo(() => (
           <Image
             src={idx === 0 ? '/2.png' : '/1.png'}
             alt={`${section} products image`}
-            fill
-            unoptimized={true}
+            layout="fill"
             className="object-cover transition-transform duration-700 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 3840px"
           />
         </div>
 
@@ -357,28 +359,27 @@ const GridDistortionSection = memo(() => (
 ));
 
 const TestimonialsSection = memo(({ testimonials }) => (
-<section className="px-8 mb-48 flex flex-col-reverse md:flex-row justify-around items-center">
-  <div className="relative">
-    <Carousel
-      items={testimonials}
-      baseWidth={360}
-      autoplay={true}
-      autoplayDelay={3000}
-      pauseOnHover={true}
-      loop={true}
-      round={true}
-    />
-  </div>
-  <motion.h2
-    className="text-6xl font-black text-center mb-16 md:mb-0"
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-  >
-    Voices of Elegance
-  </motion.h2>
-</section>
-
+  <section className="px-8 mb-48 flex flex-col-reverse md:flex-row justify-around items-center">
+    <div className="relative">
+      <Carousel
+        items={testimonials}
+        baseWidth={360}
+        autoplay={true}
+        autoplayDelay={3000}
+        pauseOnHover={true}
+        loop={true}
+        round={true}
+      />
+    </div>
+    <motion.h2
+      className="text-6xl font-black text-center mb-16 md:mb-0"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+    >
+      Voices of Elegance
+    </motion.h2>
+  </section>
 ));
 
 const NewsletterSignupSection = memo(() => (
