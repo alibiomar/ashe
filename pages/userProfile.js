@@ -58,79 +58,104 @@ const UserProfile = () => {
 
   return (
     <Layout>
-        <Head>
-            <title>My Account</title>
-        </Head>
+      <Head>
+        <title>My Account</title>
+      </Head>
       <motion.div
-        ref={menuRef}
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mt-6 mx-auto p-6 max-w-3xl space-y-6"
+        className="mx-auto p-4 md:p-6 lg:p-8 max-w-4xl w-full min-h-screen space-y-8"
       >
         {/* Profile Card */}
-        <div className="bg-white shadow rounded-lg p-6 flex items-center space-x-4 border border-gray-200">
-          <FaUserCircle className="text-gray-500" size={60} />
-          <div>
-            <p className="text-2xl font-semibold text-gray-800">
+        <div className="bg-white p-6 flex flex-col justify-between md:flex-row items-start md:items-center gap-6  transition-all">
+          <div className="flex md:flex-row flex-col items-center gap-4 md:gap-6">
+          <FaUserCircle className="text-gray-400 shrink-0" size={80} />
+          <div className="space-y-2">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
               {auth.currentUser?.displayName}
+            </h1>
+            <p className="text-sm md:text-base text-gray-500 font-medium">
+              {auth.currentUser?.email}
             </p>
-            <p className="text-sm text-gray-500">{auth.currentUser?.email}</p>
-          </div>
+          </div></div>
+          <button
+            onClick={handleLogout}
+            className="group flex items-center p-4 md:p-5 bg-[#46c7c7] rounded-sm hover:bg-gray-400 transition-all md:col-span-2"
+          >
+            <FaSignOutAlt className="mr-4 text-white   transition-colors" size={24} />
+            <span className=" transition-colors text-white font-semibold">
+              Logout
+            </span>
+          </button>
         </div>
 
-        {/* Actions */}
-        <div className="space-y-4">
+        {/* Actions Grid */}
+        <div className="grid gap-4 md:grid-cols-2">
           <button
             onClick={() => setIsPasswordModalOpen(true)}
-            className="w-full flex items-center p-4 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 transition-colors"
+            className="group flex items-center p-4 md:p-5 bg-white  border   rounded-md  transition-all"
           >
-            <FaKey className="mr-3 text-gray-600" size={20} />
-            <span className="text-gray-800 font-medium">Change your password</span>
+            <FaKey className="mr-4 text-gray-500 group-hover:text-gray-700 transition-colors" size={24} />
+            <span className="text-gray-700 font-semibold text-left">
+              Change Password
+              <span className="block text-sm text-gray-400 font-normal mt-1">
+                Update your account security
+              </span>
+            </span>
           </button>
 
           <button
             onClick={() => setIsUnsubscribeModalOpen(true)}
-            className="w-full flex items-center p-4 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 transition-colors"
+            className="group flex items-center p-4 md:p-5 bg-white  border  rounded-md   transition-all"
           >
-            <FaBox className="mr-3 text-gray-600" size={20} />
-            <span className="text-gray-800 font-medium">Unsubscribe from Newsletter</span>
+            <FaBox className="mr-4 text-gray-500 group-hover:text-gray-700 transition-colors" size={24} />
+            <span className="text-gray-700 font-semibold text-left">
+              Newsletter Settings
+              <span className="block text-sm text-gray-400 font-normal mt-1">
+                Manage email preferences
+              </span>
+            </span>
           </button>
 
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center p-4 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 transition-colors"
-          >
-            <FaSignOutAlt className="mr-3 text-gray-600" size={20} />
-            <span className="text-gray-800 font-medium">Logout</span>
-          </button>
+
         </div>
 
         {/* Order History */}
-        <div className="bg-white shadow rounded-lg p-6 border border-gray-200">
-          <h3 className="text-xl font-semibold text-gray-800 flex items-center mb-4">
-            <FaBox className="mr-2 text-gray-600" />
+        <div className="bg-white rounded-xl  p-6 border ">
+          <h3 className="text-xl font-bold text-gray-900 flex items-center mb-4">
+            <FaBox className="mr-3 text-gray-500" />
             Order History
           </h3>
-          <div className="overflow-y-auto max-h-60">
+          <div className="overflow-x-auto">
             {orders.length > 0 ? (
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="pb-2">Order ID</th>
-                    <th className="pb-2">Status</th>
+              <table className="w-full min-w-[500px]">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Order ID</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Status</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Date</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-gray-100">
                   {orders.map((order) => (
-                    <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                      <td className="py-2 text-sm">{order.id}</td>
-                      <td className="py-2 text-sm text-gray-600">{order.status}</td>
+                    <tr key={order.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-4 py-3 text-sm text-gray-600 font-medium">{order.id}</td>
+                      <td className="px-4 py-3">
+                        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          {order.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-500">
+                        {new Date(order.createdAt).toLocaleString()}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             ) : (
-              <p className="text-gray-500 text-sm">No orders found.</p>
+              <div className="text-center py-8">
+                <p className="text-gray-400 text-sm">No orders found</p>
+              </div>
             )}
           </div>
         </div>
@@ -152,6 +177,7 @@ const UserProfile = () => {
   );
 };
 
+// PasswordChangeModal Component
 const PasswordChangeModal = ({ setIsPasswordModalOpen, handleChangePassword }) => {
   const [newPassword, setNewPassword] = useState("");
 
@@ -162,46 +188,51 @@ const PasswordChangeModal = ({ setIsPasswordModalOpen, handleChangePassword }) =
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+      exit={{ opacity: 0, scale: 0.95 }}
+      className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
     >
-      <div className="relative bg-white p-6 rounded-xl shadow-xl w-96">
-        {/* Close Button */}
+      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
         <button
           onClick={() => setIsPasswordModalOpen(false)}
-          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+          className="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-full transition-colors"
         >
-          <FaTimes size={16} />
+          <FaTimes className="text-gray-500" size={20} />
         </button>
-        <h3 className="text-xl font-semibold mb-4">Change Password</h3>
-        <input
-          type="password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          placeholder="New password"
-          className="w-full p-3 mb-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
-        />
-        <div className="flex justify-end space-x-3">
-          <button
-            onClick={() => setIsPasswordModalOpen(false)}
-            className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="px-4 py-2 bg-gray-900 text-white hover:bg-gray-800 rounded-lg transition-colors"
-          >
-            Change Password
-          </button>
+        <h3 className="text-2xl font-bold text-gray-900 mb-6">Change Password</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="Enter new password"
+              className="w-full px-4 py-2.5  border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+            />
+          </div>
+          <div className="flex justify-end gap-3 mt-6">
+            <button
+              onClick={() => setIsPasswordModalOpen(false)}
+              className="px-5 py-2.5 text-gray-600 hover:bg-gray-50  transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              className="px-5 py-2.5 bg-blue-600 text-white hover:bg-blue-700  transition-colors"
+            >
+              Update Password
+            </button>
+          </div>
         </div>
       </div>
     </motion.div>
   );
 };
 
+// UnsubscribeModal Component
 const UnsubscribeModal = ({ user, setIsModalOpen }) => {
   const db = getFirestore();
 
@@ -233,33 +264,32 @@ const UnsubscribeModal = ({ user, setIsModalOpen }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+      exit={{ opacity: 0, scale: 0.95 }}
+      className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
     >
-      <div className="relative bg-gray-900 text-white p-6 rounded-lg shadow-lg w-80">
-        {/* Close Button */}
+      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
         <button
           onClick={() => setIsModalOpen(false)}
-          className="absolute top-3 right-3 text-gray-400 hover:text-gray-200"
+          className="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-full transition-colors"
         >
-          <FaTimes size={16} />
+          <FaTimes className="text-gray-500" size={20} />
         </button>
-        <h3 className="text-lg font-semibold">Are you sure?</h3>
-        <p className="text-gray-400 text-sm mt-2">
-          You will no longer receive our newsletters.
+        <h3 className="text-xl font-bold text-gray-900 mb-4">Unsubscribe from Newsletter</h3>
+        <p className="text-gray-600 mb-6">
+          Are you sure you want to stop receiving our newsletters? You can resubscribe anytime.
         </p>
-        <div className="mt-4 flex justify-end space-x-3">
+        <div className="flex justify-end gap-3">
           <button
             onClick={() => setIsModalOpen(false)}
-            className="bg-gray-700 hover:bg-gray-800 px-4 py-2 rounded transition-colors"
+            className="px-5 py-2.5 text-gray-600 hover:bg-gray-50  transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleUnsubscribe}
-            className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded transition-colors"
+            className="px-5 py-2.5 bg-red-600 text-white hover:bg-red-700  transition-colors"
           >
             Unsubscribe
           </button>

@@ -84,7 +84,7 @@ export default function Navbar({ onHeightChange }) {
       setUser(null);
       setUserData(null);
       toast.success('Successfully logged out');
-      router.push('/login'); // Redirect to login page after logout
+      router.push('/'); // Redirect to login page after logout
     } catch (error) {
       toast.error('Error logging out');
     }
@@ -176,7 +176,7 @@ export default function Navbar({ onHeightChange }) {
         ref={navRef}
         className={`fixed top-0 left-0 right-0 transition-transform duration-300 ${
           isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
-        } bg-black/80 backdrop-blur-lg border-b border-gray-800 z-50`}
+        } bg-black/80 backdrop-blur-lg z-50`}
         aria-label="Main Navigation"
       >
         <motion.div
@@ -285,27 +285,27 @@ export default function Navbar({ onHeightChange }) {
             animate={{
               opacity: 1,
               clipPath: 'circle(150% at 100% 0%)',
-              transition: { duration: 0.4, ease: [0.33, 1, 0.68, 1] }
+              transition: { duration: 0.6, ease: [0.33, 1, 0.68, 1] }
             }}
             exit={{
               opacity: 0,
               clipPath: 'circle(0% at 100% 0%)',
-              transition: { duration: 0.3, ease: [0.33, 1, 0.68, 1] }
+              transition: { duration: 0.5, ease: [0.33, 1, 0.68, 1] }
             }}
-            className="fixed inset-0 bg-black/90 backdrop-blur-xl z-40 pt-20 px-4"
+            className="fixed inset-0 bg-black z-40 pt-20 px-4 flex flex-col justify-center items-center "
           >
-            <div className="flex flex-col items-center space-y-6">
+            <div className="absolute top-[20vh] space-y-10 ">
               {menuItems.map((item) => (
                 <motion.div
                   key={item.path}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="w-full text-center"
+                  className="w-full flex " 
                 >
                   <Link
                     href={item.path}
                     onClick={() => setIsMenuOpen(false)}
-                    className={`flex items-center justify-center space-x-3 text-lg ${
+                    className={`flex items-center justify-center space-x-3 text-3xl ${
                       isActive(item.path)
                         ? 'text-teal-400'
                         : 'text-gray-300 hover:text-teal-300'
@@ -320,7 +320,7 @@ export default function Navbar({ onHeightChange }) {
 
               <div className="w-full border-t border-gray-800 pt-6 mt-6">
                 {!user ? (
-                  <div className="flex flex-col space-y-5">
+                  <div className="flex flex-col items-start space-y-5">
                     <Link
                       href="/login"
                       onClick={() => setIsMenuOpen(false)}
@@ -341,13 +341,13 @@ export default function Navbar({ onHeightChange }) {
                     </Link>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center space-x-4">
-                    <FaUserCircle className="h-10 w-10 text-teal-400" aria-hidden="true" />
-                    <div>
-                      <p className="text-base text-gray-100">
-                        {userData?.firstName} {userData?.lastName}
-                      </p>
-                      <p className="text-sm text-gray-400">{user.email}</p>
+                  <div className="flex flex-col space-y-5 items-start">
+                    <div
+                      onClick={handleLogout}
+                      className="flex items-center justify-center space-x-3 text-[#46c7c7] hover:text-white-400 py-2"
+                    >
+                      <FaSignInAlt className="h-5 w-5" />
+                      <span className="text-lg">Logout</span>
                     </div>
                   </div>
                 )}
