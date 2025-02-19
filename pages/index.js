@@ -9,7 +9,8 @@ import Image from 'next/image';
 import ErrorBoundary from '../components/ErrorBoundary';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-import Carousel from '../components/Carousel'; // Import the Carousel component
+import Carousel from '../components/Carousel';
+import { setupRealTimeActivityListener, updateUserActivity } from '../utils/updateActivity'; // Import activity functions
 
 const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
   suspense: true,
@@ -29,14 +30,7 @@ export default function Home() {
     showScrollTop: false,
   });
 
-  const {
-    user,
-    firstName,
-    testimonials,
-    loading,
-    error,
-    showScrollTop,
-  } = state;
+  const { user, firstName, testimonials, loading, error, showScrollTop } = state;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -48,6 +42,32 @@ export default function Home() {
       },
     },
   };
+
+  // Add activity tracking logic
+  useEffect(() => {
+    let unsubscribe = () => {};
+
+    const initializeActivity = async () => {
+      if (user?.uid) {
+        try {
+          // Set up real-time listener
+          unsubscribe = setupRealTimeActivityListener(user.uid);
+
+          // Update initial activity
+          await updateUserActivity(user.uid);
+        } catch (error) {
+          console.error('Activity tracking error:', error);
+        }
+      }
+    };
+
+    initializeActivity();
+
+    // Cleanup function
+    return () => {
+      unsubscribe(); // Remove real-time listener
+    };
+  }, [user]); // Re-run when user changes
 
   useEffect(() => {
     const handleScroll = () => {
@@ -110,14 +130,13 @@ export default function Home() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-100 px-6 text-center">
-
-        <div className="bg-white p-8  shadow-lg max-w-md flex flex-col items-center justify-center ">
-        <img src="logo.png" alt="ASHE™ Logo" className="w-32 mb-8" />
+        <div className="bg-white p-8 shadow-lg max-w-md flex flex-col items-center justify-center">
+          <img src="logo.png" alt="ASHE™ Logo" className="w-32 mb-8" />
           <h2 className="text-2xl font-semibold text-red-600 mb-4">Oops! Something went wrong</h2>
           <p className="text-gray-700">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-4 px-6 py-2 bg-red-500 text-white  hover:bg-red-600 transition"
+            className="mt-4 px-6 py-2 bg-red-500 text-white hover:bg-red-600 transition"
           >
             Try Again
           </button>
@@ -125,20 +144,19 @@ export default function Home() {
       </div>
     );
   }
-  
 
   return (
     <Layout>
       <Head>
         <title>ASHE™</title>
       </Head>
-      
+
       <Suspense fallback={<LoadingSpinner />}>
         <motion.div
           initial="hidden"
           animate="visible"
           variants={containerVariants}
-          className="overflow-hidden "
+          className="overflow-hidden"
         >
           <HeroSection user={user} firstName={firstName} />
           <ProductSections />
