@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getAuth, updatePassword } from "firebase/auth";
-import { getFirestore, collection, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { getFirestore, collection,getDoc, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { FaUserCircle, FaSignOutAlt, FaKey, FaBox, FaTimes } from "react-icons/fa";
 import { toast } from "sonner";
 import { useRouter } from "next/router";
@@ -16,9 +16,28 @@ const UserProfile = () => {
   const auth = getAuth();
   const db = getFirestore();
   const router = useRouter();
-
+  const user = auth.currentUser;
+const [userData, setUserData] = useState(null);
   useEffect(() => {
-    const user = auth.currentUser;
+    if (!user?.uid) return;
+  
+    const fetchUserData = async () => {
+      try {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setUserData(userData); // Assuming you have a state to store user data
+        }
+      } catch (error) {
+        toast.error("Error fetching user data!");
+        console.error("Error fetching user data:", error);
+      }
+    };
+  
+    fetchUserData();
+  }, [user?.uid]);
+  
+  useEffect(() => {
     if (!user?.uid) return;
     const fetchOrders = async () => {
       try {
@@ -67,12 +86,12 @@ const UserProfile = () => {
         className="mx-auto p-4 md:p-6 lg:p-8 max-w-4xl w-full min-h-screen space-y-8"
       >
         {/* Profile Card */}
-        <div className="bg-white p-6 flex flex-col justify-between md:flex-row items-start md:items-center gap-6  transition-all">
-          <div className="flex md:flex-row flex-col items-center gap-4 md:gap-6">
+        <div className="bg-white p-6 flex flex-col justify-between md:flex-row md:items-center items-center md:gap-6 gap-10  transition-all">
+          <div className="flex md:flex-row  items-center gap-8 md:gap-8 md:justify-center">
           <FaUserCircle className="text-gray-400 shrink-0" size={80} />
-          <div className="space-y-2">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-              {auth.currentUser?.firstName} {auth.currentUser?.lastName}
+            <div className="space-y-2 ">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 uppercase">
+              {userData?.firstName} {userData?.lastName}
             </h1>
             <p className="text-sm md:text-base text-gray-500 font-medium">
               {auth.currentUser?.email}
@@ -80,7 +99,7 @@ const UserProfile = () => {
           </div></div>
           <button
             onClick={handleLogout}
-            className="group flex items-center p-4 md:p-5 bg-[#46c7c7] rounded-sm hover:bg-gray-400 transition-all md:col-span-2"
+            className="flex w-10/12 justify-center md:w-40  items-center p-4 md:p-5 bg-[#46c7c7] rounded-md md:rounded-sm hover:bg-accent transition-all "
           >
             <FaSignOutAlt className="mr-4 text-white   transition-colors" size={24} />
             <span className=" transition-colors text-white font-semibold">
@@ -177,7 +196,6 @@ const UserProfile = () => {
   );
 };
 
-// PasswordChangeModal Component
 const PasswordChangeModal = ({ setIsPasswordModalOpen, handleChangePassword }) => {
   const [newPassword, setNewPassword] = useState("");
 
@@ -188,42 +206,45 @@ const PasswordChangeModal = ({ setIsPasswordModalOpen, handleChangePassword }) =
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
+      initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
+      exit={{ opacity: 0, scale: 0.98 }}
       className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
     >
-      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+      <div className="relative bg-white rounded-lg shadow-sm w-full max-w-md p-6 md:p-8">
         <button
           onClick={() => setIsPasswordModalOpen(false)}
-          className="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-full transition-colors"
+          className="absolute top-3 right-3 p-2 hover:bg-gray-50 rounded-md transition-colors"
         >
-          <FaTimes className="text-gray-500" size={20} />
+          <FaTimes className="text-gray-400" size={18} />
         </button>
-        <h3 className="text-2xl font-bold text-gray-900 mb-6">Change Password</h3>
-        <div className="space-y-4">
+        
+        <h3 className="text-xl font-semibold text-gray-900 mb-6">Change Password</h3>
+        
+        <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+            <label className="block text-sm text-gray-600 mb-2">New Password</label>
             <input
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="Enter new password"
-              className="w-full px-4 py-2.5  border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+              className="w-full px-4 py-3 border border-gray-200 rounded-md focus:ring-1 focus:ring-primary outline-none"
             />
           </div>
-          <div className="flex justify-end gap-3 mt-6">
+          
+          <div className="flex justify-end gap-4">
             <button
               onClick={() => setIsPasswordModalOpen(false)}
-              className="px-5 py-2.5 text-gray-600 hover:bg-gray-50  transition-colors"
+              className="px-5 py-2 text-gray-600 hover:text-gray-800 transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
-              className="px-5 py-2.5 bg-blue-600 text-white hover:bg-blue-700  transition-colors"
+              className="px-5 py-2 bg-highlight text-white rounded-md hover:bg-accent transition-colors"
             >
-              Update Password
+              Update
             </button>
           </div>
         </div>
@@ -232,7 +253,7 @@ const PasswordChangeModal = ({ setIsPasswordModalOpen, handleChangePassword }) =
   );
 };
 
-// UnsubscribeModal Component
+
 const UnsubscribeModal = ({ user, setIsModalOpen }) => {
   const db = getFirestore();
 
@@ -264,39 +285,43 @@ const UnsubscribeModal = ({ user, setIsModalOpen }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
+      initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
+      exit={{ opacity: 0, scale: 0.98 }}
       className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
     >
-      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+      <div className="relative bg-white rounded-lg shadow-sm w-full max-w-md p-6 md:p-8">
         <button
           onClick={() => setIsModalOpen(false)}
-          className="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-full transition-colors"
+          className="absolute top-3 right-3 p-2 hover:bg-gray-50 rounded-md transition-colors"
         >
-          <FaTimes className="text-gray-500" size={20} />
+          <FaTimes className="text-gray-400" size={18} />
         </button>
-        <h3 className="text-xl font-bold text-gray-900 mb-4">Unsubscribe from Newsletter</h3>
-        <p className="text-gray-600 mb-6">
-          Are you sure you want to stop receiving our newsletters? You can resubscribe anytime.
+
+        <h3 className="text-xl font-semibold text-gray-900 mb-4">Unsubscribe</h3>
+        
+        <p className="text-gray-500 text-sm mb-6 leading-relaxed">
+          You'll stop receiving our newsletters. Resubscribe anytime.
         </p>
-        <div className="flex justify-end gap-3">
+
+        <div className="flex justify-end gap-4">
           <button
             onClick={() => setIsModalOpen(false)}
-            className="px-5 py-2.5 text-gray-600 hover:bg-gray-50  transition-colors"
+            className="px-5 py-2 text-gray-600 hover:text-gray-800 transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleUnsubscribe}
-            className="px-5 py-2.5 bg-red-600 text-white hover:bg-red-700  transition-colors"
+            className="px-5 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
           >
-            Unsubscribe
+            Confirm
           </button>
         </div>
       </div>
     </motion.div>
   );
 };
+
 
 export default UserProfile;
