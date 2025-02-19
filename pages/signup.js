@@ -124,7 +124,7 @@ export default function Signup() {
           {/* Image section for mobile */}
           <div className="md:hidden">
             <img
-              src="/image_h.jpg"
+              src="/image_h.avif"
               alt="Signup"
               className="w-full h-48 object-cover"
             />
@@ -134,7 +134,7 @@ export default function Signup() {
             {/* Image section for larger screens */}
             <div className="hidden md:block">
               <img
-                src="/image_h.jpg"
+                src="/image_h.avif"
                 alt="Signup"
                 className="w-full h-full object-cover"
               />

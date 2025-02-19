@@ -31,21 +31,7 @@
       "purpose": "maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "screenshots-desktop-wide.png",
-      "sizes": "1197x672",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Desktop View"
-    },
-    {
-      "src": "screenshots-mobile-home.png",
-      "sizes": "448x797",
-      "type": "image/png",
-      "label": "Mobile Homepage"
-    }
-  ],
+
   "start_url": "/",
   "display": "standalone",
   "display_override": ["standalone", "window-controls-overlay"],

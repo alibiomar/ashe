@@ -143,7 +143,7 @@ export default function Login() {
           {/* Image section */}
           <div className="md:hidden">
             <img
-              src="/image_h.jpg"
+              src="/image_h.avif"
               alt="Login"
               className="w-full h-48 object-cover"
             />
@@ -153,7 +153,7 @@ export default function Login() {
             {/* Image for larger screens */}
             <div className="hidden md:block">
               <img
-                src="/image_h.jpg"
+                src="/image_h.avif"
                 alt="Login"
                 className="w-full h-full object-cover"
               />

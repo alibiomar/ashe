@@ -366,7 +366,7 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
         {/* Image Section */}
         <div className="relative h-64 lg:h-full overflow-hidden">
           <img
-            src="Delivery_Van.jpg"
+            src="Delivery_Van.avif"
             alt="Checkout Visual"
             className="object-cover w-full h-full"
           />

@@ -198,7 +198,7 @@ const HeroSection = memo(({ user, firstName }) => (
     >
       <div className="relative w-full hero-image-container">
         <Image
-          src="/bg.jpg"
+          src="/bg.avif"
           alt="Stunning fashion header image"
           fill
           priority
@@ -285,7 +285,7 @@ const ProductSections = memo(() => (
       >
         <div className="relative h-80 mb-8 overflow-hidden">
           <Image
-            src={idx === 0 ? '/11425.png' : '/xsc.png'}
+            src={idx === 0 ? '/2.png' : '/1.png'}
             alt={`${section} products image`}
             fill
             unoptimized={true}
