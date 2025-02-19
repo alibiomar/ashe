@@ -27,18 +27,19 @@ export default class MyDocument extends Document {
           
           {/* Fonts */}
           <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-          <link 
-            rel="preload" 
-            href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" 
-            as="style" 
-            crossOrigin="anonymous"
-          />
-          <link 
-            href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" 
-            rel="stylesheet" 
-            crossOrigin="anonymous"
-          />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+<link 
+  rel="preload" 
+  href="https://fonts.gstatic.com/s/montserrat/v25/JTUSjIg1_i6t8kCHKm459Wlhzg.woff2" 
+  as="font" 
+  type="font/woff2" 
+  crossOrigin="anonymous"
+/>
+<link 
+  href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" 
+  rel="stylesheet" 
+  crossOrigin="anonymous"
+/>
           
           {/* SEO & Social */}
           <meta name="description" content="Shop the latest in fashion with ASHE™. Find high-quality clothing for every style." />
