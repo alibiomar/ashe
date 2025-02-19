@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Head from 'next/head';
 import Layout from '../components/Layout';
 import Image from 'next/image';
@@ -62,6 +62,8 @@ export default function About() {
 
   return (
     <>
+
+      <Layout>
       <Head>
         <title>About Us | ASHE™</title>
         <meta
@@ -69,19 +71,23 @@ export default function About() {
           content="Step into the world of ASHE: a legacy of timeless craftsmanship reimagined for the modern rebel. Discover how tradition fuels our fearless designs."
         />
       </Head>
-      <Layout>
+              <Suspense fallback={<LoadingSpinner />}> 
+        
         <div className="min-h-screen bg-white relative">
           {/* Heritage Header */}
           <header className="h-screen flex items-center justify-center p-8 relative">
             <div className="absolute inset-0 z-0">
-              <Image
-                src="/heritage-hero.avif"
-                alt="Archival photo of a master tailor at work"
-                fill
-                objectFit="cover"
-                className="opacity-20"
-                priority
-              />
+            <Image
+              src="/heritage-hero.avif"
+              alt="Archival photo of a master tailor at work"
+              fill
+              objectFit="cover"
+              className="opacity-20"
+              priority
+              placeholder="blur"
+              blurDataURL="/heritage-hero-placeholder.avif"
+            />
+
             </div>
             <motion.div
               className="max-w-6xl mx-auto text-center"
@@ -406,6 +412,8 @@ export default function About() {
         </motion.button>
           )}
         </div>
+              </Suspense>
+        
       </Layout>
     </>
   );
