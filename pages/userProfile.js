@@ -72,7 +72,7 @@ const UserProfile = () => {
           <FaUserCircle className="text-gray-400 shrink-0" size={80} />
           <div className="space-y-2">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-              {auth.currentUser?.displayName}
+              {auth.currentUser?.firstName} {auth.currentUser?.lastName}
             </h1>
             <p className="text-sm md:text-base text-gray-500 font-medium">
               {auth.currentUser?.email}
