@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Disallow: /userProfile/
+Disallow: /login/
+Disallow: /signup/
+Disallow: /basket/
+Disallow: /api/
+Disallow: /api/send-email
+Disallow: /api/send-order-email
+Disallow: /api/update-activity
+
+# Crawl-delay: 10
+# Add crawl delay if needed for server load management
+ 

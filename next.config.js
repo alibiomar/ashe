@@ -15,12 +15,15 @@ const config = withPWA({
   },
 
   assetPrefix: process.env.NODE_ENV === 'production' ? 'https://test.ashe.tn' : '',
-
   async rewrites() {
     return [
       {
         source: '/_next/dynamic-css-manifest.json',
         destination: '/dynamic-css-manifest.json',
+      },
+      {
+        source: '/sitemap.xml',
+        destination: '/api/sitemap',
       },
     ];
   },
