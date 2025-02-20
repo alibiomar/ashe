@@ -293,7 +293,7 @@ const HeroSection = memo(({ user, firstName }) => (
 
 const ProductSections = memo(() => (
   <section className="container mx-auto px-4 mb-32 grid grid-cols-1 md:grid-cols-2 gap-8">
-    {['Featured', 'New Arrivals'].map((section, idx) => (
+    {['New Arrivals','Featured'].map((section, idx) => (
       <motion.div
         key={section}
         className={`group relative p-8 overflow-hidden ${idx === 0 ? 'bg-white' : 'bg-black text-white'}`}
@@ -304,7 +304,7 @@ const ProductSections = memo(() => (
       >
         <div className="relative h-80 mb-8 overflow-hidden">
           <Image
-            src={idx === 0 ? '/placeholder-art.svg' : 'https://drive.google.com/file/d/1Rzbia0nZ79L4HYvCXDqDTnP_0WzJSFu6/preview'}
+            src={idx === 0 ? '/placeholder-art.svg' : 'https://drive.google.com/uc?export=view&id=1Rzbia0nZ79L4HYvCXDqDTnP_0WzJSFu6'}
             alt={`${section} products image`}
             layout="fill"
             className="object-cover transition-transform duration-700 group-hover:scale-105"

@@ -33,13 +33,13 @@ const config = withPWA({
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "connect-src 'self' https://fastly.picsum.photos/ https://dl.dropboxusercontent.com/ https://picsum.photos/ https://fonts.gstatic.com/s/montserrat/ https://auth.ashe.tn/auth/verify-email https://auth.ashe.tn/auth/send-password-reset https://auth.ashe.tn https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://apis.google.com",
+              "connect-src 'self' https://fastly.picsum.photos/ https://drive.google.com/ https://picsum.photos/ https://fonts.gstatic.com/ https://fonts.googleapis.com/ https://auth.ashe.tn/auth/verify-email https://auth.ashe.tn/auth/send-password-reset https://auth.ashe.tn https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://apis.google.com",
               "script-src 'self' 'unsafe-eval' https://www.gstatic.com https://apis.google.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "img-src 'self' data: blob: https://*.googleusercontent.com https://dl.dropboxusercontent.com/ https://firebasestorage.googleapis.com https://picsum.photos https://fastly.picsum.photos",
+              "img-src 'self' data: blob: https://*.googleusercontent.com https://drive.google.com/ https://firebasestorage.googleapis.com https://picsum.photos https://fastly.picsum.photos",
               "frame-src 'self' https://securetoken.googleapis.com https://ashe-comm.firebaseapp.com",
               "form-action 'self'",
-              "font-src 'self' https://fonts.gstatic.com https://res.cloudinary.com data:",
+              "font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com/ https://res.cloudinary.com data:",
               "media-src 'self' https://*.firebaseio.com"
             ].join('; ')
           },
@@ -76,7 +76,7 @@ const config = withPWA({
   images: {
     domains: [
       'via.placeholder.com',
-      'dl.dropboxusercontent.com',
+      'drive.google.com',
       'firebasestorage.googleapis.com',
       'lh3.googleusercontent.com',
       'test.ashe.tn',
@@ -85,15 +85,11 @@ const config = withPWA({
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**.dropbox.com',
+        hostname: '**.google.com',
       },
       {
         protocol: 'https',
         hostname: 'via.placeholder.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'dl.dropboxusercontent.com',
       },
       {
         protocol: 'https',
