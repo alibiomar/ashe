@@ -10,141 +10,149 @@ import ErrorBoundary from '../components/ErrorBoundary';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import Carousel from '../components/Carousel';
-import { setupRealTimeActivityListener, updateUserActivity } from '../utils/updateActivity'; // Import activity functions
+import { setupRealTimeActivityListener, updateUserActivity } from '../utils/updateActivity';
 
+// Constants
+const SCROLL_THRESHOLD = 300;
+const DEFAULT_USER_NAME = 'Valued User';
+
+// Dynamic imports
 const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
   suspense: true,
 });
 
-// Lazy-loaded components for improved performance
 const GridDistortion = lazy(() => import('../components/GridDistortion'));
 const NewsletterSignup = lazy(() => import('../components/NewsletterSignup'));
 
-export default function Home() {
-  const [state, setState] = useState({
-    user: null,
-    firstName: '',
-    testimonials: [],
-    loading: true,
-    error: null,
-    showScrollTop: false,
-  });
-
-  const { user, firstName, testimonials, loading, error, showScrollTop } = state;
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        when: 'beforeChildren',
-      },
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      when: 'beforeChildren',
     },
-  };
+  },
+};
 
-  // Add activity tracking logic
-  useEffect(() => {
-    let unsubscribe = () => {};
-
-    const initializeActivity = async () => {
-      if (user?.uid) {
-        try {
-          // Set up real-time listener
-          unsubscribe = setupRealTimeActivityListener(user.uid);
-
-          // Update initial activity
-          await updateUserActivity(user.uid);
-        } catch (error) {
-        }
-      }
-    };
-
-    initializeActivity();
-
-    // Cleanup function
-    return () => {
-      unsubscribe(); // Remove real-time listener
-    };
-  }, [user]);
+// Custom hooks
+const useScrollToTop = () => {
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setState((prev) => ({ ...prev, showScrollTop: window.scrollY > 300 }));
+      setShowScrollTop(window.scrollY > SCROLL_THRESHOLD);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Listen for auth state changes and fetch user data if logged in.
+  return showScrollTop;
+};
+
+const useUserData = () => {
+  const [userData, setUserData] = useState({
+    user: null,
+    firstName: '',
+    error: null,
+  });
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        setState((prev) => ({ ...prev, user: currentUser }));
-        try {
-          const userDocRef = doc(db, 'users', currentUser.uid);
-          const userDoc = await getDoc(userDocRef);
-          setState((prev) => ({
-            ...prev,
-            firstName: userDoc.exists() ? userDoc.data().firstName || 'Valued User' : 'Valued User',
-          }));
-        } catch (err) {
-          setState((prev) => ({ ...prev, error: 'Failed to load user data', firstName: 'Valued User' }));
-        }
-      } else {
-        setState((prev) => ({ ...prev, user: null, firstName: '' }));
+      if (!currentUser) {
+        setUserData({ user: null, firstName: '', error: null });
+        return;
+      }
+
+      try {
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        setUserData({
+          user: currentUser,
+          firstName: userDoc.exists() ? userDoc.data().firstName || DEFAULT_USER_NAME : DEFAULT_USER_NAME,
+          error: null,
+        });
+      } catch (err) {
+        setUserData({
+          user: currentUser,
+          firstName: DEFAULT_USER_NAME,
+          error: 'Failed to load user data',
+        });
       }
     });
+
     return () => unsubscribe();
   }, []);
 
-  // Fetch testimonials from Firestore
+  return userData;
+};
+
+const useTestimonials = () => {
+  const [state, setState] = useState({
+    testimonials: [],
+    loading: true,
+    error: null,
+  });
+
   useEffect(() => {
     const fetchTestimonials = async () => {
-      setState((prev) => ({ ...prev, loading: true }));
       try {
-        const testimonialsCollection = collection(db, 'testimonials');
-        const querySnapshot = await getDocs(testimonialsCollection);
-        const testimonialsList = querySnapshot.docs.map((doc) => ({
+        const snapshot = await getDocs(collection(db, 'testimonials'));
+        const testimonialsList = snapshot.docs.map((doc) => ({
           id: doc.id,
           name: doc.data().name || 'Anonymous',
           review: doc.data().review || 'No review provided',
           rating: Number(doc.data().rating) || 0,
         }));
-        setState((prev) => ({ ...prev, testimonials: testimonialsList }));
+        setState({ testimonials: testimonialsList, loading: false, error: null });
       } catch (err) {
-        setState((prev) => ({ ...prev, error: 'Failed to load testimonials' }));
-      } finally {
-        setState((prev) => ({ ...prev, loading: false }));
+        setState({ testimonials: [], loading: false, error: 'Failed to load testimonials' });
       }
     };
+
     fetchTestimonials();
   }, []);
+
+  return state;
+};
+
+const useActivityTracking = (user) => {
+  useEffect(() => {
+    let unsubscribe = () => {};
+
+    const initializeActivity = async () => {
+      if (user?.uid) {
+        try {
+          unsubscribe = setupRealTimeActivityListener(user.uid);
+          await updateUserActivity(user.uid);
+        } catch (error) {
+          console.error('Activity tracking error:', error);
+        }
+      }
+    };
+
+    initializeActivity();
+    return () => unsubscribe();
+  }, [user]);
+};
+
+// Component
+export default function Home() {
+  const { user, firstName, error: userError } = useUserData();
+  const { testimonials, loading, error: testimonialError } = useTestimonials();
+  const showScrollTop = useScrollToTop();
+  
+  useActivityTracking(user);
+
+  const error = userError || testimonialError;
 
   if (loading) {
     return <LoadingSpinner />;
   }
 
   if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-100 px-6 text-center">
-        <div className="bg-white p-8 shadow-lg max-w-md flex flex-col items-center justify-center">
-          {/* Converted to Next Image for caching and optimization */}
-          <div className="w-32 mb-8 relative h-32">
-            <Image src="/logo.png" alt="ASHE™ Logo" layout="fill" objectFit="contain" />
-          </div>
-          <h2 className="text-2xl font-semibold text-red-600 mb-4">Oops! Something went wrong</h2>
-          <p className="text-gray-700">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="mt-4 px-6 py-2 bg-red-500 text-white hover:bg-red-600 transition"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
+    return <ErrorDisplay error={error} />;
   }
 
   return (
@@ -172,6 +180,24 @@ export default function Home() {
   );
 }
 
+// Error Display Component
+const ErrorDisplay = memo(({ error }) => (
+  <div className="flex flex-col items-center justify-center h-screen bg-gray-100 px-6 text-center">
+    <div className="bg-white p-8 shadow-lg max-w-md flex flex-col items-center justify-center">
+      <div className="w-32 mb-8 relative h-32">
+        <Image src="/logo.png" alt="ASHE™ Logo" layout="fill" objectFit="contain" />
+      </div>
+      <h2 className="text-2xl font-semibold text-red-600 mb-4">Oops! Something went wrong</h2>
+      <p className="text-gray-700">{error}</p>
+      <button
+        onClick={() => window.location.reload()}
+        className="mt-4 px-6 py-2 bg-red-500 text-white hover:bg-red-600 transition"
+      >
+        Try Again
+      </button>
+    </div>
+  </div>
+));
 const AnimatedArrow = memo(() => {
   return (
     <div className="flex flex-col items-center ">
