@@ -78,7 +78,7 @@ export default function About() {
           <header className="h-screen flex items-center justify-center p-8 relative">
             <div className="absolute inset-0 z-0">
             <Image
-              src="/heritage-hero.avif"
+              src="/heritage-hero.webp"
               alt="Archival photo of a master tailor at work"
               fill
               objectFit="cover"
@@ -139,7 +139,7 @@ export default function About() {
                 >
                   {/* Image */}
                   <img
-                    src="/sewing.avif"
+                    src="/sewing.webp"
                     className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                     alt="Close-up of sewing in progress"
                   />

@@ -219,7 +219,7 @@ const HeroSection = memo(({ user, firstName }) => (
     >
       <div className="relative w-full hero-image-container">
         <Image
-          src="/bg.avif"
+          src="/bg.webp"
           alt="Stunning fashion header image"
           layout="fill"
           priority
