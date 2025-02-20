@@ -84,21 +84,22 @@ export default function Footer() {
             <div className="space-y-4">
               <h3 className="text-sm font-bold uppercase tracking-wider text-gray-300">Connect</h3>
               <div className="flex space-x-4">
-                <a
-                  href="https://www.instagram.com/ashe.tn/"
+  <a
+    href="https://www.instagram.com/ashe.tn/"
+    aria-label="Visit our Instagram profile"
+    className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-all duration-300 group"
+  >
+    <FaInstagram className="h-5 w-5 text-gray-400 group-hover:text-white" />
+  </a>
+  <a
+    href="https://www.tiktok.com/@ashe.tn"
+    aria-label="Visit our TikTok profile"
+    className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-all duration-300 group"
+  >
+    <FaTiktok className="h-5 w-5 text-gray-400 group-hover:text-white" />
+  </a>
+</div>
 
-                  className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-all duration-300 group"
-                >
-                  <FaInstagram className="h-5 w-5 text-gray-400 group-hover:text-white" />
-                </a>
-                <a
-                  href="https://www.tiktok.com/@ashe.tn"
-
-                  className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-all duration-300 group"
-                >
-                  <FaTiktok className="h-5 w-5 text-gray-400 group-hover:text-white" />
-                </a>
-              </div>
             </div>
 
             <div className="space-y-4">

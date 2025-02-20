@@ -321,13 +321,24 @@ export default function ContactForm() {
               </a>
               <span className="text-neutral-400">•</span>
               <div className="flex gap-4">
-                <a href="https://www.tiktok.com/@ashe.tn" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 transition-colors">
-                  TikTok
-                </a>
-                <a href="https://www.instagram.com/ashe.tn" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 transition-colors">
-                  Instagram
-                </a>
-              </div>
+  <a
+    href="https://www.tiktok.com/@ashe.tn"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="hover:text-neutral-800 transition-colors duration-300"
+  >
+    TikTok
+  </a>
+  <a
+    href="https://www.instagram.com/ashe.tn"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="hover:text-neutral-800 transition-colors duration-300"
+  >
+    Instagram
+  </a>
+</div>
+
             </div>
           </div>
         </div>
