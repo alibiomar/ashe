@@ -35,7 +35,7 @@
   "start_url": "/",
   "display": "standalone",
   "display_override": ["standalone", "window-controls-overlay"],
-  "orientation": "any",
+  "orientation": "portrait",
   "theme_color": "#000000",
   "background_color": "#ffffff",
   "scope": "/",
