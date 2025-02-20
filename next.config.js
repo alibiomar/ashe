@@ -21,14 +21,16 @@ const config = withPWA({
         source: '/_next/dynamic-css-manifest.json',
         destination: '/dynamic-css-manifest.json',
       },
-      {
-        source: '/sitemap.xml',
-        destination: '/api/sitemap',
-      },
     ];
   },
   async headers() {
     return [
+      {
+        source: '/sitemap.xml',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=86400, s-maxage=86400' }
+        ]
+      },
       {
         source: '/:path*',
         headers: [

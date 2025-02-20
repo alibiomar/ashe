@@ -1,5 +1,3 @@
-import { promises as fs } from 'fs';
-
 const DOMAIN = process.env.SITE_URL || 'https://ashe.tn';
 const lastmod = new Date().toISOString();
 
@@ -36,7 +34,7 @@ export async function getServerSideProps({ res }) {
   try {
     const sitemap = generateSiteMap();
 
-    // Set appropriate headers and cache for one day.
+    // Set the XML content type and caching headers
     res.setHeader('Content-Type', 'text/xml');
     res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=86400');
     
