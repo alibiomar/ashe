@@ -5,6 +5,7 @@ import { createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
 import { toast, Toaster } from 'sonner';
+import Image from 'next/image';
 
 export default function Signup() {
   const [firstName, setFirstName] = useState('');
@@ -123,7 +124,7 @@ export default function Signup() {
         <div className="w-full max-w-2xl mx-auto   bg-white shadow-lg overflow-hidden">
           {/* Image section for mobile */}
           <div className="md:hidden">
-            <img
+            <Image
               src="/image_h.avif"
               alt="Signup"
               className="w-full h-48 object-cover"
@@ -133,7 +134,7 @@ export default function Signup() {
           <div className="grid grid-cols-1 md:grid-cols-2">
             {/* Image section for larger screens */}
             <div className="hidden md:block">
-              <img
+              <Image
                 src="/image_h.avif"
                 alt="Signup"
                 className="w-full h-full object-cover"

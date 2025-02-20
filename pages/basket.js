@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import { toast } from 'sonner';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 
 const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
   suspense: true,
@@ -262,7 +263,7 @@ export default function Basket() {
               {basket.length === 0 ? (
                 <div className="text-center flex items-center flex-col space-y-8">
                   <div className="w-40 mb-6 animate-bounce">
-                    <img src="/basket.svg" alt="Empty Basket" />
+                    <Image src="/basket.svg" alt="Empty Basket" />
                   </div>
                   <p className="text-xl text-gray-600 font-medium tracking-wide">
                     Awaiting your selection
@@ -287,7 +288,7 @@ export default function Basket() {
                         className="group flex items-center p-6 hover:bg-gray-100 transition-all duration-300 animate-fadeIn"
                       >
                         <div className="relative w-24 h-24 flex-shrink-0">
-                          <img
+                          <Image
                             src={item?.images?.[0] || '/placeholder-art.svg'}
                             alt={item.name}
                             className="w-full h-auto object-contain rounded-none"
@@ -384,7 +385,7 @@ export default function Basket() {
                     <div className="flex items-center justify-between mb-6">
                       <div>
                         <h2 className="text-2xl text-white">Total Summary</h2>
-                        <p className="text-gray-600 mt-1 text-sm">
+                        <p className="text-gray-400 mt-1 text-sm">
                           {basketCount} premium items selected
                         </p>
                       </div>

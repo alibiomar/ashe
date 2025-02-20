@@ -138,7 +138,7 @@ export default function About() {
                   variants={fadeIn}
                 >
                   {/* Image */}
-                  <img
+                  <Image
                     src="/sewing.webp"
                     className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                     alt="Close-up of sewing in progress"

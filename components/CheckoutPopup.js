@@ -5,6 +5,7 @@ import { auth, db } from '../lib/firebase';
 import { toast, Toaster } from 'sonner';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
+import Image from 'next/image';
 
 // PDF generation helper function
 const generateInvoice = (order, userData) => {
@@ -365,7 +366,7 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
       <div ref={popupRef} className="bg-white w-full max-w-6xl h-[90vh] flex flex-col lg:grid lg:grid-cols-2 shadow-xl overflow-hidden">
         {/* Image Section */}
         <div className="relative h-64 lg:h-full overflow-hidden">
-          <img
+          <Image
             src="Delivery_Van.avif"
             alt="Checkout Visual"
             className="object-cover w-full h-full"

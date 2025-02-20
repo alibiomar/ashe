@@ -8,6 +8,7 @@ import {
 import { auth } from '../lib/firebase'; // Import Firebase initialization
 import { useAuth } from '../contexts/AuthContext'; // Import the useAuth hook
 import { toast, Toaster } from 'sonner'; // Import toast and Toaster from sonner
+import Image from 'next/image';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -142,7 +143,7 @@ export default function Login() {
         <div className="w-full max-w-lg mx-auto bg-white -lg shadow-lg overflow-hidden">
           {/* Image section */}
           <div className="md:hidden">
-            <img
+            <Image
               src="/image_h.avif"
               alt="Login"
               className="w-full h-48 object-cover"
@@ -152,7 +153,7 @@ export default function Login() {
           <div className="grid grid-cols-1 md:grid-cols-2">
             {/* Image for larger screens */}
             <div className="hidden md:block">
-              <img
+              <Image
                 src="/image_h.avif"
                 alt="Login"
                 className="w-full h-full object-cover"

@@ -86,16 +86,14 @@ export default function Footer() {
               <div className="flex space-x-4">
                 <a
                   href="https://www.instagram.com/ashe.tn/"
-                  target="_blank"
-                  rel="noopener noreferrer"
+
                   className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-all duration-300 group"
                 >
                   <FaInstagram className="h-5 w-5 text-gray-400 group-hover:text-white" />
                 </a>
                 <a
                   href="https://www.tiktok.com/@ashe.tn"
-                  target="_blank"
-                  rel="noopener noreferrer"
+
                   className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-all duration-300 group"
                 >
                   <FaTiktok className="h-5 w-5 text-gray-400 group-hover:text-white" />
