@@ -123,12 +123,10 @@ const useActivityTracking = (user) => {
 
     const initializeActivity = async () => {
       if (user?.uid) {
-        try {
+
           unsubscribe = setupRealTimeActivityListener(user.uid);
           await updateUserActivity(user.uid);
-        } catch (error) {
-          console.error('Activity tracking error:', error);
-        }
+
       }
     };
 
