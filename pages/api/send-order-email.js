@@ -99,10 +99,8 @@ export default async function handler(req, res) {
       })
     });
 
-    console.log("✅ Admin notification sent successfully");
     res.status(200).json({ success: true });
   } catch (error) {
-    console.error("❌ Order notification error:", error);
     res.status(500).json({
       error: "Failed to send order notification",
       details: error.message

@@ -30,7 +30,6 @@ const [userData, setUserData] = useState(null);
         }
       } catch (error) {
         toast.error("Error fetching user data!");
-        console.error("Error fetching user data:", error);
       }
     };
   
@@ -46,7 +45,6 @@ const [userData, setUserData] = useState(null);
         setOrders(querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
       } catch (error) {
         toast.error("Error fetching orders!");
-        console.error("Error fetching orders:", error);
       }
     };
     fetchOrders();
@@ -278,7 +276,6 @@ const UnsubscribeModal = ({ user, setIsModalOpen }) => {
       toast.success("You have successfully unsubscribed.");
       setIsModalOpen(false);
     } catch (error) {
-      console.error("Error unsubscribing:", error);
       toast.error("An error occurred. Please try again.");
     }
   };

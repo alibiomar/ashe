@@ -56,7 +56,6 @@ export default function Home() {
           // Update initial activity
           await updateUserActivity(user.uid);
         } catch (error) {
-          console.error('Activity tracking error:', error);
         }
       }
     };
@@ -225,7 +224,6 @@ const HeroSection = memo(({ user, firstName }) => (
           priority
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 3840px"
-          unoptimized={true}
         />
       </div>
     </motion.div>

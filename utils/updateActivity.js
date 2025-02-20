@@ -6,10 +6,6 @@ import { getApp } from 'firebase/app';
 const db = getFirestore(getApp());
 
 export const updateUserActivity = async (uid) => {
-  if (!uid) {
-    console.warn('No user ID provided for activity update');
-    return;
-  }
 
   try {
     // Create reference to the user document
@@ -20,14 +16,12 @@ export const updateUserActivity = async (uid) => {
       lastActivity: serverTimestamp()
     });
       } catch (error) {
-    console.error('Error updating activity:', error);
     throw error; // Rethrow to handle in the component
   }
 };
 
 export const setupRealTimeActivityListener = (uid) => {
   if (!uid) {
-    console.warn('No user ID provided for activity listener');
     return () => {};
   }
 
@@ -44,14 +38,11 @@ export const setupRealTimeActivityListener = (uid) => {
           // You can now use data.lastActivity (as a Timestamp)
         }
       },
-      (error) => {
-        console.error('Listener error:', error);
-      }
+
     );
 
     return unsubscribe;
   } catch (error) {
-    console.error('Error setting up activity listener:', error);
     return () => {};
   }
 };

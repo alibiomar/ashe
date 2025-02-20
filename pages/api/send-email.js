@@ -44,10 +44,8 @@ export default async function handler(req, res) {
 
     const info = await transporter.sendMail(mailOptions);
 
-    console.log("✅ Email sent successfully:", info.messageId);
     res.status(200).json({ success: true, messageId: info.messageId });
   } catch (error) {
-    console.error("❌ SMTP Error:", error);
     res.status(500).json({
       error: "Email failed to send",
       details: error.message,

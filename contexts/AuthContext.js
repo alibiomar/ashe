@@ -17,7 +17,6 @@ export const AuthProvider = ({ children }) => {
         setError(null);
       },
       (error) => {
-        console.error('Auth state change error:', error);
         setError(error.message);
         setLoading(false);
       }
