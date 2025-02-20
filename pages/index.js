@@ -233,9 +233,8 @@ const HeroSection = memo(({ user, firstName }) => (
       <motion.div
         className="container h-screen gap-5 flex flex-col items-center text-center justify-center"
         variants={{
-          hidden: { scale:1.5, opacity: 0 },
+          hidden: { opacity: 0 },
           visible: {
-            scale:1,
             opacity: 1,
             transition: { type: 'spring', stiffness: 120, damping: 20 },
           },
@@ -252,7 +251,7 @@ const HeroSection = memo(({ user, firstName }) => (
           textColor="#ffffff"
           strokeColor="#ff0000"
           minFontSize={36}
-          className="pt-[20vh] h-fit width-fit"
+          className="pt-[20vh]"
         />
         <div className="flex flex-col items-center mb-14">
           <motion.a
@@ -305,7 +304,7 @@ const ProductSections = memo(() => (
       >
         <div className="relative h-80 mb-8 overflow-hidden">
           <Image
-            src={idx === 0 ? '/2.png' : '/1.png'}
+            src={idx === 0 ? '/placeholder-art.svg' : 'https://drive.google.com/file/d/1Rzbia0nZ79L4HYvCXDqDTnP_0WzJSFu6/preview'}
             alt={`${section} products image`}
             layout="fill"
             className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -316,8 +315,8 @@ const ProductSections = memo(() => (
         <h2 className="text-4xl font-semibold mb-4">{section}</h2>
         <p className={`text-lg mb-6 ${idx === 0 ? 'text-gray-600' : 'text-gray-300'}`}>
           {idx === 0
-            ? 'Curated selection of signature pieces'
-            : 'Discover our latest seasonal offerings'}
+            ? 'Discover our latest seasonal offerings'
+            : 'Curated selection of signature pieces'}
         </p>
         <a
           href="/products"

@@ -50,7 +50,7 @@ export default function Login() {
           if (!response.ok) throw new Error('Failed to send verification email');
           
           setVerificationSent(true);
-          toast.error('Verify your email before logging in. Check your inbox.');
+          toast.error('Verify your email before logging in.');
         } catch (error) {
           toast.error('Failed to send verification email');
         }
@@ -98,7 +98,7 @@ export default function Login() {
       if (!response.ok) throw new Error('Password reset failed');
 
       setPasswordResetEmailSent(true);
-      toast.success('Password reset email sent - check your inbox');
+      toast.success('Password reset email sent.');
     } catch (err) {
       toast.error(err.message || 'Failed to send reset email');
     }
