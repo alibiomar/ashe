@@ -209,7 +209,7 @@ const AnimatedArrow = memo(() => {
 });
 
 const HeroSection = memo(({ user, firstName }) => (
-  <section className="relative w-full h-screen mb-32 overflow-hidden">
+  <section className="relative w-full h-screen mb-32 overflow-hidden bg-black">
     <motion.div
       className="absolute inset-0"
       initial={{ scale: 1.1, opacity: 0 }}
