@@ -224,6 +224,7 @@ const HeroSection = memo(({ user, firstName }) => (
           priority
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 3840px"
+          unoptimized={true}
         />
       </div>
     </motion.div>
@@ -232,14 +233,14 @@ const HeroSection = memo(({ user, firstName }) => (
       <motion.div
         className="container h-screen gap-5 flex flex-col items-center text-center justify-center"
         variants={{
-          hidden: { y: 40, opacity: 0 },
+          hidden: { scale:1.5, opacity: 0 },
           visible: {
-            y: 0,
+            scale:1,
             opacity: 1,
             transition: { type: 'spring', stiffness: 120, damping: 20 },
           },
         }}
-      >
+          >
         <TextPressure
           text={user ? `Welcome, ${firstName}!` : 'Welcome to ASHE'}
           flex={true}
@@ -251,14 +252,15 @@ const HeroSection = memo(({ user, firstName }) => (
           textColor="#ffffff"
           strokeColor="#ff0000"
           minFontSize={36}
-          className="pt-[20vh] h-fit md:minFontSize={48}"
+          className="pt-[20vh] h-fit width-fit"
         />
         <div className="flex flex-col items-center mb-14">
           <motion.a
             href="/products"
             className="border-2 border-white text-white px-8 py-4 rounded-full font-medium hover:bg-white hover:text-black flex items-center gap-2 md:px-10 md:py-5 md:text-lg"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.05, y: -5 }}
+            whileTap={{ scale: 0.95, y: 5 }}
+            transition={{ type: 'spring', stiffness: 300 }}
           >
             Shop Now
             <motion.span
@@ -396,7 +398,8 @@ const ScrollToTopButton = memo(() => (
   <motion.button
     onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
     className="fixed bottom-8 right-8 bg-[#46c7c7] text-white rounded-full p-3 shadow-lg hover:bg-gray-800 transition"
-    whileHover={{ scale: 1.1 }}
+    whileHover={{ scale: 1.2 }}
+    whileTap={{ scale: 0.9 }}
     aria-label="Back to Top"
   >
     <svg
