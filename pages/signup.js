@@ -151,7 +151,7 @@ export default function Signup() {
               >
                 &times;
               </button>
-              <form onSubmit={handleSignup} className="grid gap-4" enctype="multipart/form-data">
+              <form onSubmit={handleSignup} className="grid gap-4" encType="application/x-www-form-urlencoded">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <input

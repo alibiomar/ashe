@@ -26,17 +26,6 @@ export default class MyDocument extends Document {
           <meta name="msapplication-TileImage" content="/mstile-144x144.png" />
 {/* Fonts */}
 <link 
-  rel="preconnect" 
-  href="https://fonts.googleapis.com" 
-  crossOrigin="anonymous" 
-/>
-<link 
-  rel="preconnect" 
-  href="https://fonts.gstatic.com" 
-  crossOrigin="anonymous" 
-/>
-<link 
-  rel="preload" 
   as="font" 
   href="https://fonts.gstatic.com/s/montserrat/v25/JTUSjIg1_i6t8kCHKm459Wlhzg.woff2" 
   type="font/woff2" 

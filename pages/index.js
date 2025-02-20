@@ -185,7 +185,7 @@ const ErrorDisplay = memo(({ error }) => (
   <div className="flex flex-col items-center justify-center h-screen bg-gray-100 px-6 text-center">
     <div className="bg-white p-8 shadow-lg max-w-md flex flex-col items-center justify-center">
       <div className="w-32 mb-8 relative h-32">
-        <Image src="/logo.png" alt="ASHE™ Logo" layout="fill" objectFit="contain" />
+        <Image src="/logo.png" alt="ASHE™ Logo" fill style={{ objectFit: "contain" }} />
       </div>
       <h2 className="text-2xl font-semibold text-red-600 mb-4">Oops! Something went wrong</h2>
       <p className="text-gray-700">{error}</p>
@@ -246,7 +246,7 @@ const HeroSection = memo(({ user, firstName }) => (
         <Image
           src="/bg.webp"
           alt="Stunning fashion header image"
-          layout="fill"
+          fill style={{ objectFit: "cover" }}
           priority
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 3840px"
@@ -332,7 +332,7 @@ const ProductSections = memo(() => (
           <Image
             src={idx === 0 ? '/placeholder-art.svg' : 'https://drive.google.com/uc?export=view&id=1Rzbia0nZ79L4HYvCXDqDTnP_0WzJSFu6'}
             alt={`${section} products image`}
-            layout="fill"
+            fill style={{ objectFit: "cover" }}
             className="object-cover transition-transform duration-700 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 3840px"
           />
