@@ -368,6 +368,7 @@ export default function About() {
     <a 
       href="https://www.instagram.com/ashe.tn/" 
       target="_blank" 
+      aria-label="Visit our Instagram profile"
       rel="noopener noreferrer"
       className="text-gray-600 hover:text-gray-900 transition-colors"
     >
@@ -376,6 +377,7 @@ export default function About() {
     <a 
       href="https://www.tiktok.com/@ashe.tn" 
       target="_blank" 
+      aria-label="Visit our TikTok profile"
       rel="noopener noreferrer"
       className="text-gray-600 hover:text-gray-900 transition-colors"
     >
