@@ -28,6 +28,7 @@ function StarRating({ rating, onChange, disabled }) {
       <button
         type="button"
         key={starNumber}
+        aria-label="star"
         onClick={() => onChange(starNumber)}
         disabled={disabled}
         className="focus:outline-none"
