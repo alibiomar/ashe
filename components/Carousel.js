@@ -16,13 +16,17 @@ export default function Carousel({
   const itemWidth = baseWidth - containerPadding * 2;
   const trackItemOffset = itemWidth + 16;
 
-  const carouselItems = loop ? [...items, items[0]] : items;
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // If looping, add a clone of the last item at the beginning and the first item at the end.
+  const carouselItems = loop
+    ? [items[items.length - 1], ...items, items[0]]
+    : items;
+  // For looping, start at index 1 (the first “real” item); otherwise, start at 0.
+  const [currentIndex, setCurrentIndex] = useState(loop ? 1 : 0);
   const x = useMotionValue(0);
   const [isHovered, setIsHovered] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
-
   const containerRef = useRef(null);
+
   useEffect(() => {
     if (pauseOnHover && containerRef.current) {
       const container = containerRef.current;
@@ -41,11 +45,13 @@ export default function Carousel({
     if (autoplay && (!pauseOnHover || !isHovered)) {
       const timer = setInterval(() => {
         setCurrentIndex((prev) => {
-          if (prev === items.length - 1 && loop) {
-            return prev + 1; // Animate to clone.
+          // If at the clone of the first item, move to it then reset.
+          if (loop && prev === carouselItems.length - 1) {
+            return prev + 1; // animate into the clone first
           }
+          // Otherwise, move forward (or stay if non-looping)
           if (prev === carouselItems.length - 1) {
-            return loop ? 0 : prev;
+            return loop ? 1 : prev;
           }
           return prev + 1;
         });
@@ -57,19 +63,33 @@ export default function Carousel({
     autoplayDelay,
     isHovered,
     loop,
-    items.length,
     carouselItems.length,
     pauseOnHover,
   ]);
 
-  const effectiveTransition = isResetting ? { duration: 0 } : { type: "spring", stiffness: 300, damping: 30 };
+  // Use a spring transition unless we're in the middle of a reset.
+  const effectiveTransition = isResetting
+    ? { duration: 0 }
+    : { type: "spring", stiffness: 300, damping: 30 };
 
+  // When the animation completes, check if we've reached a cloned slide.
   const handleAnimationComplete = () => {
-    if (loop && currentIndex === carouselItems.length - 1) {
-      setIsResetting(true);
-      x.set(0);
-      setCurrentIndex(0);
-      setTimeout(() => setIsResetting(false), 50);
+    if (loop) {
+      // If we're at the beginning clone (index 0), jump to the real last item.
+      if (currentIndex === 0) {
+        setIsResetting(true);
+        // Set x to the real last item position.
+        x.set(-items.length * trackItemOffset);
+        setCurrentIndex(items.length);
+        setTimeout(() => setIsResetting(false), 50);
+      }
+      // If we're at the end clone (last index), jump to the real first item.
+      if (currentIndex === carouselItems.length - 1) {
+        setIsResetting(true);
+        x.set(-trackItemOffset);
+        setCurrentIndex(1);
+        setTimeout(() => setIsResetting(false), 50);
+      }
     }
   };
 
@@ -77,20 +97,17 @@ export default function Carousel({
     const offset = info.offset.x;
     const velocity = info.velocity.x;
     if (offset < -5 || velocity < -500) {
-      if (loop && currentIndex === items.length - 1) {
-        setCurrentIndex(currentIndex + 1);
-      } else {
-        setCurrentIndex((prev) => Math.min(prev + 1, carouselItems.length - 1));
-      }
+      setCurrentIndex((prev) =>
+        Math.min(prev + 1, carouselItems.length - 1)
+      );
     } else if (offset > 5 || velocity > 500) {
-      if (loop && currentIndex === 0) {
-        setCurrentIndex(items.length - 1);
-      } else {
-        setCurrentIndex((prev) => Math.max(prev - 1, 0));
-      }
+      setCurrentIndex((prev) =>
+        Math.max(prev - 1, 0)
+      );
     }
   };
 
+  // When not looping, constrain the drag motion.
   const dragProps = loop
     ? {}
     : {
@@ -103,10 +120,11 @@ export default function Carousel({
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden p-4 ${round
-        ? "rounded-full border border-white"
-        : "rounded-[24px] border border-[#222]"
-        }`}
+      className={`relative overflow-hidden p-4 ${
+        round
+          ? "rounded-full border border-white"
+          : "rounded-[24px] border border-[#222]"
+      }`}
       style={{
         width: `${baseWidth}px`,
         ...(round && { height: `${baseWidth}px` }),
@@ -120,7 +138,9 @@ export default function Carousel({
           width: itemWidth,
           gap: `16px`,
           perspective: 1000,
-          perspectiveOrigin: `${currentIndex * trackItemOffset + itemWidth / 2}px 50%`,
+          perspectiveOrigin: `${
+            currentIndex * trackItemOffset + itemWidth / 2
+          }px 50%`,
           x,
         }}
         onDragEnd={handleDragEnd}
@@ -139,10 +159,11 @@ export default function Carousel({
           return (
             <motion.div
               key={index}
-              className={`relative shrink-0 flex flex-col ${round
-                ? "items-center justify-center text-center bg-[#060606] border-0"
-                : "items-start justify-between bg-[#222] border border-[#222] rounded-[12px]"
-                } overflow-hidden cursor-grab active:cursor-grabbing`}
+              className={`relative shrink-0 flex flex-col ${
+                round
+                  ? "items-center justify-center text-center bg-[#060606] border-0"
+                  : "items-start justify-between bg-[#222] border border-[#222] rounded-[12px]"
+              } overflow-hidden cursor-grab active:cursor-grabbing`}
               style={{
                 width: itemWidth,
                 height: round ? itemWidth : "100%",
@@ -153,7 +174,7 @@ export default function Carousel({
             >
               <div className={`${round ? "p-0 m-0" : "mb-4 p-5"}`}>
                 <span className="flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[#060606]">
-                  <MdGppGood  className="h-[24px] w-[24px] text-white" />
+                  <MdGppGood className="h-[24px] w-[24px] text-white" />
                 </span>
               </div>
               <div className="p-5">
@@ -163,7 +184,10 @@ export default function Carousel({
                 <p className="text-sm text-white">{item.review}</p>
                 <div className="flex items-center mt-2">
                   {Array.from({ length: item.rating }).map((_, i) => (
-                    <PiStarFourFill key={i} className="h-[16px] w-[16px] text-white" />
+                    <PiStarFourFill
+                      key={i}
+                      className="h-[16px] w-[16px] text-white"
+                    />
                   ))}
                 </div>
               </div>
@@ -172,25 +196,36 @@ export default function Carousel({
         })}
       </motion.div>
       <div
-        className={`flex w-full justify-center ${round ? "absolute z-20 bottom-12 left-1/2 -translate-x-1/2" : ""
-          }`}
+        className={`flex w-full justify-center ${
+          round
+            ? "absolute z-20 bottom-12 left-1/2 -translate-x-1/2"
+            : ""
+        }`}
       >
         <div className="mt-4 flex w-[150px] justify-between px-8">
           {items.map((_, index) => (
             <motion.div
               key={index}
-              className={`h-2 w-2 rounded-full cursor-pointer transition-colors duration-150 ${currentIndex % items.length === index
-                ? round
-                  ? "bg-white"
-                  : "bg-[#333333]"
-                : round
+              className={`h-2 w-2 rounded-full cursor-pointer transition-colors duration-150 ${
+                // Adjust dot indicator because our real slides start at index 1.
+                (currentIndex - 1 + items.length) % items.length === index
+                  ? round
+                    ? "bg-white"
+                    : "bg-[#333333]"
+                  : round
                   ? "bg-[#555]"
                   : "bg-[rgba(51,51,51,0.4)]"
-                }`}
+              }`}
               animate={{
-                scale: currentIndex % items.length === index ? 1.2 : 1,
+                scale:
+                  (currentIndex - 1 + items.length) % items.length === index
+                    ? 1.2
+                    : 1,
               }}
-              onClick={() => setCurrentIndex(index)}
+              onClick={() => {
+                // When clicking a dot, adjust the index to the corresponding "real" slide.
+                setCurrentIndex(loop ? index + 1 : index);
+              }}
               transition={{ duration: 0.15 }}
             />
           ))}

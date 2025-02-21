@@ -80,7 +80,7 @@ export default function About() {
                   className="absolute inset-0"
                   initial={{ scale: 1.5, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 2, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 2}}
                 >
             <div className="absolute inset-0 z-0">
             <Image
