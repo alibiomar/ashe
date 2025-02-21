@@ -242,7 +242,7 @@ const HeroSection = memo(({ user, firstName }) => (
     >
       <div className="relative w-full hero-image-container">
         <Image
-          src="https://drive.google.com/uc?export=view&id=1DVj5tSiCwu1nxpaiYjOCbqm2i68xj25z"
+          src="https://drive.google.com/uc?export=view&id=1oj4EgvSR2CWYjSjjfc2pPWAjSo0uL10v"
           alt="Stunning fashion header image"
           fill style={{ objectFit: "cover" }}
           priority
