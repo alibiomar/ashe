@@ -62,9 +62,9 @@ export default function ProductCard({ product, onAddToBasket, getBasketQuantity 
   const currentBasketQty = selectedSize ? getBasketQuantity(product.id, selectedSize) : 0;
   const availableForUser = selectedSizeStock - currentBasketQty;
   return (
-    <div className="w-full flex flex-col items-center md:flex-row bg-white p-6 gap-6">
+    <div className="w-full flex flex-col items-center justify-around md:flex-row bg-white p-6 gap-6 md:gap-22">
       {/* Image Slider */}
-      <div className="w-full md:w-[60%] relative group">
+      <div className="w-full md:w-[35%] relative group">
         <Swiper
           spaceBetween={10}
           slidesPerView={1}
@@ -105,7 +105,6 @@ export default function ProductCard({ product, onAddToBasket, getBasketQuantity 
               </span>
             )}
           </p>
-          {/* Optionally, show a badge for the selected size stock status */}
           {selectedSize && (
             <span
               className={`px-3 py-1 text-xs font-black uppercase text-white ${
@@ -135,7 +134,6 @@ export default function ProductCard({ product, onAddToBasket, getBasketQuantity 
               onChange={handleSizeChange}
               className="w-full py-3 border-2 border-black focus:outline-none font-semibold bg-transparent px-3 appearance-none hover:border-gray-500 focus:border-[#46c7c7] transition-colors"
             >
-              {/* Default option prompting user to select a size */}
               <option value="">No size selected</option>
               {sizes?.map((size, index) => (
                 <option key={`${size}-${index}`} value={size}>
@@ -199,7 +197,7 @@ export default function ProductCard({ product, onAddToBasket, getBasketQuantity 
             tabIndex={0}
             onKeyDown={(e) => e.key === 'Escape' && closeModal()}
           />
-          <div className="relative w-[95%] h-[90vh] max-w-6xl bg-white p-6 transform transition-all duration-300 scale-95 animate-slide-up">
+          <div className="relative w-96 h-1/2 md:w-full md:h-full max-w-2xl bg-transparent rounded-lg overflow-hidden scale-95 m-0 md:m-6">
             <button
               onClick={closeModal}
               className="absolute top-6 right-6 z-50 text-[#46c7c7] hover:text-dark transition-colors duration-200"
@@ -217,15 +215,14 @@ export default function ProductCard({ product, onAddToBasket, getBasketQuantity 
             >
               {images?.map((image, index) => (
                 <SwiperSlide key={`modal-image-${index}`}>
-                  <div className="swiper-zoom-container relative h-full w-full">
+                  <div className="swiper-zoom-container relative">
                     <Image
                       src={image}
                       alt={`Enlarged view of ${name} - Image ${index + 1}`}
-                      fill
+                      fill style={{ objectFit: "cover" }}
                       priority
-                      quality={90}
+                      quality={100}
                       className="object-contain"
-                      sizes="(max-width: 768px) 95vw, (max-width: 1200px) 85vw, 75vw"
                     />
                   </div>
                 </SwiperSlide>

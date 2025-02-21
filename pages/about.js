@@ -76,12 +76,17 @@ export default function About() {
         <div className="min-h-screen bg-white relative md:-mt-16">
           {/* Heritage Header */}
           <header className="h-screen flex items-center justify-center p-8 relative">
+                <motion.div
+                  className="absolute inset-0"
+                  initial={{ scale: 1.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 2, ease: [0.22, 1, 0.36, 1] }}
+                >
             <div className="absolute inset-0 z-0">
             <Image
               src="/heritage-hero.webp"
               alt="Archival photo of a master tailor at work"
-              fill
-              objectFit="cover"
+              fill style={{ objectFit: "cover" }}
               className="opacity-20"
               priority
               placeholder="blur"
@@ -89,6 +94,7 @@ export default function About() {
             />
 
             </div>
+            </motion.div>
             <motion.div
               className="max-w-6xl mx-auto text-center"
               initial="hidden"
@@ -140,6 +146,7 @@ export default function About() {
                   {/* Image */}
                   <Image
                     src="/sewing.webp"
+                    fill style={{ objectFit: "cover" }}
                     className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                     alt="Close-up of sewing in progress"
                   />
