@@ -185,52 +185,53 @@ export default function ProductCard({ product, onAddToBasket, getBasketQuantity 
 
       {/* Image Modal */}
       {isModalOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in"
-        >
-          <div
-            className="fixed inset-0"
-            onClick={closeModal}
-            aria-label="Close modal"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === 'Escape' && closeModal()}
-          />
-          <div className="relative w-96 h-1/2 md:w-full md:h-full max-w-2xl bg-transparent rounded-lg overflow-hidden scale-95 m-0 md:m-6">
-            <button
-              onClick={closeModal}
-              className="absolute top-6 right-6 z-50 text-[#46c7c7] hover:text-dark transition-colors duration-200"
-              aria-label="Close image modal"
-            >
-              <FaTimes className="text-xl md:text-2xl" />
-            </button>
-            <Swiper
-              initialSlide={selectedImageIndex}
-              modules={[Navigation, Pagination, Zoom]}
-              navigation
-              pagination={{ clickable: true }}
-              zoom
-              className="h-full w-full"
-            >
-              {images?.map((image, index) => (
-                <SwiperSlide key={`modal-image-${index}`}>
-                  <div className="swiper-zoom-container relative">
-                    <Image
-                      src={image}
-                      alt={`Enlarged view of ${name} - Image ${index + 1}`}
-                      fill style={{ objectFit: "cover" }}
-                      priority
-                      quality={100}
-                      className="object-contain"
-                    />
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
-        </div>
-      )}
+  <div
+    role="dialog"
+    aria-modal="true"
+    className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in"
+  >
+    <div
+      className="fixed inset-0"
+      onClick={closeModal}
+      aria-label="Close modal"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === 'Escape' && closeModal()}
+    />
+    <div className="relative w-96 h-[70vh] md:w-full md:h-full max-w-2xl bg-white rounded-lg overflow-hidden scale-90 m-0 md:m-6 flex items-center justify-center">
+      <button
+        onClick={closeModal}
+        className="absolute top-4 right-4 z-50 text-[#46c7c7] hover:text-dark transition-colors duration-200"
+        aria-label="Close image modal"
+      >
+        <FaTimes className="text-xl md:text-2xl" />
+      </button>
+      <Swiper
+        initialSlide={selectedImageIndex}
+        modules={[Navigation, Pagination, Zoom]}
+        navigation
+        pagination={{ clickable: true }}
+        zoom
+        className="h-full w-full"
+      >
+        {images?.map((image, index) => (
+          <SwiperSlide key={`modal-image-${index}`} className="flex items-center justify-center">
+            <div className="swiper-zoom-container relative flex items-center justify-center">
+              <Image
+                src={image}
+                alt={`Enlarged view of ${name} - Image ${index + 1}`}
+                fill
+                style={{ objectFit: "contain" }}
+                priority
+                quality={100}
+              />
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
