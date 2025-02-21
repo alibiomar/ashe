@@ -1,11 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* styles/globals.css */
+/* Regular (normal style) variable font */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900; /* Supports weights from 100 to 900 */
+  font-style: normal;
+  font-display: swap;
+}
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Italic variable font */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
 
 :root {
   --swiper-theme-color: #46c7c7; /* This changes both navigation and pagination color */
@@ -27,7 +39,7 @@ body.overflow-hidden {
 }
 body {
   @apply bg-white font-sans; /* Neutral background and classic Swiss typography */
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Montserrat', sans-serif;
   margin: 0;
   padding: 0;
 }

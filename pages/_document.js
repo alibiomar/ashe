@@ -21,21 +21,8 @@ export default class MyDocument extends Document {
           <link rel="apple-touch-icon" sizes="192x192" href="/logo192.png" />
           <link rel="icon" type="image/png" sizes="72x72" href="/logo72.png" />
           <link rel="icon" type="image/png" sizes="192x192" href="/logo192.png" />
-          <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#000000" />
-          <meta name="msapplication-TileColor" content="#ffffff" />
-          <meta name="msapplication-TileImage" content="/mstile-144x144.png" />
-{/* Fonts */}
-<link 
-  as="font" 
-  href="https://fonts.gstatic.com/s/montserrat/v25/JTUSjIg1_i6t8kCHKm459Wlhzg.woff2" 
-  type="font/woff2" 
-  crossOrigin="anonymous" 
-/>
-<link 
-  href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" 
-  rel="stylesheet" 
-  crossOrigin="anonymous" 
-/>
+          <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#ffffff" />
+          <meta name="msapplication-TileColor" content="#000000" />
           
           {/* SEO & Social */}
           <meta name="description" content="Shop the latest in fashion with ASHE™. Find high-quality clothing for every style." />
