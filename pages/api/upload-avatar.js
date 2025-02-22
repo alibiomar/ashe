@@ -3,6 +3,7 @@ import { db } from "../../lib/firebaseAdmin";
 import path from "path";
 import { promises as fs } from "fs";
 import formidable from "formidable";
+import sharp from "sharp"; // Import sharp for image compression
 
 export const config = {
   api: {
@@ -31,59 +32,79 @@ export default async function handler(req, res) {
 
     const userId = decodedToken.uid;
 
-    // Parse form data with updated formidable usage
+    // Parse form data with formidable
     const form = formidable({
       maxFileSize: 3 * 1024 * 1024, // 3MB
       filter: function ({ mimetype }) {
-        return mimetype && mimetype.includes('image/');
+        return mimetype && mimetype.includes("image/");
       },
     });
 
     const [fields, files] = await form.parse(req);
-    
+
     // File validation
-    const file = files.avatar?.[0];  // Updated to match new formidable structure
+    const file = files.avatar?.[0];
     if (!file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    // Create upload directory with absolute path
-    const uploadDir = '/var/www/test.ashe.tn/uploads';  // Change this to your VPS path
+    // Get current avatar from Firestore
+    let currentAvatar = null;
+    try {
+      const userDoc = await db.collection("users").doc(userId).get();
+      currentAvatar = userDoc.data()?.avatar;
+    } catch (firestoreError) {
+      return res.status(500).json({ error: "Failed to fetch user data" });
+    }
 
-    // File handling
-    const ext = path.extname(file.originalFilename || '');
+    // Delete the old avatar if it exists
+    if (currentAvatar) {
+      const oldFilePath = path.join("/var/www/test.ashe.tn/uploads", currentAvatar);
+      try {
+        await fs.unlink(oldFilePath); // Delete old file if it exists
+      } catch (deleteError) {
+        console.error("Error deleting old avatar:", deleteError);
+      }
+    }
+
+    // Define upload directory
+    const uploadDir = "/var/www/test.ashe.tn/uploads"; // Adjust to your VPS path
+    const ext = path.extname(file.originalFilename || "");
     const filename = `${userId}-${Date.now()}${ext}`;
     const filePath = path.join(uploadDir, filename);
 
     try {
-        await fs.copyFile(file.filepath, filePath);
-        await fs.unlink(file.filepath); // Delete the temp file
-        
-    } catch (moveError) {
-      return res.status(500).json({ error: "File processing error" });
+      // Compress and save the image
+      await sharp(file.filepath)
+        .resize(800) // Resize to a maximum width of 800px while maintaining aspect ratio
+        .jpeg({ quality: 80 }) // Convert to JPEG with 80% quality (adjustable)
+        .toFile(filePath);
+
+      // Delete the temporary uploaded file
+      await fs.unlink(file.filepath);
+    } catch (compressionError) {
+      return res.status(500).json({ error: "Image compression failed" });
     }
 
-    // Update Firestore
+    // Update Firestore with new avatar filename
     try {
       await db.collection("users").doc(userId).update({
         avatar: filename,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       });
     } catch (dbError) {
-      // Try to cleanup the uploaded file
-      await fs.unlink(filePath).catch(console.error);
+      await fs.unlink(filePath).catch(console.error); // Cleanup on failure
       return res.status(500).json({ error: "Database update failed" });
     }
 
-    res.status(200).json({ 
+    res.status(200).json({
       success: true,
-      avatarUrl: `/uploads/${filename}` // Adjust this URL based on your server config
+      avatarUrl: `/uploads/${filename}`, // Adjust based on your server config
     });
-
   } catch (error) {
-    res.status(500).json({ 
+    res.status(500).json({
       error: "Internal server error",
-      message: process.env.NODE_ENV === 'development' ? error.message : undefined
+      message: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 }

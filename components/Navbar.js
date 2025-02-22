@@ -169,30 +169,41 @@ export default function Navbar({ onHeightChange }) {
       document.body.classList.remove('no-scroll');
     };
   }, [isMenuOpen]);
+
   useEffect(() => {
     if (!user?.uid) return;
   
-    const fetchUserData = async () => {
-      try {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists()) {
-          const data = userDoc.data();
+    const unsubscribe = onSnapshot(
+      doc(db, "users", user.uid),
+      async (userDoc) => {
+        try {
+          if (userDoc.exists()) {
+            const data = userDoc.data();
   
-          // Get Firebase ID Token
-          const idToken = await user.getIdToken();
+            // Get Firebase ID Token
+            const idToken = await user.getIdToken();
   
-          setUserData({
-            avatar: data.avatar 
-              ? `/api/serve-image?filename=${data.avatar}&token=${idToken}&t=${Date.now()}` 
-              : null,
-          });
+            setUserData({
+              avatar: data.avatar
+                ? `/api/serve-image?filename=${data.avatar}&token=${idToken}&t=${Date.now()}`
+                : null,
+            });
+          } else {
+            toast.error("User data does not exist!");
+          }
+        } catch (error) {
+          toast.error("Error fetching user data!");
         }
-      } catch (error) {
-        toast.error("Error fetching user data!");
+      },
+      (error) => {
+        toast.error("Error with the real-time listener!");
       }
-    };
+    );
   
-    fetchUserData();
+    // Cleanup the listener when the component unmounts or the user changes
+    return () => {
+      unsubscribe(); // Unsubscribe from the snapshot listener
+    };
   }, [user?.uid]);
   
   return (
@@ -260,11 +271,11 @@ export default function Navbar({ onHeightChange }) {
                 // The user icon is now clickable. If on "/userProfile", clicking redirects to "/"
 <div
   onClick={handleUserIconClick}
-  className="group cursor-pointer flex items-center justify-around px-2 py-1 rounded-full border border-gray-600 hover:border-teal-400/80 text-gray-300 hover:text-teal-400 transition-all duration-300 shadow-md hover:shadow-xl backdrop-blur-sm bg-black/30 hover:bg-black/50 relative overflow-hidden"
+  className=" cursor-pointer flex items-center justify-around px-2 py-1 rounded-full border border-gray-600 hover:border-teal-400/80 text-gray-300 hover:text-teal-400 transition-all duration-300 shadow-md hover:shadow-xl backdrop-blur-sm bg-black/30 hover:bg-black/50 relative overflow-hidden"
 >
   {/* Animated background layer */}
   <motion.div
-    className="absolute inset-0 bg-gradient-to-r from-teal-400/10 to-transparent opacity-0 group-hover:opacity-100"
+    className="absolute inset-0 bg-gradient-to-r from-teal-400/10 to-transparent opacity-0 hover:opacity-100"
     initial={{ opacity: 0 }}
     animate={{ opacity: router.pathname === '/userProfile' ? 0.1 : 0 }}
     transition={{ duration: 0.3 }}
@@ -279,7 +290,7 @@ export default function Navbar({ onHeightChange }) {
       <motion.img
         src={`${userData.avatar}${userData.avatar.includes('?') ? '&' : '?'}t=${Date.now()}`}
         alt="User Avatar"
-        className="w-10 h-10 rounded-full object-cover border-2 border-gray-600/80 group-hover:border-teal-400/80 transition-all duration-300"
+        className="w-10 h-10 rounded-full object-cover border-2 border-gray-600/80 hover:border-teal-400/80 transition-all duration-300"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -297,7 +308,7 @@ export default function Navbar({ onHeightChange }) {
       whileHover={{ scale: 1.05 }}
       transition={{ type: "spring", stiffness: 300 }}
     >
-      <FaUserCircle className="text-gray-500/80 w-10 h-10 transition-all duration-300 group-hover:text-teal-400/90" />
+      <FaUserCircle className="text-gray-500/80 w-10 h-10 transition-all duration-300 hover:text-teal-400/90" />
     </motion.div>
   )}
   

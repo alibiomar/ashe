@@ -188,12 +188,12 @@ const handleAvatarChange = async (e) => {
       >
         {/* Profile Card */}
         <div className="bg-white p-6 flex flex-col justify-between md:flex-row md:items-center items-center md:gap-6 gap-10 transition-all">
-          <div className="flex md:flex-row items-center gap-8 md:gap-8 md:justify-center">
+          <div className="flex md:flex-row items-center gap-8 md:gap-8 justify-center">
             {/* Clickable Avatar with Hover Indication */}
             <motion.div
               whileHover={{ scale: 1.05 }}
               onClick={handleAvatarClick}
-              className="relative cursor-pointer group flex flex-col items-center"
+              className="relative cursor-pointer  flex flex-col items-center"
             >
               <div className="relative">
               {previewAvatar || userData?.avatar ? (
@@ -221,8 +221,8 @@ const handleAvatarChange = async (e) => {
                 )}
               </div>
               {/* Light Text Prompt */}
-              <span className="text-sm text-gray-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                Change your image
+              <span className="text-sm text-gray-400 mt-2 opacity-0 hover:opacity-100 transition-opacity duration-300">
+                Edit image.
               </span>
               {/* Hidden File Input */}
               <input
@@ -255,9 +255,9 @@ const handleAvatarChange = async (e) => {
         <div className="grid gap-4 md:grid-cols-2">
           <button
             onClick={() => setIsPasswordModalOpen(true)}
-            className="group flex items-center p-4 md:p-5 bg-white border rounded-md transition-all"
+            className=" flex items-center p-4 md:p-5 bg-white border rounded-md transition-all"
           >
-            <FaKey className="mr-4 text-gray-500 group-hover:text-gray-700 transition-colors" size={24} />
+            <FaKey className="mr-4 text-gray-500 hover:text-gray-700 transition-colors" size={24} />
             <span className="text-gray-700 font-semibold text-left">
               Change Password
               <span className="block text-sm text-gray-400 font-normal mt-1">
@@ -268,9 +268,9 @@ const handleAvatarChange = async (e) => {
 
           <button
             onClick={() => setIsUnsubscribeModalOpen(true)}
-            className="group flex items-center p-4 md:p-5 bg-white border rounded-md transition-all"
+            className=" flex items-center p-4 md:p-5 bg-white border rounded-md transition-all"
           >
-            <FaBox className="mr-4 text-gray-500 group-hover:text-gray-700 transition-colors" size={24} />
+            <FaBox className="mr-4 text-gray-500 hover:text-gray-700 transition-colors" size={24} />
             <span className="text-gray-700 font-semibold text-left">
               Newsletter Settings
               <span className="block text-sm text-gray-400 font-normal mt-1">
