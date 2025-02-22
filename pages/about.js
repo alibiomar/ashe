@@ -82,7 +82,7 @@ export default function About() {
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 2}}
                 >
-            <div className="absolute inset-0 z-0">
+            <div className="relative w-full hero-image-container">
             <Image
               src="/heritage-hero.webp"
               alt="Archival photo of a master tailor at work"
@@ -96,18 +96,18 @@ export default function About() {
             </div>
             </motion.div>
             <motion.div
-              className="max-w-6xl mx-auto text-center"
+              className="max-w-8xl mx-auto text-center"
               initial="hidden"
               animate="visible"
               variants={fadeIn}
             >
               <div className="mb-12">
                 <div className="h-px bg-black/20 w-32 mx-auto mb-8" />
-                <h4 className="text-xl uppercase tracking-widest text-gray-500">
+                <h4 className="text-base uppercase tracking-widest text-gray-500">
                   An Inherited Story
                 </h4>
               </div>
-              <h1 className="text-6xl md:text-8xl font-black mb-8 leading-none">
+              <h1 className="text-5xl md:text-8xl font-black mb-8 leading-none">
                 <span className="block">Born from Legacy</span>
                 <span className="text-gray-400">crafted for eternity</span>
               </h1>

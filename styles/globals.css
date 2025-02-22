@@ -47,7 +47,6 @@ body {
 h1, h2, h3, h4 {
   @apply font-bold tracking-wide; /* Bold and clear headings with improved readability */
 }
-.group { display: block !important; }
 
 .container {
   @apply mx-auto px-4 sm:px-6 lg:px-8;
