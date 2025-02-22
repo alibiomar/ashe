@@ -57,7 +57,7 @@ const UserProfile = () => {
           setUserData({
             ...data,
             avatar: data.avatar 
-              ? `/api/serve-image?filename=${data.avatar}&token=${idToken}&t=${Date.now()}` 
+              ? `/api/serve-image?filename=uploads/${data.avatar}&token=${idToken}` 
               : null,
           });
         }
@@ -138,10 +138,9 @@ const handleAvatarChange = async (e) => {
     const data = await res.json();
     
     // Update the avatar URL with cache-busting parameter
-    const timestamp = Date.now();
     setUserData((prev) => ({
       ...prev,
-      avatar: `/api/serve-image?filename=${data.avatarUrl}&t=${timestamp}`,
+      avatar: `/api/serve-image?filename=uploads/${data.avatar}&token=${idToken}`,
     }));
     
     toast.success("Avatar updated successfully!");
@@ -198,13 +197,14 @@ const handleAvatarChange = async (e) => {
               <div className="relative">
               {previewAvatar || userData?.avatar ? (
                   <img
-                    src={previewAvatar || `${userData.avatar}${userData.avatar.includes('?') ? '&' : '?'}t=${Date.now()}`}
-                    alt="User Avatar"
-                    className="w-20 h-20 rounded-full object-cover shadow-md transition-all duration-300"
-                    onError={(e) => {
-                      e.target.onerror = null; // Prevent infinite loop
-                      setUserData(prev => ({...prev, avatar: null}));}}
-                  />
+                  src={previewAvatar || userData.avatar}
+                  alt="User Avatar"
+                  className="w-20 h-20 rounded-full object-cover shadow-md transition-all duration-300"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    setUserData(prev => ({...prev, avatar: null}));
+                  }}
+                />
                 ) : (
                   <FaUserCircle className="text-gray-400" size={80} />
                 )}
@@ -221,7 +221,7 @@ const handleAvatarChange = async (e) => {
                 )}
               </div>
               {/* Light Text Prompt */}
-              <span className="text-sm text-gray-400 mt-2 opacity-0 hover:opacity-100 transition-opacity duration-300">
+              <span className="text-sm text-gray-400 mt-2 opacity-100 ">
                 Edit image.
               </span>
               {/* Hidden File Input */}

@@ -173,37 +173,35 @@ export default function Navbar({ onHeightChange }) {
   useEffect(() => {
     if (!user?.uid) return;
   
-    const unsubscribe = onSnapshot(
-      doc(db, "users", user.uid),
-      async (userDoc) => {
-        try {
-          if (userDoc.exists()) {
-            const data = userDoc.data();
+    const fetchUserData = async () => {
+      try {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const data = userDoc.data();
   
-            // Get Firebase ID Token
-            const idToken = await user.getIdToken();
+          // Get Firebase ID Token
+          const idToken = await user.getIdToken();
   
-            setUserData({
-              avatar: data.avatar
-                ? `/api/serve-image?filename=${data.avatar}&token=${idToken}&t=${Date.now()}`
-                : null,
-            });
-          } else {
-            toast.error("User data does not exist!");
-          }
-        } catch (error) {
-          toast.error("Error fetching user data!");
+          console.log('Avatar filename from Firestore:', data.avatar); // Debug log
+  
+          const avatarUrl = data.avatar 
+            ? `/api/serve-image?filename=uploads/${data.avatar}&token=${idToken}`
+            : null;
+  
+          console.log('Constructed avatar URL:', avatarUrl); // Debug log
+  
+          setUserData({
+            ...data,
+            avatar: avatarUrl,
+          });
         }
-      },
-      (error) => {
-        toast.error("Error with the real-time listener!");
+      } catch (error) {
+        console.error('Error fetching user data:', error); // Debug log
+        toast.error("Error fetching user data!");
       }
-    );
-  
-    // Cleanup the listener when the component unmounts or the user changes
-    return () => {
-      unsubscribe(); // Unsubscribe from the snapshot listener
     };
+  
+    fetchUserData();
   }, [user?.uid]);
   
   return (
@@ -286,19 +284,19 @@ export default function Navbar({ onHeightChange }) {
       className="relative"
       whileHover={{ scale: 1.05 }}
       transition={{ type: "spring", stiffness: 300 }}
-    >
-      <motion.img
-        src={`${userData.avatar}${userData.avatar.includes('?') ? '&' : '?'}t=${Date.now()}`}
-        alt="User Avatar"
-        className="w-10 h-10 rounded-full object-cover border-2 border-gray-600/80 hover:border-teal-400/80 transition-all duration-300"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
-        onError={(e) => {
-          e.target.onerror = null;
-          setUserData(prev => ({ ...prev, avatar: null }));
-        }}
-      />
+    > 
+    <motion.img
+    src={userData.avatar}
+    alt="User Avatar"
+    className="w-10 h-10 rounded-full object-cover border-2 border-gray-600/80 hover:border-teal-400/80 transition-all duration-300"
+    initial={{ opacity: 0, scale: 0.8 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 0.5, ease: 'easeOut' }}
+    onError={(e) => {
+      e.target.onerror = null;
+      setUserData(prev => ({ ...prev, avatar: null }));
+    }}
+  />
       {/* Online status indicator */}
       <div className="absolute bottom-0 right-0 w-3 h-3 bg-teal-400 rounded-full border-2 border-black/80" />
     </motion.div>

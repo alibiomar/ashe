@@ -1,6 +1,6 @@
-import fs from "fs";
-import path from "path";
-import { getAuth } from "firebase-admin/auth";
+import fs from 'fs';
+import path from 'path';
+import { getAuth } from 'firebase-admin/auth';
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -8,23 +8,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Input validation
-    const { filename } = req.query;
+    let { filename } = req.query;
+    
+    console.log('Requested filename:', filename);  // Debug log
+
     // Check for token in header or query param
-    const authToken =
-      req.headers.authorization?.split("Bearer ")[1] || req.query.token;
+    const authToken = req.headers.authorization?.split("Bearer ")[1] || req.query.token;
 
     if (!authToken) {
       return res.status(401).json({ error: "Unauthorized" });
     }
-    
+
     if (!filename) {
       return res.status(400).json({ error: "Filename is required" });
-    }
-
-    // Validate filename to prevent directory traversal
-    if (filename.includes("..") || filename.includes("/")) {
-      return res.status(400).json({ error: "Invalid filename" });
     }
 
     // Authentication
@@ -33,7 +29,16 @@ export default async function handler(req, res) {
       const decodedToken = await getAuth().verifyIdToken(authToken);
       userId = decodedToken.uid;
     } catch (authError) {
+      console.error('Auth error:', authError);  // Debug log
       return res.status(401).json({ error: "Invalid token" });
+    }
+
+    // Remove any leading slash and 'uploads/' prefix if it exists
+    filename = filename.replace(/^\/+/, '').replace(/^uploads\//, '');
+
+    // Validate filename to prevent directory traversal
+    if (filename.includes("..") || filename.includes("/")) {
+      return res.status(400).json({ error: "Invalid filename" });
     }
 
     // Authorization: ensure the filename starts with the user's UID
@@ -41,14 +46,16 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: "Forbidden" });
     }
 
-    // File handling
-    const uploadDir = "/var/www/test.ashe.tn/uploads"; // Your VPS uploads path
-    const filePath = path.join(uploadDir, filename);
+    const uploadDir = "/var/www/test.ashe.tn";
+    const filePath = path.join(uploadDir, 'uploads', filename);
+    
+    console.log('Full file path:', filePath);  // Debug log
 
     // Check if file exists
     try {
       await fs.promises.access(filePath, fs.constants.R_OK);
     } catch (error) {
+      console.error('File access error:', error);  // Debug log
       return res.status(404).json({ error: "File not found" });
     }
 
@@ -68,12 +75,13 @@ export default async function handler(req, res) {
     }
 
     res.setHeader("Content-Type", contentType);
-    res.setHeader("Cache-Control", "public, max-age=31536000"); // Cache for 1 year
+    res.setHeader("Cache-Control", "public, max-age=31536000");
     res.setHeader("Content-Security-Policy", "default-src 'self'");
 
     // Stream file with error handling
     const stream = fs.createReadStream(filePath);
     stream.on("error", (error) => {
+      console.error('Stream error:', error);  // Debug log
       if (!res.headersSent) {
         res.status(500).json({ error: "Error streaming file" });
       }
@@ -81,6 +89,7 @@ export default async function handler(req, res) {
 
     stream.pipe(res);
   } catch (error) {
+    console.error('Unexpected error:', error);  // Debug log
     if (!res.headersSent) {
       res.status(500).json({ error: "Internal server error" });
     }

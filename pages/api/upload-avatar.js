@@ -60,11 +60,8 @@ export default async function handler(req, res) {
     // Delete the old avatar if it exists
     if (currentAvatar) {
       const oldFilePath = path.join("/var/www/test.ashe.tn/uploads", currentAvatar);
-      try {
         await fs.unlink(oldFilePath); // Delete old file if it exists
-      } catch (deleteError) {
-        console.error("Error deleting old avatar:", deleteError);
-      }
+      
     }
 
     // Define upload directory
