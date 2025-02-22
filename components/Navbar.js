@@ -173,36 +173,26 @@ export default function Navbar({ onHeightChange }) {
   useEffect(() => {
     if (!user?.uid) return;
   
-    const fetchUserData = async () => {
-      try {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists()) {
-          const data = userDoc.data();
-  
-          // Get Firebase ID Token
-          const idToken = await user.getIdToken();
-  
-          console.log('Avatar filename from Firestore:', data.avatar); // Debug log
-  
-          const avatarUrl = data.avatar 
-            ? `/api/serve-image?filename=uploads/${data.avatar}&token=${idToken}`
-            : null;
-  
-          console.log('Constructed avatar URL:', avatarUrl); // Debug log
-  
-          setUserData({
-            ...data,
-            avatar: avatarUrl,
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error); // Debug log
-        toast.error("Error fetching user data!");
+    const unsubscribe = onSnapshot(doc(db, "users", user.uid), async (userDoc) => {
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        // Get Firebase ID Token
+        const idToken = await user.getIdToken();
+        const avatarUrl = data.avatar 
+          ? `/api/serve-image?filename=uploads/${data.avatar}&token=${idToken}`
+          : null;
+        setUserData({
+          ...data,
+          avatar: avatarUrl,
+        });
       }
-    };
+    }, (error) => {
+      toast.error("Error fetching user data!");
+    });
   
-    fetchUserData();
+    return () => unsubscribe(); // Cleanup the listener on unmount
   }, [user?.uid]);
+  
   
   return (
     <>

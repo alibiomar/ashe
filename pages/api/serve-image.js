@@ -10,7 +10,6 @@ export default async function handler(req, res) {
   try {
     let { filename } = req.query;
     
-    console.log('Requested filename:', filename);  // Debug log
 
     // Check for token in header or query param
     const authToken = req.headers.authorization?.split("Bearer ")[1] || req.query.token;
@@ -29,7 +28,6 @@ export default async function handler(req, res) {
       const decodedToken = await getAuth().verifyIdToken(authToken);
       userId = decodedToken.uid;
     } catch (authError) {
-      console.error('Auth error:', authError);  // Debug log
       return res.status(401).json({ error: "Invalid token" });
     }
 
@@ -49,13 +47,11 @@ export default async function handler(req, res) {
     const uploadDir = "/var/www/test.ashe.tn";
     const filePath = path.join(uploadDir, 'uploads', filename);
     
-    console.log('Full file path:', filePath);  // Debug log
 
     // Check if file exists
     try {
       await fs.promises.access(filePath, fs.constants.R_OK);
     } catch (error) {
-      console.error('File access error:', error);  // Debug log
       return res.status(404).json({ error: "File not found" });
     }
 
@@ -81,7 +77,6 @@ export default async function handler(req, res) {
     // Stream file with error handling
     const stream = fs.createReadStream(filePath);
     stream.on("error", (error) => {
-      console.error('Stream error:', error);  // Debug log
       if (!res.headersSent) {
         res.status(500).json({ error: "Error streaming file" });
       }
@@ -89,7 +84,6 @@ export default async function handler(req, res) {
 
     stream.pipe(res);
   } catch (error) {
-    console.error('Unexpected error:', error);  // Debug log
     if (!res.headersSent) {
       res.status(500).json({ error: "Internal server error" });
     }
