@@ -173,26 +173,27 @@ export default function Navbar({ onHeightChange }) {
   useEffect(() => {
     if (!user?.uid) return;
   
-    const unsubscribe = onSnapshot(doc(db, "users", user.uid), async (userDoc) => {
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        // Get Firebase ID Token
-        const idToken = await user.getIdToken();
-        const avatarUrl = data.avatar 
-          ? `/api/serve-image?filename=uploads/${data.avatar}&token=${idToken}`
-          : null;
-        setUserData({
-          ...data,
-          avatar: avatarUrl,
-        });
+    const fetchUserData = async () => {
+      try {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          // Get Firebase ID Token
+          const idToken = await user.getIdToken();  
+          const avatarUrl = data.avatar 
+            ? `/api/serve-image?filename=uploads/${data.avatar}&token=${idToken}`
+            : null;  
+          setUserData({
+            ...data,
+            avatar: avatarUrl,
+          });
+        }
+      } catch (error) {
+        toast.error("Error fetching user data!");
       }
-    }, (error) => {
-      toast.error("Error fetching user data!");
-    });
-  
-    return () => unsubscribe(); // Cleanup the listener on unmount
+    };
+    fetchUserData();
   }, [user?.uid]);
-  
   
   return (
     <>
