@@ -22,7 +22,7 @@ const fadeInUp = {
 
 const fadeIn = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.7, ease: 'easeOut' } },
+  visible: { opacity: 1, transition: { duration: 1, ease: 'easeOut' } },
 };
 
 // Staggered container for the value pillars
@@ -76,13 +76,8 @@ export default function About() {
         <div className="min-h-screen bg-white relative md:-mt-16">
           {/* Heritage Header */}
           <header className="h-screen flex items-center justify-center p-8 relative">
-                <motion.div
-                  className="absolute inset-0"
-                  initial={{ scale: 1.5, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 2}}
-                >
-            <div className="relative w-full hero-image-container">
+
+            <div className="absolute inset-0  w-full hero-image-container">
             <Image
               src="/heritage-hero.webp"
               alt="Archival photo of a master tailor at work"
@@ -94,7 +89,6 @@ export default function About() {
             />
 
             </div>
-            </motion.div>
             <motion.div
               className="max-w-8xl mx-auto text-center"
               initial="hidden"
@@ -111,7 +105,7 @@ export default function About() {
                 <span className="block">Born from Legacy</span>
                 <span className="text-gray-400">crafted for eternity</span>
               </h1>
-              <p className="text-lg md:text-2xl text-gray-600 max-w-3xl mx-auto">
+              <p className="text-md md:text-2xl text-gray-600 max-w-3xl mx-auto">
                 Welcome to ASHE, where every piece carries an inherited story.
               </p>
             </motion.div>
