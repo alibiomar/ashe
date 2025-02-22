@@ -169,7 +169,32 @@ export default function Navbar({ onHeightChange }) {
       document.body.classList.remove('no-scroll');
     };
   }, [isMenuOpen]);
-
+  useEffect(() => {
+    if (!user?.uid) return;
+  
+    const fetchUserData = async () => {
+      try {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+  
+          // Get Firebase ID Token
+          const idToken = await user.getIdToken();
+  
+          setUserData({
+            avatar: data.avatar 
+              ? `/api/serve-image?filename=${data.avatar}&token=${idToken}&t=${Date.now()}` 
+              : null,
+          });
+        }
+      } catch (error) {
+        toast.error("Error fetching user data!");
+      }
+    };
+  
+    fetchUserData();
+  }, [user?.uid]);
+  
   return (
     <>
       <nav
@@ -233,13 +258,71 @@ export default function Navbar({ onHeightChange }) {
 
               {user ? (
                 // The user icon is now clickable. If on "/userProfile", clicking redirects to "/"
-                <div
-                  onClick={handleUserIconClick}
-                  className="cursor-pointer flex items-center space-x-2 text-gray-300 hover:text-teal-400"
-                >
-                  <FaUserCircle className="h-8 w-8" />
-                  <span className="ml-2">{user.displayName}</span>
-                </div>
+<div
+  onClick={handleUserIconClick}
+  className="group cursor-pointer flex items-center justify-around px-2 py-1 rounded-full border border-gray-600 hover:border-teal-400/80 text-gray-300 hover:text-teal-400 transition-all duration-300 shadow-md hover:shadow-xl backdrop-blur-sm bg-black/30 hover:bg-black/50 relative overflow-hidden"
+>
+  {/* Animated background layer */}
+  <motion.div
+    className="absolute inset-0 bg-gradient-to-r from-teal-400/10 to-transparent opacity-0 group-hover:opacity-100"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: router.pathname === '/userProfile' ? 0.1 : 0 }}
+    transition={{ duration: 0.3 }}
+  />
+  
+  {userData?.avatar ? (
+    <motion.div
+      className="relative"
+      whileHover={{ scale: 1.05 }}
+      transition={{ type: "spring", stiffness: 300 }}
+    >
+      <motion.img
+        src={`${userData.avatar}${userData.avatar.includes('?') ? '&' : '?'}t=${Date.now()}`}
+        alt="User Avatar"
+        className="w-10 h-10 rounded-full object-cover border-2 border-gray-600/80 group-hover:border-teal-400/80 transition-all duration-300"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        onError={(e) => {
+          e.target.onerror = null;
+          setUserData(prev => ({ ...prev, avatar: null }));
+        }}
+      />
+      {/* Online status indicator */}
+      <div className="absolute bottom-0 right-0 w-3 h-3 bg-teal-400 rounded-full border-2 border-black/80" />
+    </motion.div>
+  ) : (
+    <motion.div
+      className="relative"
+      whileHover={{ scale: 1.05 }}
+      transition={{ type: "spring", stiffness: 300 }}
+    >
+      <FaUserCircle className="text-gray-500/80 w-10 h-10 transition-all duration-300 group-hover:text-teal-400/90" />
+    </motion.div>
+  )}
+  
+  <motion.span 
+    className="text-sm font-medium hidden sm:block tracking-tight"
+    initial={{ x: -5 }}
+    animate={{ x: 0 }}
+    transition={{ delay: 0.1 }}
+  >
+    Profile
+    {/* Animated underline */}
+    <span className="block absolute -bottom-1 left-0 w-0 group-hover:w-full h-0.5 bg-teal-400 transition-all duration-300" />
+  </motion.span>
+
+  {/* Active state indicator */}
+  {router.pathname === '/userProfile' && (
+    <motion.div 
+      className="absolute -right-1 -top-1 w-2 h-2 bg-teal-400 rounded-full shadow-glow"
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      transition={{ type: "spring" }}
+    />
+  )}
+</div>
+
               ) : (
                 <>
                   <Link

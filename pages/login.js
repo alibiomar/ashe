@@ -146,6 +146,8 @@ export default function Login() {
             <Image
               src="/image_h.avif"
               alt="Login"
+              width={500}
+              height={500}
               className="w-full h-48 object-cover"
             />
           </div>
@@ -156,6 +158,8 @@ export default function Login() {
               <Image
                 src="/image_h.avif"
                 alt="Login"
+                width={500}
+                height={500}
                 className="w-full h-full object-cover"
               />
             </div>

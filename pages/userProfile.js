@@ -1,23 +1,47 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getAuth, updatePassword } from "firebase/auth";
-import { getFirestore, collection,getDoc, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { FaUserCircle, FaSignOutAlt, FaKey, FaBox, FaTimes } from "react-icons/fa";
+import {
+  getFirestore,
+  collection,
+  getDoc,
+  query,
+  where,
+  getDocs,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
+import { FaUserCircle, FaSignOutAlt, FaKey, FaBox, FaTimes, FaSpinner, FaPen } from "react-icons/fa";
 import { toast } from "sonner";
 import { useRouter } from "next/router";
 import Layout from "../components/Layout";
-import Head from 'next/head';
+import Head from "next/head";
 
 const UserProfile = () => {
   const [orders, setOrders] = useState([]);
   const [isUnsubscribeModalOpen, setIsUnsubscribeModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const menuRef = useRef(null);
+  const [userData, setUserData] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [previewAvatar, setPreviewAvatar] = useState(null);
+  const fileInputRef = useRef(null);
   const auth = getAuth();
   const db = getFirestore();
   const router = useRouter();
   const user = auth.currentUser;
-const [userData, setUserData] = useState(null);
+
+  // Redirect if no authenticated user
+  useEffect(() => {
+    if (!user) {
+      router.push("/login");
+    }
+  }, [user, router]);
+
+  // Render nothing while redirecting
+  if (!user) {
+    return null;
+  }
+
   useEffect(() => {
     if (!user?.uid) return;
   
@@ -25,8 +49,17 @@ const [userData, setUserData] = useState(null);
       try {
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists()) {
-          const userData = userDoc.data();
-          setUserData(userData); // Assuming you have a state to store user data
+          const data = userDoc.data();
+  
+          // Get Firebase ID Token
+          const idToken = await user.getIdToken();
+  
+          setUserData({
+            ...data,
+            avatar: data.avatar 
+              ? `/api/serve-image?filename=${data.avatar}&token=${idToken}&t=${Date.now()}` 
+              : null,
+          });
         }
       } catch (error) {
         toast.error("Error fetching user data!");
@@ -36,11 +69,15 @@ const [userData, setUserData] = useState(null);
     fetchUserData();
   }, [user?.uid]);
   
+  // Fetch user orders
   useEffect(() => {
     if (!user?.uid) return;
     const fetchOrders = async () => {
       try {
-        const q = query(collection(db, "orders"), where("userInfo.id", "==", user.uid));
+        const q = query(
+          collection(db, "orders"),
+          where("userInfo.id", "==", user.uid)
+        );
         const querySnapshot = await getDocs(q);
         setOrders(querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
       } catch (error) {
@@ -48,7 +85,73 @@ const [userData, setUserData] = useState(null);
       }
     };
     fetchOrders();
-  }, [auth.currentUser]);
+  }, [user?.uid]);
+
+  // Trigger file input when avatar is clicked
+  const handleAvatarClick = () => {
+    if (fileInputRef.current && !isUploading) {
+      fileInputRef.current.click();
+    }
+  };
+
+// Handle avatar change and upload via Next.js API
+const handleAvatarChange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  // Validate file type and size
+  if (!file.type.startsWith("image/")) {
+    toast.error("Please select a valid image file.");
+    return;
+  }
+  const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB
+  if (file.size > MAX_FILE_SIZE) {
+    toast.error("File size must be less than 3MB.");
+    return;
+  }
+
+  // Generate preview
+  const preview = URL.createObjectURL(file);
+  setPreviewAvatar(preview);
+  setIsUploading(true);
+
+  try {
+    // Get the current user's ID token
+    const idToken = await user.getIdToken();
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    const res = await fetch("/api/upload-avatar", {
+      method: "POST",
+      headers: {
+        // Send the token in the Authorization header
+        "Authorization": `Bearer ${idToken}`
+      },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error || "Failed to upload avatar.");
+    }
+
+    const data = await res.json();
+    
+    // Update the avatar URL with cache-busting parameter
+    const timestamp = Date.now();
+    setUserData((prev) => ({
+      ...prev,
+      avatar: `/api/serve-image?filename=${data.avatarUrl}&t=${timestamp}`,
+    }));
+    
+    toast.success("Avatar updated successfully!");
+  } catch (error) {
+    toast.error(error.message || "Error uploading avatar.");
+  } finally {
+    setIsUploading(false);
+    URL.revokeObjectURL(preview); // Clean up preview
+  }
+};
 
   const handleChangePassword = async (newPassword) => {
     try {
@@ -84,25 +187,67 @@ const [userData, setUserData] = useState(null);
         className="mx-auto p-4 md:p-6 lg:p-8 max-w-4xl w-full min-h-screen space-y-8"
       >
         {/* Profile Card */}
-        <div className="bg-white p-6 flex flex-col justify-between md:flex-row md:items-center items-center md:gap-6 gap-10  transition-all">
-          <div className="flex md:flex-row  items-center gap-8 md:gap-8 md:justify-center">
-          <FaUserCircle className="text-gray-400 shrink-0" size={80} />
-            <div className="space-y-2 ">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 uppercase">
-              {userData?.firstName} {userData?.lastName}
-            </h1>
-            <p className="text-sm md:text-base text-gray-500 font-medium">
-              {auth.currentUser?.email}
-            </p>
-          </div></div>
+        <div className="bg-white p-6 flex flex-col justify-between md:flex-row md:items-center items-center md:gap-6 gap-10 transition-all">
+          <div className="flex md:flex-row items-center gap-8 md:gap-8 md:justify-center">
+            {/* Clickable Avatar with Hover Indication */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              onClick={handleAvatarClick}
+              className="relative cursor-pointer group flex flex-col items-center"
+            >
+              <div className="relative">
+              {previewAvatar || userData?.avatar ? (
+                  <img
+                    src={previewAvatar || `${userData.avatar}${userData.avatar.includes('?') ? '&' : '?'}t=${Date.now()}`}
+                    alt="User Avatar"
+                    className="w-20 h-20 rounded-full object-cover shadow-md transition-all duration-300"
+                    onError={(e) => {
+                      e.target.onerror = null; // Prevent infinite loop
+                      setUserData(prev => ({...prev, avatar: null}));}}
+                  />
+                ) : (
+                  <FaUserCircle className="text-gray-400" size={80} />
+                )}
+                {/* Pen Icon Overlay */}
+                <div className="absolute bottom-0 right-0 p-1.5 bg-white rounded-full shadow-sm transition-opacity duration-300">
+                  <FaPen className="text-gray-600" size={16} />
+                </div>
+                {/* Uploading Spinner */}
+                {isUploading && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 rounded-full">
+                    <FaSpinner className="animate-spin text-white mb-1" size={24} />
+                    <span className="text-white text-xs mt-1">Processing...</span>
+                  </div>
+                )}
+              </div>
+              {/* Light Text Prompt */}
+              <span className="text-sm text-gray-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                Change your image
+              </span>
+              {/* Hidden File Input */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleAvatarChange}
+                accept="image/*"
+              />
+            </motion.div>
+            <div className="space-y-2">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 uppercase">
+                {userData?.firstName} {userData?.lastName}
+              </h1>
+              <p className="text-sm md:text-base text-gray-500 font-medium">
+                {auth.currentUser?.email}
+              </p>
+            </div>
+          </div>
           <button
             onClick={handleLogout}
-            className="flex w-10/12 justify-center md:w-40  items-center p-4 md:p-5 bg-[#46c7c7] rounded-md md:rounded-sm hover:bg-accent transition-all "
+            className="flex w-10/12 justify-center md:w-40 items-center p-4 md:p-5 bg-[#46c7c7] rounded-md hover:bg-accent transition-all"
           >
-            <FaSignOutAlt className="mr-4 text-white   transition-colors" size={24} />
-            <span className=" transition-colors text-white font-semibold">
-              Logout
-            </span>
+            <FaSignOutAlt className="mr-4 text-white" size={24} />
+            <span className="text-white font-semibold">Logout</span>
           </button>
         </div>
 
@@ -110,7 +255,7 @@ const [userData, setUserData] = useState(null);
         <div className="grid gap-4 md:grid-cols-2">
           <button
             onClick={() => setIsPasswordModalOpen(true)}
-            className="group flex items-center p-4 md:p-5 bg-white  border   rounded-md  transition-all"
+            className="group flex items-center p-4 md:p-5 bg-white border rounded-md transition-all"
           >
             <FaKey className="mr-4 text-gray-500 group-hover:text-gray-700 transition-colors" size={24} />
             <span className="text-gray-700 font-semibold text-left">
@@ -123,7 +268,7 @@ const [userData, setUserData] = useState(null);
 
           <button
             onClick={() => setIsUnsubscribeModalOpen(true)}
-            className="group flex items-center p-4 md:p-5 bg-white  border  rounded-md   transition-all"
+            className="group flex items-center p-4 md:p-5 bg-white border rounded-md transition-all"
           >
             <FaBox className="mr-4 text-gray-500 group-hover:text-gray-700 transition-colors" size={24} />
             <span className="text-gray-700 font-semibold text-left">
@@ -133,12 +278,10 @@ const [userData, setUserData] = useState(null);
               </span>
             </span>
           </button>
-
-
         </div>
 
         {/* Order History */}
-        <div className="bg-white rounded-xl  p-6 border ">
+        <div className="bg-white rounded-xl p-6 border">
           <h3 className="text-xl font-bold text-gray-900 flex items-center mb-4">
             <FaBox className="mr-3 text-gray-500" />
             Order History
@@ -148,15 +291,23 @@ const [userData, setUserData] = useState(null);
               <table className="w-full min-w-[500px]">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Order ID</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Status</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Date</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
+                      Order ID
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
+                      Status
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
+                      Date
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {orders.map((order) => (
                     <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3 text-sm text-gray-600 font-medium">{order.id}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600 font-medium">
+                        {order.id}
+                      </td>
                       <td className="px-4 py-3">
                         <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                           {order.status}
@@ -187,7 +338,10 @@ const [userData, setUserData] = useState(null);
           />
         )}
         {isUnsubscribeModalOpen && (
-          <UnsubscribeModal user={auth.currentUser} setIsModalOpen={setIsUnsubscribeModalOpen} />
+          <UnsubscribeModal
+            user={auth.currentUser}
+            setIsModalOpen={setIsUnsubscribeModalOpen}
+          />
         )}
       </AnimatePresence>
     </Layout>
@@ -216,9 +370,9 @@ const PasswordChangeModal = ({ setIsPasswordModalOpen, handleChangePassword }) =
         >
           <FaTimes className="text-gray-400" size={18} />
         </button>
-        
+
         <h3 className="text-xl font-semibold text-gray-900 mb-6">Change Password</h3>
-        
+
         <div className="space-y-6">
           <div>
             <label className="block text-sm text-gray-600 mb-2">New Password</label>
@@ -230,7 +384,7 @@ const PasswordChangeModal = ({ setIsPasswordModalOpen, handleChangePassword }) =
               className="w-full px-4 py-3 border border-gray-200 rounded-md focus:ring-1 focus:ring-primary outline-none"
             />
           </div>
-          
+
           <div className="flex justify-end gap-4">
             <button
               onClick={() => setIsPasswordModalOpen(false)}
@@ -250,7 +404,6 @@ const PasswordChangeModal = ({ setIsPasswordModalOpen, handleChangePassword }) =
     </motion.div>
   );
 };
-
 
 const UnsubscribeModal = ({ user, setIsModalOpen }) => {
   const db = getFirestore();
@@ -296,7 +449,7 @@ const UnsubscribeModal = ({ user, setIsModalOpen }) => {
         </button>
 
         <h3 className="text-xl font-semibold text-gray-900 mb-4">Unsubscribe</h3>
-        
+
         <p className="text-gray-500 text-sm mb-6 leading-relaxed">
           You'll stop receiving our newsletters. Resubscribe anytime.
         </p>
@@ -319,6 +472,5 @@ const UnsubscribeModal = ({ user, setIsModalOpen }) => {
     </motion.div>
   );
 };
-
 
 export default UserProfile;

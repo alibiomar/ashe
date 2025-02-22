@@ -79,31 +79,11 @@ const config = withPWA({
   },
 
   images: {
-    domains: [
-      'via.placeholder.com',
-      'drive.google.com',
-      'firebasestorage.googleapis.com',
-      'lh3.googleusercontent.com',
-      'test.ashe.tn',
-      'fastly.picsum.photos',
-    ],
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '**.google.com',
+        protocol: "https",
+        hostname: "**", // Allow all domains
       },
-      {
-        protocol: 'https',
-        hostname: 'via.placeholder.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'firebasestorage.googleapis.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'lh3.googleusercontent.com',
-      }
     ],
   },  
 
