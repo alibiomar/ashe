@@ -366,22 +366,23 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
       <div ref={popupRef} className="bg-white w-full max-w-6xl h-[90vh] flex flex-col lg:grid lg:grid-cols-2 shadow-xl overflow-hidden">
         {/* Image Section */}
         <div className="relative h-64 lg:h-full overflow-hidden">
-          <Image
-            src="Delivery_Van.avif"
-            alt="Checkout Visual"
-            className="object-cover w-full h-full"
-          />
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 text-white bg-black/20 hover:bg-black/30 p-2 rounded-full transition-all"
-            aria-label="Close checkout"
-            disabled={loading}
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+  <Image
+    src="/Delivery_Van.avif"
+    alt="Checkout Visual"
+    fill
+    className="object-cover"
+  />
+  <button
+    onClick={onClose}
+    className="absolute top-4 right-4 text-white bg-black/20 hover:bg-black/30 p-2 rounded-full transition-all"
+    aria-label="Close checkout"
+    disabled={loading}
+  >
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
+</div>
 
         {/* Form Section */}
         <div className="flex-1 overflow-y-auto p-6 lg:p-8">
