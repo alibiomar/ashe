@@ -111,7 +111,7 @@ export default function About() {
                 <span className="block">Born from Legacy</span>
                 <span className="text-gray-400">crafted for eternity</span>
               </h1>
-              <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto">
+              <p className="text-lg md:text-2xl text-gray-600 max-w-3xl mx-auto">
                 Welcome to ASHE, where every piece carries an inherited story.
               </p>
             </motion.div>
