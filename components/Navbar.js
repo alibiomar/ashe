@@ -308,8 +308,6 @@ export default function Navbar({ onHeightChange }) {
     transition={{ delay: 0.1 }}
   >
     Profile
-    {/* Animated underline */}
-    <span className="block absolute -bottom-1 left-0 w-0 group-hover:w-full h-0.5 bg-teal-400 transition-all duration-300" />
   </motion.span>
 
   {/* Active state indicator */}
