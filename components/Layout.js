@@ -1,16 +1,16 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from './Navbar';
-import Footer from './Footer'; // Add a Footer component
+import Footer from './Footer';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react'; // Add useState
+import { useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
 
 export default function Layout({ children }) {
   const router = useRouter();
-  const [navbarHeight, setNavbarHeight] = useState(0); // State to store navbar height
+  const [navbarHeight, setNavbarHeight] = useState(0);
 
   useEffect(() => {
-    const handleRouteChange = (url) => {
+    const handleRouteChange = () => {
       window.scrollTo(0, 0);
     };
 
@@ -21,27 +21,22 @@ export default function Layout({ children }) {
   }, [router]);
 
   return (
-    
-    <div className="flex items-center justify-center flex-col min-h-screen w-full bg-white antialiased">
-      {/* Pass the setNavbarHeight function to Navbar */}
+    <div className="flex flex-col items-center justify-center min-h-screen w-full bg-white antialiased">
       <Navbar onHeightChange={setNavbarHeight} />
       <Toaster position="bottom-center" richColors />
-      {/* Apply navbar height as top margin */}
+      
       <motion.main
         id="main-content"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
-        className="flex-1 sm:px-0 w-full "
-        style={{ marginTop: (router.pathname === "/")? 0 : navbarHeight }}
+        className={`flex-1 sm:px-0 w-full transition-all`}
+        style={{ marginTop: router.pathname === '/' ? 0 : navbarHeight }}
       >
-        <AnimatePresence>
-          {children}
-        </AnimatePresence>
+        <AnimatePresence>{children}</AnimatePresence>
       </motion.main>
 
-      {/* Footer */}
       <Footer />
     </div>
   );
