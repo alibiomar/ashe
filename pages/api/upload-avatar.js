@@ -59,13 +59,13 @@ export default async function handler(req, res) {
 
     // Delete the old avatar if it exists
     if (currentAvatar) {
-      const oldFilePath = path.join("/var/www/ashe.tn/uploads", currentAvatar);
+      const oldFilePath = path.join("/var/www/test.ashe.tn/uploads", currentAvatar);
         await fs.unlink(oldFilePath); // Delete old file if it exists
       
     }
 
     // Define upload directory
-    const uploadDir = "/var/www/ashe.tn/uploads"; // Adjust to your VPS path
+    const uploadDir = "/var/www/test.ashe.tn/uploads"; // Adjust to your VPS path
     const ext = path.extname(file.originalFilename || "");
     const filename = `${userId}-${Date.now()}${ext}`;
     const filePath = path.join(uploadDir, filename);

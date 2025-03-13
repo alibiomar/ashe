@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { doc, addDoc, collection, getDoc, updateDoc, increment } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
@@ -6,6 +6,7 @@ import { toast, Toaster } from 'sonner';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import Image from 'next/image';
+import citiesData from '../data/cities.json';
 
 // PDF generation helper function
 const generateInvoice = (order, userData) => {
@@ -74,7 +75,7 @@ const generateInvoice = (order, userData) => {
     doc.setFont(undefined, 'normal');
     const clientInfo = [
       order.shippingInfo.addressLine,
-      `${order.shippingInfo.city}, ${order.shippingInfo.state} ${order.shippingInfo.zipCode}`,
+      `${order.shippingInfo.district}, ${order.shippingInfo.city}, ${order.shippingInfo.state}`,
       `Phone: ${userData.phone}`,
       `Client: ${userData.firstName} ${userData.lastName}`
     ].join('\n');
@@ -220,23 +221,139 @@ FormInput.propTypes = {
   children: PropTypes.node,
 };
 
+// FormSelect Component for dropdowns
+const FormSelect = ({ label, name, value, onChange, options, required = true, ...props }) => (
+  <div className="mb-6">
+    <label htmlFor={name} className="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <select
+      id={name}
+      name={name}
+      value={value}
+      onChange={onChange}
+      className="w-full px-0 py-3 border-b border-gray-300 focus:border-black focus:outline-none placeholder-gray-400 text-base bg-transparent"
+      required={required}
+      {...props}
+    >
+      <option value="">Select {label}</option>
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  </div>
+);
+
+FormSelect.propTypes = {
+  label: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  required: PropTypes.bool,
+};
+
 // CheckoutPopup Component
-export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
+export default function CheckoutPopup({ basketItems, onClose, onPlaceOrder }) {
   const [formData, setFormData] = useState({
     state: '',
     city: '',
-    zipCode: '',
+    district: '',
     addressLine: '',
   });
+
   const [loading, setLoading] = useState(false);
   const [placedOrder, setPlacedOrder] = useState(null);
   const [userDataForInvoice, setUserDataForInvoice] = useState(null);
+
+  // State for location data options
+  const [locationOptions, setLocationOptions] = useState({
+    states: [],
+    cities: [],
+    districts: [],
+  });
+
   const popupRef = useRef(null);
 
   const totalAmount = useMemo(() =>
-    basket.reduce((sum, item) => sum + item.price * item.quantity, 0),
-    [basket]
+    basketItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [basketItems]
   );
+
+  // Initialize states options on component mount
+  useEffect(() => {
+    const stateOptions = citiesData.Tunisia.governorates.map(governorate => ({
+      value: governorate.name,
+      label: governorate.name
+    }));
+
+    setLocationOptions(prev => ({
+      ...prev,
+      states: stateOptions
+    }));
+  }, []);
+
+  // Update city (delegation) options when state changes
+  useEffect(() => {
+    if (!formData.state) {
+      setLocationOptions(prev => ({ ...prev, cities: [], districts: [] }));
+      setFormData(prev => ({ ...prev, city: '', district: '' }));
+      return;
+    }
+
+    const selectedGovernorate = citiesData.Tunisia.governorates.find(
+      g => g.name === formData.state
+    );
+
+    const cityOptions = selectedGovernorate?.delegations?.map(delegation => ({
+      value: delegation.name,
+      label: delegation.name
+    })) || [];
+
+    setLocationOptions(prev => ({
+      ...prev,
+      cities: cityOptions,
+      districts: []
+    }));
+
+    setFormData(prev => ({ ...prev, city: '', district: '' }));
+  }, [formData.state]);
+
+  // Update district (city) options when city (delegation) changes
+  useEffect(() => {
+    if (!formData.state || !formData.city) {
+      setLocationOptions(prev => ({ ...prev, districts: [] }));
+      setFormData(prev => ({ ...prev, district: '' }));
+      return;
+    }
+
+    const selectedGovernorate = citiesData.Tunisia.governorates.find(
+      g => g.name === formData.state
+    );
+
+    const selectedDelegation = selectedGovernorate?.delegations?.find(
+      d => d.name === formData.city
+    );
+
+    const districtOptions = selectedDelegation?.cities?.map(city => ({
+      value: city,
+      label: city
+    })) || [];
+
+    setLocationOptions(prev => ({
+      ...prev,
+      districts: districtOptions
+    }));
+
+    setFormData(prev => ({ ...prev, district: '' }));
+  }, [formData.state, formData.city]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -244,8 +361,8 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
   };
 
   const validateForm = () => {
-    const { state, city, zipCode } = formData;
-    if (!state || !city || !zipCode) {
+    const { state, city, district, addressLine } = formData;
+    if (!state || !city || !district || !addressLine) {
       toast.error('All fields are required');
       return false;
     }
@@ -275,8 +392,13 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
           email: user.email,
           phone: userDoc.data().phone,
         },
-        shippingInfo: formData,
-        items: basket.map(item => ({
+        shippingInfo: {
+          state: formData.state,
+          city: formData.city,
+          district: formData.district,
+          addressLine: formData.addressLine,
+        },
+        items: basketItems.map(item => ({
           id: item.id,
           name: item.name,
           price: item.price,
@@ -300,12 +422,12 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
           body: JSON.stringify({ order: orderWithId })
         });
       } catch (emailError) {
-        toast.error('Admin failed to recieve notification, but your order was placed successfully');
+        toast.error('Admin failed to receive notification, but your order was placed successfully');
       }
 
       // Update the stock for each ordered product
       await Promise.all(
-        basket.map(async (item) => {
+        basketItems.map(async (item) => {
           const productRef = doc(db, 'products', item.id);
           const productDoc = await getDoc(productRef);
 
@@ -366,56 +488,66 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
       <div ref={popupRef} className="bg-white w-full max-w-6xl h-[90vh] flex flex-col lg:grid lg:grid-cols-2 shadow-xl overflow-hidden">
         {/* Image Section */}
         <div className="relative h-64 lg:h-full overflow-hidden">
-  <Image
-    src="/Delivery_Van.avif"
-    alt="Checkout Visual"
-    fill
-    className="object-cover"
-  />
-  <button
-    onClick={onClose}
-    className="absolute top-4 right-4 text-white bg-black/20 hover:bg-black/30 p-2 rounded-full transition-all"
-    aria-label="Close checkout"
-    disabled={loading}
-  >
-    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-    </svg>
-  </button>
-</div>
+          <Image
+            src="/Delivery_Van.avif"
+            alt="Checkout Visual"
+            fill
+            className="object-cover"
+          />
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-white bg-black/20 hover:bg-black/30 p-2 rounded-full transition-all"
+            aria-label="Close checkout"
+            disabled={loading}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
 
         {/* Form Section */}
         <div className="flex-1 overflow-y-auto p-6 lg:p-8">
           <h2 className="text-3xl font-bold mb-8 tracking-tight">ORDER DETAILS</h2>
           <form onSubmit={handlePlaceOrder} className="space-y-6" encType="application/x-www-form-urlencoded">
             <h3 className="text-mx font-light italic mb-8 text-red-500">*Currently, we only ship in Tunisia*</h3>
-            <FormInput
-              label="State"
+
+            {/* State (Governorate) Dropdown */}
+            <FormSelect
+              label="Governorate"
               name="state"
               value={formData.state}
               onChange={handleChange}
-              autoComplete="state"
+              options={locationOptions.states}
             />
-            <FormInput
-              label="City"
+
+            {/* City (Delegation) Dropdown */}
+            <FormSelect
+              label="Delegation"
               name="city"
               value={formData.city}
               onChange={handleChange}
-              autoComplete="city"
+              options={locationOptions.cities}
+              disabled={!formData.state || locationOptions.cities.length === 0}
             />
-            <FormInput
-              label="Zip Code"
-              name="zipCode"
-              value={formData.zipCode}
+
+            {/* District (City) Dropdown */}
+            <FormSelect
+              label="City"
+              name="district"
+              value={formData.district}
               onChange={handleChange}
-              type="text"
-              autoComplete="postal-code"
+              options={locationOptions.districts}
+              disabled={!formData.city || locationOptions.districts.length === 0}
             />
+
+            {/* Address Line input */}
             <FormInput
               label="Address Line"
               name="addressLine"
               value={formData.addressLine}
               onChange={handleChange}
+              placeholder="Street name, building number, apartment, etc."
               autoComplete="street-address"
             />
 
@@ -456,7 +588,7 @@ export default function CheckoutPopup({ basket, onClose, onPlaceOrder }) {
 }
 
 CheckoutPopup.propTypes = {
-  basket: PropTypes.arrayOf(PropTypes.shape({
+  basketItems: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     price: PropTypes.number.isRequired,

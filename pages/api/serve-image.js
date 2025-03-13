@@ -44,7 +44,7 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: "Forbidden" });
     }
 
-    const uploadDir = "/var/www/ashe.tn";
+    const uploadDir = "/var/www/test.ashe.tn";
     const filePath = path.join(uploadDir, 'uploads', filename);
     
 

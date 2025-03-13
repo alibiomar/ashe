@@ -51,32 +51,38 @@ export default function Signup() {
       // Create user with Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
+    
       // Save user details in Firestore
       await setDoc(doc(db, 'users', user.uid), {
         firstName,
         lastName,
         phone,
         email,
-        gender, // Added to Firestore document
+        gender, 
         createdAt: new Date().toISOString(),
         role: 'user',
       });
-
+    
+      // Add user to newsletter_signups collection
+      await addDoc(collection(db, 'newsletter_signups'), {
+        email,
+        timestamp: serverTimestamp(),
+      });
+    
       // Create an empty basket for the user
       await setDoc(doc(db, 'baskets', user.uid), {
         items: [],
       });
-
+    
       // Send verification email via backend
       const response = await fetch('https://auth.ashe.tn/auth/verify-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-
+    
       if (!response.ok) throw new Error('Failed to send verification email');
-
+    
       // Notify user and clear form
       toast.success('Account created! Please check your email to verify your account.');
       setFirstName('');
@@ -86,10 +92,10 @@ export default function Signup() {
       setPassword('');
       setConfirmPassword('');
       setGender(''); // Reset gender state
-
+    
       // Log out the user immediately after signup
       await signOut(auth);
-
+    
       // Redirect to login page after 2 seconds
       setTimeout(() => {
         router.push('/login');
@@ -99,6 +105,7 @@ export default function Signup() {
     } finally {
       setLoading(false);
     }
+    
   };
 
   const handleSignupError = (err) => {
@@ -127,6 +134,8 @@ export default function Signup() {
             <Image
               src="/image_h.avif"
               alt="Signup"
+              width={500}
+              height={500}
               className="w-full h-48 object-cover"
             />
           </div>
@@ -137,6 +146,8 @@ export default function Signup() {
               <Image
                 src="/image_h.avif"
                 alt="Signup"
+                width={500}
+                height={500}
                 className="w-full h-full object-cover"
               />
             </div>

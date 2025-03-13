@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 import { toast } from 'sonner';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
+import { useBasket } from '../contexts/BasketContext';
 
 const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
   suspense: true,
@@ -16,11 +17,10 @@ const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
 const CheckoutPopup = lazy(() => import('../components/CheckoutPopup'));
 
 export default function Basket() {
-  const [basket, setBasket] = useState([]);
+  const { getItemQuantity,updateItemQuantity,basketItems,basketCount,loadBasketFromCookies,removeItemFromBasket  } = useBasket();
   const [loading, setLoading] = useState(true);
   const [showCheckoutPopup, setShowCheckoutPopup] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
-  const [basketCount, setBasketCount] = useState(0);
   const router = useRouter();
 
   // Fetch authenticated user and set basket on mount
@@ -30,7 +30,6 @@ export default function Basket() {
       if (user) {
         // Fetch user info and basket from Firestore
         await fetchUserInfo(user.uid);
-        await fetchAndSyncBasket(user.uid);
       } else {
         // Load basket from cookies for unauthenticated users
         loadBasketFromCookies();
@@ -56,158 +55,7 @@ export default function Basket() {
     }
   };
 
-  // Fetch and sync the basket from Firestore
-  const fetchAndSyncBasket = async (userId) => {
-    try {
-      const basketDocRef = doc(db, 'baskets', userId);
-      const basketSnapshot = await getDoc(basketDocRef);
 
-      let firestoreBasket = basketSnapshot.exists()
-        ? basketSnapshot.data().items || []
-        : [];
-      const cookiesBasket = Cookies.get('basket')
-        ? JSON.parse(Cookies.get('basket'))
-        : [];
-
-      // Merge baskets from Firestore and cookies
-      firestoreBasket = mergeBaskets(firestoreBasket, cookiesBasket);
-
-      // Update Firestore with the merged basket
-      await updateDoc(basketDocRef, { items: firestoreBasket });
-
-      // Remove synced cookies and set state
-      Cookies.remove('basket');
-      setBasket(firestoreBasket);
-      updateBasketCount(firestoreBasket);
-    } catch (error) {
-      toast.error('Error syncing basket:', error);
-    }
-  };
-
-  // Load basket from cookies for unauthenticated users
-  const loadBasketFromCookies = () => {
-    const basketFromCookies = Cookies.get('basket')
-      ? JSON.parse(Cookies.get('basket'))
-      : [];
-    setBasket(basketFromCookies);
-    updateBasketCount(basketFromCookies);
-  };
-
-  // Merge baskets from Firestore and cookies
-  const mergeBaskets = (firestoreBasket, cookiesBasket) => {
-    const mergedBasket = [...firestoreBasket];
-
-    cookiesBasket.forEach((cookieItem) => {
-      const existingItemIndex = mergedBasket.findIndex(
-        (item) => item.id === cookieItem.id && item.size === cookieItem.size
-      );
-      if (existingItemIndex !== -1) {
-        // Merge quantities and preserve images
-        mergedBasket[existingItemIndex].quantity += cookieItem.quantity;
-        if (cookieItem.images) {
-          mergedBasket[existingItemIndex].images = cookieItem.images;
-        }
-      } else {
-        mergedBasket.push(cookieItem);
-      }
-    });
-
-    return mergedBasket;
-  };
-
-  // Remove an item from the basket
-  const removeFromBasket = (itemId, itemSize) => {
-    const updatedBasket = basket.filter(
-      (item) => !(item.id === itemId && item.size === itemSize)
-    );
-    setBasket(updatedBasket);
-
-    if (auth.currentUser) {
-      updateBasketInFirestore(updatedBasket);
-    } else {
-      Cookies.set('basket', JSON.stringify(updatedBasket), { expires: 7 });
-    }
-
-    updateBasketCount(updatedBasket);
-  };
-
-  // Update basket count (total quantity of items)
-  const updateBasketCount = (basketItems) => {
-    const totalItems = basketItems.reduce(
-      (total, item) => total + item.quantity,
-      0
-    );
-    setBasketCount(totalItems);
-  };
-
-  // Update basket in Firestore
-  const updateBasketInFirestore = async (updatedBasket) => {
-    try {
-      const user = auth.currentUser;
-      if (user) {
-        const basketDocRef = doc(db, 'baskets', user.uid);
-        await updateDoc(basketDocRef, { items: updatedBasket });
-      }
-    } catch (error) {
-      toast.error('Error updating basket:', error);
-    }
-  };
-
-  /**
-   * Update the quantity of a basket item.
-   * First checks the product's available stock for the selected size in Firestore.
-   * If newQuantity is greater than the available stock, a toast alert is shown.
-   */
-  const updateQuantity = async (itemId, itemSize, newQuantity) => {
-    if (newQuantity < 1) {
-      // If new quantity is less than 1, remove the item
-      removeFromBasket(itemId, itemSize);
-      return;
-    }
-
-    try {
-      // Get the product document to check available stock for the selected size
-      const productRef = doc(db, 'products', itemId);
-      const productSnapshot = await getDoc(productRef);
-      if (productSnapshot.exists()) {
-        const productData = productSnapshot.data();
-
-        // Check if the stock map exists and if the size key is present
-        const availableStock =
-          productData.stock && productData.stock[itemSize] !== undefined
-            ? productData.stock[itemSize]
-            : 0;
-        if (newQuantity > availableStock) {
-          toast.error(
-            `Not enough stock available for size ${itemSize}!`
-          );
-          return;
-        }
-      } else {
-        toast.error('Unable to verify product stock.');
-        return;
-      }
-    } catch (error) {
-      toast.error('Error checking product stock. Please try again.');
-      return;
-    }
-
-    // If available stock is sufficient, update the basket as usual
-    const updatedBasket = basket.map((item) => {
-      if (item.id === itemId && item.size === itemSize) {
-        return { ...item, quantity: newQuantity };
-      }
-      return item;
-    });
-    setBasket(updatedBasket);
-
-    if (auth.currentUser) {
-      updateBasketInFirestore(updatedBasket);
-    } else {
-      Cookies.set('basket', JSON.stringify(updatedBasket), { expires: 7 });
-    }
-    updateBasketCount(updatedBasket);
-  };
 
   // Proceed to checkout
   const proceedToCheckout = () => {
@@ -260,10 +108,11 @@ export default function Basket() {
             </header>
 
             <Suspense fallback={<LoadingSpinner />}>
-              {basket.length === 0 ? (
+              {basketCount === 0 ? (
                 <div className="text-center flex items-center flex-col space-y-8">
                   <div className="w-40 mb-6 animate-bounce">
-                    <Image src="/basket.svg" alt="Empty Basket" />
+                    <Image width={96} height={96}  className="w-full h-full object-contain rounded-none"
+ src="/basket.svg" alt="Empty Basket" />
                   </div>
                   <p className="text-xl text-gray-600 font-medium tracking-wide">
                     Awaiting your selection
@@ -278,7 +127,7 @@ export default function Basket() {
               ) : (
                 <div className="space-y-8">
                   <div className="bg-white border border-gray-300 rounded-none overflow-hidden divide-y divide-gray-300">
-                    {basket.map((item, index) => (
+                    {basketItems.map((item, index) => (
                       <div
                         key={
                           item.id && item.size
@@ -288,20 +137,23 @@ export default function Basket() {
                         className="group flex items-center p-6 hover:bg-gray-100 transition-all duration-300 animate-fadeIn"
                       >
                         <div className="relative w-24 h-24 flex-shrink-0">
-                          <Image
-                            src={item?.images?.[0] || '/placeholder-art.svg'}
-                            alt={item.name}
-                            className="w-full h-auto object-contain rounded-none"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              router.push('/products');
-                            }}
-                            onError={(e) => {
-                              e.target.src = '/placeholder-art.svg'; // Fallback if image doesn't load
-                            }}
-                            loading="lazy"
-                          />
-                        </div>
+                        <Image
+                          src={item?.images?.[0] || '/placeholder-art.svg'}
+                          alt={item.name}
+                          width={96} // Explicit width (tailwind w-24 is 96px)
+                          height={96} // Explicit height (tailwind h-24 is 96px)
+                          className="w-full h-full object-contain rounded-none"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            router.push('/products');
+                          }}
+                          onError={(e) => {
+                            e.target.src = '/placeholder-art.svg'; // Fallback if image doesn't load
+                          }}
+                          loading="lazy"
+                        />
+                      </div>
+
 
                         <div className="ml-6 flex-1">
                           <div className="flex items-start justify-between">
@@ -314,7 +166,7 @@ export default function Basket() {
                               </p>
                             </div>
                             <button
-                              onClick={() => removeFromBasket(item.id, item.size)}
+                              onClick={() => removeItemFromBasket(item.id, item.size)}
                               className="text-gray-400 hover:text-red-600 transition-colors duration-300 p-2"
                               aria-label="Remove items"
                             >
@@ -338,7 +190,7 @@ export default function Basket() {
                           <div className="mt-2 flex items-center space-x-4">
                             <button
                               onClick={async () =>
-                                await updateQuantity(
+                                await updateItemQuantity(
                                   item.id,
                                   item.size,
                                   item.quantity - 1
@@ -353,7 +205,7 @@ export default function Basket() {
                             </span>
                             <button
                               onClick={async () =>
-                                await updateQuantity(
+                                await updateItemQuantity(
                                   item.id,
                                   item.size,
                                   item.quantity + 1
@@ -386,11 +238,11 @@ export default function Basket() {
                       <div>
                         <h2 className="text-2xl text-white">Total Summary</h2>
                         <p className="text-gray-400 mt-1 text-sm">
-                          {basketCount} premium items selected
+                          {getItemQuantity} premium items selected
                         </p>
                       </div>
                       <p className="text-2xl font-bold text-[#46c7c7]">
-                        {basket
+                        {basketItems
                           .reduce(
                             (total, item) => total + item.price * item.quantity,
                             0
@@ -427,7 +279,7 @@ export default function Basket() {
             {showCheckoutPopup && userInfo && (
               <Suspense >
                 <CheckoutPopup
-                  basket={basket}
+                  basketItems={basketItems}
                   userInfo={userInfo}
                   onClose={closePopup}
                   onPlaceOrder={handlePlaceOrder}

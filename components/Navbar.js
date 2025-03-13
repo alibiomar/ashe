@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../lib/firebase';
 import { toast } from 'sonner';
+import { useBasket } from '../contexts/BasketContext';
 import {
   FaSignInAlt,
   FaUserPlus,
@@ -19,8 +20,7 @@ import {
 import { RiShoppingBasket2Fill } from "react-icons/ri";
 
 import Image from 'next/image';
-import Cookies from 'js-cookie';
-import { doc, onSnapshot, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 
 const menuItems = [
   { path: '/', label: 'Home', icon: FaHome },
@@ -33,12 +33,12 @@ export default function Navbar({ onHeightChange }) {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
-  const [basketCount, setBasketCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isNavbarVisible, setIsNavbarVisible] = useState(true);
   const navRef = useRef(null);
+  const { basketCount } = useBasket();
 
   // Function to handle user icon click
   const handleUserIconClick = () => {
@@ -90,40 +90,7 @@ export default function Navbar({ onHeightChange }) {
     }
   }, [router]);
 
-  // Update basket count based on items
-  const updateBasketCount = useCallback((items) => {
-    const count = items.reduce((total, item) => total + item.quantity, 0);
-    setBasketCount(count);
-  }, []);
-
-  // Sync basket between Firestore and cookies
-  const syncBasketWithFirestore = useCallback(async (userId) => {
-    const basket = Cookies.get('basket') ? JSON.parse(Cookies.get('basket')) : [];
-
-    if (basket.length > 0) {
-      const basketRef = doc(db, 'baskets', userId);
-      const basketDoc = await getDoc(basketRef);
-      let newBasket = basketDoc.exists() ? basketDoc.data().items || [] : [];
-
-      basket.forEach((product) => {
-        const existingProductIndex = newBasket.findIndex(
-          (item) => item.id === product.id && item.size === product.size
-        );
-        if (existingProductIndex !== -1) {
-          newBasket[existingProductIndex].quantity += product.quantity;
-        } else {
-          newBasket.push(product);
-        }
-      });
-
-      await setDoc(basketRef, { items: newBasket });
-
-      Cookies.remove('basket');
-      updateBasketCount(newBasket);
-    }
-  }, [updateBasketCount]);
-
-  // Listen for auth state changes and sync basket
+  // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
@@ -131,45 +98,13 @@ export default function Navbar({ onHeightChange }) {
       if (currentUser) {
         const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
         setUserData(userDoc.data());
-
-        await syncBasketWithFirestore(currentUser.uid);
-
-        const basketUnsubscribe = onSnapshot(doc(db, 'baskets', currentUser.uid), (snap) => {
-          updateBasketCount(snap.exists() ? snap.data().items : []);
-        });
-
-        return () => basketUnsubscribe();
-      } else {
-        const checkCookie = () => {
-          const basket = Cookies.get('basket') ? JSON.parse(Cookies.get('basket')) : [];
-          updateBasketCount(basket);
-        };
-
-        const interval = setInterval(checkCookie, 1000);
-
-        return () => clearInterval(interval);
       }
     });
 
     return () => unsubscribe();
-  }, [syncBasketWithFirestore, updateBasketCount]);
+  }, []);
 
-  // Check if the current route is active
-  const isActive = (path) => router.pathname === path;
-
-  // Disable scrolling when the mobile menu is open
-  useEffect(() => {
-    if (isMenuOpen) {
-      document.body.classList.add('no-scroll');
-    } else {
-      document.body.classList.remove('no-scroll');
-    }
-
-    return () => {
-      document.body.classList.remove('no-scroll');
-    };
-  }, [isMenuOpen]);
-
+  // Fetch user data including avatar
   useEffect(() => {
     if (!user?.uid) return;
   
@@ -194,6 +129,22 @@ export default function Navbar({ onHeightChange }) {
     };
     fetchUserData();
   }, [user?.uid]);
+
+  // Check if the current route is active
+  const isActive = (path) => router.pathname === path;
+
+  // Disable scrolling when the mobile menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.classList.add('no-scroll');
+    } else {
+      document.body.classList.remove('no-scroll');
+    }
+
+    return () => {
+      document.body.classList.remove('no-scroll');
+    };
+  }, [isMenuOpen]);
   
   return (
     <>
@@ -257,70 +208,68 @@ export default function Navbar({ onHeightChange }) {
               </motion.div>
 
               {user ? (
-                // The user icon is now clickable. If on "/userProfile", clicking redirects to "/"
-<div
-  onClick={handleUserIconClick}
-  className=" cursor-pointer flex items-center justify-around px-2 py-1 rounded-full border border-gray-600 hover:border-teal-400/80 text-gray-300 hover:text-teal-400 transition-all duration-300 shadow-md hover:shadow-xl backdrop-blur-sm bg-black/30 hover:bg-black/50 relative overflow-hidden"
->
-  {/* Animated background layer */}
-  <motion.div
-    className="absolute inset-0 bg-gradient-to-r from-teal-400/10 to-transparent opacity-0 hover:opacity-100"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: router.pathname === '/userProfile' ? 0.1 : 0 }}
-    transition={{ duration: 0.3 }}
-  />
-  
-  {userData?.avatar ? (
-    <motion.div
-      className="relative"
-      whileHover={{ scale: 1.05 }}
-      transition={{ type: "spring", stiffness: 300 }}
-    > 
-    <motion.img
-    src={userData.avatar}
-    alt="User Avatar"
-    className="w-10 h-10 rounded-full object-cover border-2 border-gray-600/80 hover:border-teal-400/80 transition-all duration-300"
-    initial={{ opacity: 0, scale: 0.8 }}
-    animate={{ opacity: 1, scale: 1 }}
-    transition={{ duration: 0.5, ease: 'easeOut' }}
-    onError={(e) => {
-      e.target.onerror = null;
-      setUserData(prev => ({ ...prev, avatar: null }));
-    }}
-  />
-      {/* Online status indicator */}
-      <div className="absolute bottom-0 right-0 w-3 h-3 bg-teal-400 rounded-full border-2 border-black/80" />
-    </motion.div>
-  ) : (
-    <motion.div
-      className="relative"
-      whileHover={{ scale: 1.05 }}
-      transition={{ type: "spring", stiffness: 300 }}
-    >
-      <FaUserCircle className="text-gray-500/80 w-10 h-10 transition-all duration-300 hover:text-teal-400/90" />
-    </motion.div>
-  )}
-  
-  <motion.span 
-    className="text-sm font-medium hidden sm:block tracking-tight"
-    initial={{ x: -5 }}
-    animate={{ x: 0 }}
-    transition={{ delay: 0.1 }}
-  >
-    Profile
-  </motion.span>
+                <div
+                  onClick={handleUserIconClick}
+                  className="cursor-pointer flex items-center justify-around px-2 py-1 rounded-full border border-gray-600 hover:border-teal-400/80 text-gray-300 hover:text-teal-400 transition-all duration-300 shadow-md hover:shadow-xl backdrop-blur-sm bg-black/30 hover:bg-black/50 relative overflow-hidden"
+                >
+                  {/* Animated background layer */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-teal-400/10 to-transparent opacity-0 hover:opacity-100"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: router.pathname === '/userProfile' ? 0.1 : 0 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                  
+                  {userData?.avatar ? (
+                    <motion.div
+                      className="relative"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    > 
+                      <motion.img
+                        src={userData.avatar}
+                        alt="User Avatar"
+                        className="w-10 h-10 rounded-full object-cover border-2 border-gray-600/80 hover:border-teal-400/80 transition-all duration-300"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.5, ease: 'easeOut' }}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          setUserData(prev => ({ ...prev, avatar: null }));
+                        }}
+                      />
+                      {/* Online status indicator */}
+                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-teal-400 rounded-full border-2 border-black/80" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      className="relative"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <FaUserCircle className="text-gray-500/80 w-10 h-10 transition-all duration-300 hover:text-teal-400/90" />
+                    </motion.div>
+                  )}
+                  
+                  <motion.span 
+                    className="text-sm font-medium hidden sm:block tracking-tight"
+                    initial={{ x: -5 }}
+                    animate={{ x: 0 }}
+                    transition={{ delay: 0.1 }}
+                  >
+                    Profile
+                  </motion.span>
 
-  {/* Active state indicator */}
-  {router.pathname === '/userProfile' && (
-    <motion.div 
-      className="absolute -right-1 -top-1 w-2 h-2 bg-teal-400 rounded-full shadow-glow"
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      transition={{ type: "spring" }}
-    />
-  )}
-</div>
-
+                  {/* Active state indicator */}
+                  {router.pathname === '/userProfile' && (
+                    <motion.div 
+                      className="absolute -right-1 -top-1 w-2 h-2 bg-teal-400 rounded-full shadow-glow"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring" }}
+                    />
+                  )}
+                </div>
               ) : (
                 <>
                   <Link
@@ -373,15 +322,15 @@ export default function Navbar({ onHeightChange }) {
               clipPath: 'circle(0% at 100% 0%)',
               transition: { duration: 0.5, ease: [0.33, 1, 0.68, 1] }
             }}
-            className="fixed inset-0 bg-black z-40  flex flex-col justify-center items-center "
+            className="fixed inset-0 bg-black z-40 flex flex-col justify-center items-center"
           >
-            <div className="space-y-6 ">
+            <div className="space-y-6">
               {menuItems.map((item) => (
                 <motion.div
                   key={item.path}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="w-full flex " 
+                  className="w-full flex" 
                 >
                   <Link
                     href={item.path}

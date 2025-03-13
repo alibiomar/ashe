@@ -123,10 +123,8 @@ const useActivityTracking = (user) => {
 
     const initializeActivity = async () => {
       if (user?.uid) {
-
-          unsubscribe = setupRealTimeActivityListener(user.uid);
-          await updateUserActivity(user.uid);
-
+        unsubscribe = setupRealTimeActivityListener(user.uid);
+        await updateUserActivity(user.uid);
       }
     };
 
@@ -140,7 +138,7 @@ export default function Home() {
   const { user, firstName, error: userError } = useUserData();
   const { testimonials, loading, error: testimonialError } = useTestimonials();
   const showScrollTop = useScrollToTop();
-  
+
   useActivityTracking(user);
 
   const error = userError || testimonialError;
@@ -157,6 +155,7 @@ export default function Home() {
     <Layout>
       <Head>
         <title>ASHE™</title>
+        <meta name="description" content="Crafting timeless elegance through refined tailoring and sustainable mastery." />
       </Head>
 
       <Suspense fallback={<LoadingSpinner />}>
@@ -196,41 +195,40 @@ const ErrorDisplay = memo(({ error }) => (
     </div>
   </div>
 ));
-const AnimatedArrow = memo(() => {
-  return (
-    <div className="flex flex-col items-center ">
-      {[...Array(3)].map((_, index) => (
-        <motion.div
-          key={index}
-          initial={{ opacity: 0, y: -5 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            duration: 1,
-            delay: index * 0.2,
-            repeat: Infinity,
-            repeatType: 'loop',
-            ease: 'easeInOut',
-          }}
+
+const AnimatedArrow = memo(() => (
+  <div className="flex flex-col items-center">
+    {[...Array(3)].map((_, index) => (
+      <motion.div
+        key={index}
+        initial={{ opacity: 0, y: -5 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 1,
+          delay: index * 0.2,
+          repeat: Infinity,
+          repeatType: 'loop',
+          ease: 'easeInOut',
+        }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          className="w-4 h-4 text-white"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="w-4 h-4 text-white"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </motion.div>
-      ))}
-    </div>
-  );
-});
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </motion.div>
+    ))}
+  </div>
+));
 
 const HeroSection = memo(({ user, firstName }) => (
   <section className="relative w-full h-screen mb-32 overflow-hidden bg-black">
@@ -262,7 +260,7 @@ const HeroSection = memo(({ user, firstName }) => (
             transition: { type: 'spring', stiffness: 120, damping: 20 },
           },
         }}
-          >
+      >
         <TextPressure
           text={user ? `Welcome, ${firstName}!` : 'Welcome to ASHE'}
           flex={true}
@@ -283,6 +281,7 @@ const HeroSection = memo(({ user, firstName }) => (
             whileHover={{ scale: 1.05, y: -5 }}
             whileTap={{ scale: 0.95, y: 5 }}
             transition={{ type: 'spring', stiffness: 300 }}
+            aria-label="Shop Now"
           >
             Shop Now
             <motion.span
@@ -316,7 +315,7 @@ const HeroSection = memo(({ user, firstName }) => (
 
 const ProductSections = memo(() => (
   <section className="container mx-auto px-4 mb-32 grid grid-cols-1 md:grid-cols-2 gap-8">
-    {['New Arrivals','Featured'].map((section, idx) => (
+    {['New Arrivals', 'Featured'].map((section, idx) => (
       <motion.div
         key={section}
         className={`group relative p-8 overflow-hidden ${idx === 0 ? 'bg-white' : 'bg-black text-white'}`}
@@ -365,7 +364,7 @@ const GridDistortionSection = memo(() => (
         <GridDistortion
           imageSrc="https://picsum.photos/1920/1080?grayscale"
           grid={12}
-          mouse={0.1}
+          mouse={0.14}
           strength={0.15}
           relaxation={0.9}
         />

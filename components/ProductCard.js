@@ -8,7 +8,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/zoom';
 
-export default function ProductCard({ product, onAddToBasket, getBasketQuantity }) {
+export default function ProductCard({ product, onAddToBasket, getItemQuantity }) {
   const [selectedSize, setSelectedSize] = useState('');
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,7 +37,7 @@ export default function ProductCard({ product, onAddToBasket, getBasketQuantity 
     }
 
     const selectedSizeStock = product.stock?.[selectedSize] || 0;
-    const currentBasketQty = getBasketQuantity(product.id, selectedSize) || 0;
+    const currentBasketQty = getItemQuantity(product.id, selectedSize) || 0;
     const availableForUser = selectedSizeStock - currentBasketQty;
 
     if (availableForUser <= 0) {
@@ -47,7 +47,7 @@ export default function ProductCard({ product, onAddToBasket, getBasketQuantity 
 
     setError('');
     onAddToBasket({ ...product, size: selectedSize, images: product.images });
-  }, [selectedSize, product, getBasketQuantity, onAddToBasket]);
+  }, [selectedSize, product, getItemQuantity, onAddToBasket]);
 
   if (!product) {
     return (
@@ -59,8 +59,12 @@ export default function ProductCard({ product, onAddToBasket, getBasketQuantity 
 
   const { name, price, originalPrice, stock, images, description, sizes } = product;
   const selectedSizeStock = stock?.[selectedSize] || 0;
-  const currentBasketQty = selectedSize ? getBasketQuantity(product.id, selectedSize) : 0;
+  const currentBasketQty = selectedSize ? getItemQuantity(product.id, selectedSize) : 0;
   const availableForUser = selectedSizeStock - currentBasketQty;
+
+  // Check if all sizes are out of stock
+  const allSizesOutOfStock = sizes?.every((size) => (stock?.[size] || 0) === 0);
+
   return (
     <div className="w-full flex flex-col items-center justify-around md:flex-row bg-white p-6 gap-6 md:gap-22">
       {/* Image Slider */}
@@ -155,18 +159,26 @@ export default function ProductCard({ product, onAddToBasket, getBasketQuantity 
         </div>
 
         {/* Add to Basket Button */}
-        <button
-          onClick={handleAddToBasket}
-          disabled={!selectedSize || availableForUser <= 0}
-          className={`w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all ${
-            !selectedSize || availableForUser <= 0
-              ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
-              : 'bg-black text-white hover:bg-white hover:text-black hover:scale-105 focus:bg-white focus:text-black focus:outline-none'
-          }`}
-        >
-          <FaShoppingBasket className="mr-2" />
-          Add to Basket
-        </button>
+        {allSizesOutOfStock ? (
+          <button
+            className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-gray-400 text-gray-700 cursor-not-allowed"
+          >
+            SOLD OUT
+          </button>
+        ) : (
+          <button
+            onClick={handleAddToBasket}
+            disabled={!selectedSize || availableForUser <= 0}
+            className={`w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all ${
+              !selectedSize || availableForUser <= 0
+                ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+                : 'bg-black text-white hover:bg-white hover:text-black hover:scale-105 focus:bg-white focus:text-black focus:outline-none'
+            }`}
+          >
+            <FaShoppingBasket className="mr-2" />
+            Add to Basket
+          </button>
+        )}
 
         {/* Additional Info */}
         <div className="mt-6 pt-4 border-t border-gray-200">
@@ -185,53 +197,52 @@ export default function ProductCard({ product, onAddToBasket, getBasketQuantity 
 
       {/* Image Modal */}
       {isModalOpen && (
-  <div
-    role="dialog"
-    aria-modal="true"
-    className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in"
-  >
-    <div
-      className="fixed inset-0"
-      onClick={closeModal}
-      aria-label="Close modal"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Escape' && closeModal()}
-    />
-    <div className="relative w-96 h-[70vh] md:w-full md:h-full max-w-2xl bg-white rounded-lg overflow-hidden scale-90 m-0 md:m-6 flex items-center justify-center">
-      <button
-        onClick={closeModal}
-        className="absolute top-4 right-4 z-50 text-[#46c7c7] hover:text-dark transition-colors duration-200"
-        aria-label="Close image modal"
-      >
-        <FaTimes className="text-xl md:text-2xl" />
-      </button>
-      <Swiper
-        initialSlide={selectedImageIndex}
-        modules={[Navigation, Pagination, Zoom]}
-        navigation
-        pagination={{ clickable: true }}
-        zoom
-        className="h-full w-full"
-      >
-        {images?.map((image, index) => (
-          <SwiperSlide key={`modal-image-${index}`} className="flex items-center justify-center">
-            <div className="swiper-zoom-container relative flex items-center justify-center">
-              <Image
-                src={image}
-                alt={`Enlarged view of ${name} - Image ${index + 1}`}
-                fill
-                style={{ objectFit: "contain" }}
-                priority
-                quality={100}
-              />
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
-    </div>
-  </div>
-)}
-
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in"
+        >
+          <div
+            className="fixed inset-0"
+            onClick={closeModal}
+            aria-label="Close modal"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Escape' && closeModal()}
+          />
+          <div className="relative w-96 h-[70vh] md:w-full md:h-full max-w-2xl bg-white rounded-lg overflow-hidden scale-90 m-0 md:m-6 flex items-center justify-center">
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 z-50 text-[#46c7c7] hover:text-dark transition-colors duration-200"
+              aria-label="Close image modal"
+            >
+              <FaTimes className="text-xl md:text-2xl" />
+            </button>
+            <Swiper
+              initialSlide={selectedImageIndex}
+              modules={[Navigation, Pagination, Zoom]}
+              navigation
+              pagination={{ clickable: true }}
+              zoom
+              className="h-full w-full"
+            >
+              {images?.map((image, index) => (
+                <SwiperSlide key={`modal-image-${index}`} className="flex items-center justify-center">
+                  <div className="swiper-zoom-container relative flex items-center justify-center">
+                    <Image
+                      src={image}
+                      alt={`Enlarged view of ${name} - Image ${index + 1}`}
+                      fill
+                      style={{ objectFit: "contain" }}
+                      priority
+                      quality={100}
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

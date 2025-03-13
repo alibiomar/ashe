@@ -117,7 +117,7 @@ const NewsletterSignup = ({ title = "Join Our Newsletter", subtitle = "Get exclu
               <span className="relative z-10">
                 {status === 'loading' ? (
                   <span className="flex items-center justify-center gap-2">
-                    <span className="animate-spin">↻</span> Submitting...
+                    <span className="animate-spin">↻</span> Subscribing...
                   </span>
                 ) : (
                   'Subscribe Now'
@@ -136,7 +136,7 @@ const NewsletterSignup = ({ title = "Join Our Newsletter", subtitle = "Get exclu
               >
                 <div className="flex items-center gap-3">
                   <div className={`flex-shrink-0 ${status === 'success' ? 'text-[#46c7c7]' : status === 'exists' ? 'text-[#46c7c7]' : 'text-[#46c7c7]'}`}>
-                    {status === 'success' ? '✔ Success! Please check your inbox.' : status === 'exists' ? '⚠ You are already signed up!' : status === 'invalid' ? '✖ Invalid email address.' : '✖ Subscription failed. Try again.'}
+                    {status === 'success' ? '✔ Done.' : status === 'exists' ? '⚠ You are already signed up!' : status === 'invalid' ? '✖ Invalid email address.' : '✖ Subscription failed. Try again.'}
                   </div>
                 </div>
               </motion.div>

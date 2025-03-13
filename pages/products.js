@@ -1,15 +1,15 @@
 import { useEffect, useState, useCallback, Suspense, lazy } from 'react';
 import Head from 'next/head';
-import { collection, getDocs, query, orderBy, limit, startAfter, doc, getDoc, setDoc } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, limit, startAfter, doc, getDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Layout from '../components/Layout';
 import dynamic from 'next/dynamic';
+import { useBasket } from '../contexts/BasketContext';
 
 const LoadingScreen = dynamic(() => import('../components/LoadingScreen'), {
   suspense: true,
 });
-import { app, db } from '../lib/firebase';
-import Cookies from 'js-cookie';
+import { db } from '../lib/firebase';
 import { toast, Toaster } from 'sonner';
 
 const ProductCard = lazy(() => import('../components/ProductCard'));
@@ -17,82 +17,16 @@ const ProductCard = lazy(() => import('../components/ProductCard'));
 const PRODUCTS_PER_PAGE = 2;
 
 export default function Products() {
-    const [firstName, setFirstName] = useState('');
     const [products, setProducts] = useState([]);
     const [user, setUser] = useState(null);
     const [lastVisible, setLastVisible] = useState(null);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
-    const [basketItems, setBasketItems] = useState([]);
+    
+    // Use basket context
+    const { getItemQuantity, addItemToBasket } = useBasket();
 
-    const getBasketQuantity = useCallback((productId, size) => {
-        const item = basketItems.find(item => item.id === productId && item.size === size);
-        return item ? item.quantity : 0;
-    }, [basketItems]);
 
-    const addToBasket = useCallback(async (product) => {
-        const newBasket = [...basketItems];
-        const existingIndex = newBasket.findIndex(
-            item => item.id === product.id && item.size === product.size
-        );
-
-        if (existingIndex >= 0) {
-            newBasket[existingIndex].quantity += 1;
-        } else {
-            newBasket.push({ ...product, quantity: 1 });
-        }
-
-        if (user) {
-            const basketRef = doc(db, 'baskets', user.uid);
-            await setDoc(basketRef, { items: newBasket });
-        } else {
-            Cookies.set('basket', JSON.stringify(newBasket), { expires: 7 });
-        }
-
-        setBasketItems(newBasket);
-        toast.success(`${product.name} added to your basket!`);
-    }, [user, basketItems]);
-
-    const syncBasketWithFirestore = useCallback(async (userId) => {
-        const cookieBasket = Cookies.get('basket') ? JSON.parse(Cookies.get('basket')) : [];
-        if (cookieBasket.length === 0) return;
-
-        const basketRef = doc(db, 'baskets', userId);
-        const basketDoc = await getDoc(basketRef);
-        let firestoreBasket = basketDoc.exists() ? basketDoc.data().items : [];
-
-        const mergedBasket = [...firestoreBasket];
-        cookieBasket.forEach(cookieItem => {
-            const existingIndex = mergedBasket.findIndex(
-                item => item.id === cookieItem.id && item.size === cookieItem.size
-            );
-            if (existingIndex >= 0) {
-                mergedBasket[existingIndex].quantity += cookieItem.quantity;
-            } else {
-                mergedBasket.push(cookieItem);
-            }
-        });
-
-        await setDoc(basketRef, { items: mergedBasket });
-        Cookies.remove('basket');
-        setBasketItems(mergedBasket);
-    }, []);
-
-    const fetchUserFirstName = useCallback(async (userId) => {
-        try {
-            const userDocRef = doc(db, 'users', userId);
-            const userDoc = await getDoc(userDocRef);
-
-            if (userDoc.exists()) {
-                const userData = userDoc.data();
-                setFirstName(userData.firstName || 'Valued User');
-            } else {
-                setFirstName('Valued User');
-            }
-        } catch (error) {
-            setFirstName('Valued User');
-        }
-    }, []);
 
     const loadMoreProducts = useCallback(async () => {
         if (loading || !hasMore) return;
@@ -153,6 +87,7 @@ export default function Products() {
                 
                 setHasMore(productsSnapshot.docs.length === PRODUCTS_PER_PAGE);
             } catch (error) {
+                console.error("Error fetching products:", error);
             }
             setLoading(false);
         };
@@ -160,32 +95,20 @@ export default function Products() {
         initialFetch();
     }, []);
 
-    // Auth and basket management
+    // Auth management
     useEffect(() => {
         const auth = getAuth();
         
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             setUser(currentUser);
-            if (currentUser) {
-                await syncBasketWithFirestore(currentUser.uid);
-                fetchUserFirstName(currentUser.uid);
-                const basketRef = doc(db, 'baskets', currentUser.uid);
-                const basketDoc = await getDoc(basketRef);
-                setBasketItems(basketDoc.exists() ? basketDoc.data().items : []);
-            } else {
-                setFirstName('');
-                const cookieBasket = Cookies.get('basket');
-                setBasketItems(cookieBasket ? JSON.parse(cookieBasket) : []);
-            }
         });
 
         return () => unsubscribe();
-    }, [syncBasketWithFirestore, fetchUserFirstName]);
+    }, []);
 
     if (loading && products.length === 0) {
         return <LoadingScreen />;
     }
-
     return (
         <Layout>
             <Head>
@@ -204,8 +127,8 @@ export default function Products() {
 
                                 <ProductCard
                                     product={product}
-                                    getBasketQuantity={getBasketQuantity}
-                                    onAddToBasket={addToBasket}
+                                    getItemQuantity={getItemQuantity}
+                                    onAddToBasket={addItemToBasket}
                                 />
                         </div>
                     ))}
