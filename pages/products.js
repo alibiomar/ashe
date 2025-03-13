@@ -14,7 +14,7 @@ import { toast, Toaster } from 'sonner';
 
 const ProductCard = lazy(() => import('../components/ProductCard'));
 
-const PRODUCTS_PER_PAGE = 2;
+const PRODUCTS_PER_PAGE = 3;
 
 export default function Products() {
     const [products, setProducts] = useState([]);
@@ -118,11 +118,11 @@ export default function Products() {
                   <Suspense fallback={<LoadingScreen />}>
             
             <main className="container mx-auto px-4 mb-24">
-                <div className="grid grid-cols-1 gap-12">
+                <div className="grid grid-cols-1 gap-14">
                     {products.map((product, index) => (
                         <div
                             key={product.id || `product-${index}`}
-                            className="group relative"
+                            className="group relative mt-5"
                         >
 
                                 <ProductCard

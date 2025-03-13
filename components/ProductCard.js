@@ -127,10 +127,10 @@ export default function ProductCard({ product, onAddToBasket, getItemQuantity })
               <label htmlFor="size" className="font-semibold text-gray-700">
                 SELECT SIZE:
               </label>
-              <button className="text-sm flex items-center gap-1 text-gray-500 hover:text-black focus:outline-none focus:underline">
+              {/*<button className="text-sm flex items-center gap-1 text-gray-500 hover:text-black focus:outline-none focus:underline">
                 <FaInfoCircle className="text-sm" />
                 Size Guide
-              </button>
+              </button>*/}
             </div>
             <select
               id="size"

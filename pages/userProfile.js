@@ -380,6 +380,14 @@ const UserProfile = () => {
 const ModalWrapper = ({ children, onClose }) => {
   const modalRef = useRef();
 
+  // Disable background scrolling when modal is open
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
   // Close modal when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -400,6 +408,7 @@ const ModalWrapper = ({ children, onClose }) => {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.98 }}
       className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50 p-4"
+      style={{ pointerEvents: "auto" }} // Ensures modal captures interactions
     >
       <div ref={modalRef} className="relative bg-white rounded-md shadow-2xl w-full max-w-md overflow-hidden">
         <button
@@ -408,9 +417,7 @@ const ModalWrapper = ({ children, onClose }) => {
         >
           <FaTimes className="text-accent" size={20} />
         </button>
-        <div className="p-6 md:p-8 space-y-6">
-          {children}
-        </div>
+        <div className="p-6 md:p-8 space-y-6">{children}</div>
       </div>
     </motion.div>
   );
@@ -539,7 +546,7 @@ const OrderModal = ({ order, onClose }) => {
 
   return (
     <>
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-6 overflow-scroll">
         <div className="p-3 bg-highlight/10 ">
           <FaBox className="text-highlight" size={24} />
         </div>
