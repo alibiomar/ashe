@@ -17,7 +17,7 @@ const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
 const CheckoutPopup = lazy(() => import('../components/CheckoutPopup'));
 
 export default function Basket() {
-  const { getItemQuantity,updateItemQuantity,basketItems,basketCount,loadBasketFromCookies,removeItemFromBasket  } = useBasket();
+  const { getItemQuantity,updateItemQuantity,basketItems,basketCount,loadBasketFromCookies,removeItemFromBasket,clearBasket  } = useBasket();
   const [loading, setLoading] = useState(true);
   const [showCheckoutPopup, setShowCheckoutPopup] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
@@ -73,9 +73,8 @@ export default function Basket() {
   // Handle placing the order (this example simply clears the basket)
   const handlePlaceOrder = async (shippingInfo, totalAmount) => {
     try {
-      setBasket([]);
       if (auth.currentUser) {
-        updateBasketInFirestore([]);
+        clearBasket();
       } else {
         Cookies.remove('basket');
       }
@@ -189,13 +188,8 @@ export default function Basket() {
                           {/* Quantity modification controls */}
                           <div className="mt-2 flex items-center space-x-4">
                             <button
-                              onClick={async () =>
-                                await updateItemQuantity(
-                                  item.id,
-                                  item.size,
-                                  item.quantity - 1
-                                )
-                              }
+                              onClick={() => updateItemQuantity(item.id, item.size, item.quantity - 1)}
+
                               className="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
                             >
                               –
@@ -204,13 +198,8 @@ export default function Basket() {
                               {item.quantity}
                             </span>
                             <button
-                              onClick={async () =>
-                                await updateItemQuantity(
-                                  item.id,
-                                  item.size,
-                                  item.quantity + 1
-                                )
-                              }
+                              onClick={() => updateItemQuantity(item.id, item.size, item.quantity + 1)}
+
                               className="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
                             >
                               +
@@ -238,7 +227,7 @@ export default function Basket() {
                       <div>
                         <h2 className="text-2xl text-white">Total Summary</h2>
                         <p className="text-gray-400 mt-1 text-sm">
-                          {getItemQuantity} premium items selected
+                          {basketCount} premium items selected
                         </p>
                       </div>
                       <p className="text-2xl font-bold text-[#46c7c7]">

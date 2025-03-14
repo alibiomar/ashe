@@ -382,9 +382,14 @@ const ModalWrapper = ({ children, onClose }) => {
 
   // Disable background scrolling when modal is open
   useEffect(() => {
-    document.body.style.overflow = "hidden";
+    // Save the current overflow style
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    // Prevent background scrolling
+    document.body.style.overflow = 'hidden';
+    
     return () => {
-      document.body.style.overflow = "auto";
+      // Restore original overflow style when modal closes
+      document.body.style.overflow = originalStyle;
     };
   }, []);
 
@@ -410,14 +415,17 @@ const ModalWrapper = ({ children, onClose }) => {
       className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50 p-4"
       style={{ pointerEvents: "auto" }} // Ensures modal captures interactions
     >
-      <div ref={modalRef} className="relative bg-white rounded-md shadow-2xl w-full max-w-md overflow-hidden">
+      <div 
+        ref={modalRef} 
+        className="relative bg-white rounded-md shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col"
+      >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 hover:bg-light rounded-full transition-colors"
+          className="absolute top-4 right-4 p-2 hover:bg-light rounded-full transition-colors z-10"
         >
           <FaTimes className="text-accent" size={20} />
         </button>
-        <div className="p-6 md:p-8 space-y-6">{children}</div>
+        <div className="p-6 md:p-8 overflow-y-auto">{children}</div>
       </div>
     </motion.div>
   );
@@ -585,16 +593,16 @@ const OrderModal = ({ order, onClose }) => {
               <p className="text-dark">{shipping.addressLine}</p>
             </div>
             <div>
-              <p className="text-gray-500">City</p>
-              <p className="text-dark">{shipping.city}</p>
+              <p className="text-gray-500">District</p>
+              <p className="text-dark">{shipping.district}</p>
             </div>
             <div>
-              <p className="text-gray-500">State</p>
-              <p className="text-dark">{shipping.state}</p>
+              <p className="text-gray-500">Delegation</p>
+              <p className="text-dark">{shipping.delegation}</p>
             </div>
             <div>
-              <p className="text-gray-500">Zip Code</p>
-              <p className="text-dark">{shipping.zipCode}</p>
+              <p className="text-gray-500">Governorate</p>
+              <p className="text-dark">{shipping.governorate}</p>
             </div>
           </div>
         </div>

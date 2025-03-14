@@ -75,7 +75,7 @@ const generateInvoice = (order, userData) => {
     doc.setFont(undefined, 'normal');
     const clientInfo = [
       order.shippingInfo.addressLine,
-      `${order.shippingInfo.district}, ${order.shippingInfo.city}, ${order.shippingInfo.state}`,
+      `${order.shippingInfo.district}, ${order.shippingInfo.delegation}, ${order.shippingInfo.governorate}`,
       `Phone: ${userData.phone}`,
       `Client: ${userData.firstName} ${userData.lastName}`
     ].join('\n');
@@ -263,8 +263,8 @@ FormSelect.propTypes = {
 // CheckoutPopup Component
 export default function CheckoutPopup({ basketItems, onClose, onPlaceOrder }) {
   const [formData, setFormData] = useState({
-    state: '',
-    city: '',
+    governorate: '',
+    delegation: '',
     district: '',
     addressLine: '',
   });
@@ -275,8 +275,8 @@ export default function CheckoutPopup({ basketItems, onClose, onPlaceOrder }) {
 
   // State for location data options
   const [locationOptions, setLocationOptions] = useState({
-    states: [],
-    cities: [],
+    governorates: [],
+    delegations: [],
     districts: [],
   });
 
@@ -287,59 +287,59 @@ export default function CheckoutPopup({ basketItems, onClose, onPlaceOrder }) {
     [basketItems]
   );
 
-  // Initialize states options on component mount
+  // Initialize governorates options on component mount
   useEffect(() => {
-    const stateOptions = citiesData.Tunisia.governorates.map(governorate => ({
+    const governorateOptions = citiesData.Tunisia.governorates.map(governorate => ({
       value: governorate.name,
       label: governorate.name
     }));
 
     setLocationOptions(prev => ({
       ...prev,
-      states: stateOptions
+      governorates: governorateOptions
     }));
   }, []);
 
-  // Update city (delegation) options when state changes
+  // Update delegation options when governorate changes
   useEffect(() => {
-    if (!formData.state) {
-      setLocationOptions(prev => ({ ...prev, cities: [], districts: [] }));
-      setFormData(prev => ({ ...prev, city: '', district: '' }));
+    if (!formData.governorate) {
+      setLocationOptions(prev => ({ ...prev, delegations: [], districts: [] }));
+      setFormData(prev => ({ ...prev, delegation: '', district: '' }));
       return;
     }
 
     const selectedGovernorate = citiesData.Tunisia.governorates.find(
-      g => g.name === formData.state
+      g => g.name === formData.governorate
     );
 
-    const cityOptions = selectedGovernorate?.delegations?.map(delegation => ({
+    const delegationOptions = selectedGovernorate?.delegations?.map(delegation => ({
       value: delegation.name,
       label: delegation.name
     })) || [];
 
     setLocationOptions(prev => ({
       ...prev,
-      cities: cityOptions,
+      delegations: delegationOptions,
       districts: []
     }));
 
-    setFormData(prev => ({ ...prev, city: '', district: '' }));
-  }, [formData.state]);
+    setFormData(prev => ({ ...prev, delegation: '', district: '' }));
+  }, [formData.governorate]);
 
-  // Update district (city) options when city (delegation) changes
+  // Update district options when delegation changes
   useEffect(() => {
-    if (!formData.state || !formData.city) {
+    if (!formData.governorate || !formData.delegation) {
       setLocationOptions(prev => ({ ...prev, districts: [] }));
       setFormData(prev => ({ ...prev, district: '' }));
       return;
     }
 
     const selectedGovernorate = citiesData.Tunisia.governorates.find(
-      g => g.name === formData.state
+      g => g.name === formData.governorate
     );
 
     const selectedDelegation = selectedGovernorate?.delegations?.find(
-      d => d.name === formData.city
+      d => d.name === formData.delegation
     );
 
     const districtOptions = selectedDelegation?.cities?.map(city => ({
@@ -353,7 +353,7 @@ export default function CheckoutPopup({ basketItems, onClose, onPlaceOrder }) {
     }));
 
     setFormData(prev => ({ ...prev, district: '' }));
-  }, [formData.state, formData.city]);
+  }, [formData.governorate, formData.delegation]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -361,8 +361,8 @@ export default function CheckoutPopup({ basketItems, onClose, onPlaceOrder }) {
   };
 
   const validateForm = () => {
-    const { state, city, district, addressLine } = formData;
-    if (!state || !city || !district || !addressLine) {
+    const { governorate, delegation, district, addressLine } = formData;
+    if (!governorate || !delegation || !district || !addressLine) {
       toast.error('All fields are required');
       return false;
     }
@@ -393,8 +393,8 @@ export default function CheckoutPopup({ basketItems, onClose, onPlaceOrder }) {
           phone: userDoc.data().phone,
         },
         shippingInfo: {
-          state: formData.state,
-          city: formData.city,
+          governorate: formData.governorate,
+          delegation: formData.delegation,
           district: formData.district,
           addressLine: formData.addressLine,
         },
@@ -512,33 +512,33 @@ export default function CheckoutPopup({ basketItems, onClose, onPlaceOrder }) {
           <form onSubmit={handlePlaceOrder} className="space-y-6" encType="application/x-www-form-urlencoded">
             <h3 className="text-mx font-light italic mb-8 text-red-500">*Currently, we only ship in Tunisia*</h3>
 
-            {/* State (Governorate) Dropdown */}
+            {/* Governorate Dropdown */}
             <FormSelect
               label="Governorate"
-              name="state"
-              value={formData.state}
+              name="governorate"
+              value={formData.governorate}
               onChange={handleChange}
-              options={locationOptions.states}
+              options={locationOptions.governorates}
             />
 
-            {/* City (Delegation) Dropdown */}
+            {/* Delegation Dropdown */}
             <FormSelect
               label="Delegation"
-              name="city"
-              value={formData.city}
+              name="delegation"
+              value={formData.delegation}
               onChange={handleChange}
-              options={locationOptions.cities}
-              disabled={!formData.state || locationOptions.cities.length === 0}
+              options={locationOptions.delegations}
+              disabled={!formData.governorate || locationOptions.delegations.length === 0}
             />
 
-            {/* District (City) Dropdown */}
+            {/* District Dropdown */}
             <FormSelect
-              label="City"
+              label="District"
               name="district"
               value={formData.district}
               onChange={handleChange}
               options={locationOptions.districts}
-              disabled={!formData.city || locationOptions.districts.length === 0}
+              disabled={!formData.delegation || locationOptions.districts.length === 0}
             />
 
             {/* Address Line input */}
@@ -570,7 +570,7 @@ export default function CheckoutPopup({ basketItems, onClose, onPlaceOrder }) {
               </button>
               <button
                 type="submit"
-                className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none"
+                className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white  focus:bg-white focus:text-black focus:outline-none"
                 disabled={loading}
               >
                 {loading ? (

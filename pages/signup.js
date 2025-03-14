@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
 import { toast, Toaster } from 'sonner';
 import Image from 'next/image';
@@ -128,7 +128,7 @@ export default function Signup() {
       <div className="min-h-screen flex flex-col items-center justify-center">
         <Toaster position="bottom-center" />
 
-        <div className="w-full max-w-2xl mx-auto   bg-white shadow-lg overflow-hidden">
+        <div className="w-full max-w-3xl mx-auto  bg-white shadow-lg overflow-hidden">
           {/* Image section for mobile */}
           <div className="md:hidden">
             <Image
