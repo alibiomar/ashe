@@ -1,5 +1,104 @@
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import Navbar from '../components/Navbar';
+
+const Navbar = dynamic(() => import('../components/Navbar'), { ssr: false });
+
+const policies = [
+  {
+    id: 'termsofservice',
+    title: 'Terms of Service',
+    updated: '04/02/2025',
+    content: [
+      {
+        heading: '1. Orders & Payments',
+        items: [
+          'All prices are in Tunisian Dinar (TND)',
+          'Payment is required upon shipment',
+          'Orders are processed within 1-3 business days',
+        ],
+      },
+      {
+        heading: '2. Returns & Exchanges',
+        items: [
+          'Returns are accepted within 7 days of receiving the product',
+          'Items that have been worn, washed, or damaged cannot be returned',
+          'Contact us at contact@ashe.tn',
+        ],
+      },
+      {
+        heading: '3. Intellectual Property',
+        text: 'Every design, logo, and piece of content is the intellectual property of ASHE™, safeguarded by Tunisian Law No. 2001-36 on Copyright Protection.',
+      },
+    ],
+  },
+  {
+    id: 'privacypolicy',
+    title: 'Privacy Policy',
+    updated: '04/02/2025',
+    content: [
+      {
+        heading: '1. Data Collected',
+        items: [
+          'Your name, email, and shipping address for processing orders',
+          'Cookies to enhance site performance and personalization',
+        ],
+      },
+      {
+        heading: '2. Cookies',
+        items: [
+          'Remember your cart items',
+          'Analyze traffic via Google Analytics',
+          'Tailor advertisements across social platforms',
+        ],
+        note: 'Disabling cookies might affect site functionality.',
+      },
+      {
+        heading: '3. Data Sharing',
+        text: 'Rest assured, we never sell your data.',
+      },
+    ],
+  },
+  {
+    id: 'shippingpolicy',
+    title: 'Shipping Policy',
+    content: [
+      {
+        heading: 'Domestic Shipping (Tunisia)',
+        items: [
+          'Free shipping on orders over 200 TND',
+          'Standard delivery: 3-5 business days (8 TND)',
+        ],
+      },
+    ],
+  },
+];
+
+const PolicySection = ({ id, title, updated, content }) => (
+  <section id={id} className="group bg-white p-8 border-l-[5px] border-[#46c7c7]">
+    <div className="flex flex-col mb-6 border-b border-gray-100 pb-4">
+      <h1 className="text-3xl font-bold text-gray-900 mb-1">{title}</h1>
+      {updated && <p className="text-xs text-gray-400 uppercase tracking-wider">Last Updated: {updated}</p>}
+    </div>
+    <div className="space-y-6 text-base leading-relaxed">
+      {content.map((section, idx) => (
+        <div key={idx}>
+          <h3 className="font-semibold text-xl text-gray-900 mb-3">{section.heading}</h3>
+          {section.text && <p className="text-gray-700">{section.text}</p>}
+          {section.items && (
+            <ul className="list-disc pl-6 space-y-2.5 text-gray-700">
+              {section.items.map((item, index) => (
+                <li key={index} className="relative pl-2 -indent-2">
+                  <span className="absolute left-0 text-[#46c7c7]">•</span> {item}
+                </li>
+              ))}
+            </ul>
+          )}
+          {section.note && <p className="mt-4 text-sm text-gray-500 italic">{section.note}</p>}
+        </div>
+      ))}
+    </div>
+  </section>
+);
 
 const LegalPage = () => {
   return (
@@ -11,163 +110,18 @@ const LegalPage = () => {
           content="Explore the legal policies for ASHE™, a brand celebrating authentic Tunisian craftsmanship and modern elegance."
         />
       </Head>
-      <div className=" bg-white p-8 text-gray-900 font-sans">
+      <div className="bg-white p-8 text-gray-900 font-sans">
         <Navbar />
-        <div className="max-w-4xl mx-auto space-y-10 mt-20">
-          {/* Terms of Service */}
-          <section
-            id="termsofservice"
-            className="group bg-white p-8 border-l-[5px] border-[#46c7c7]"
-          >
-            <div className="flex flex-col mb-6 border-b border-gray-100 pb-4">
-              <h1 className="text-3xl font-bold text-gray-900 mb-1">Terms of Service</h1>
-              <p className="text-xs text-gray-400 uppercase tracking-wider">Last Updated: 04/02/2025</p>
-            </div>
-
-            <div className="space-y-6 text-base leading-relaxed">
-              <p className="text-gray-700">
-                Welcome to <strong className="text-[#46c7c7]">ASHE™</strong>, where modern design meets authentic Tunisian craftsmanship. By using our website and purchasing our products, you agree to the following terms.
-              </p>
-
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-semibold text-xl text-gray-900 mb-3">1. Orders & Payments</h3>
-                  <ul className="list-disc pl-6 space-y-2.5 text-gray-700">
-                    <li className="relative pl-2 -indent-2">
-                      <span className="absolute left-0 text-[#46c7c7]">•</span>
-                      All prices are in <strong className="text-[#46c7c7]">Tunisian Dinar (TND)</strong>
-                    </li>
-                    <li className="relative pl-2 -indent-2">
-                      <span className="absolute left-0 text-[#46c7c7]">•</span>
-                      Payment is required upon shipment
-                    </li>
-                    <li className="relative pl-2 -indent-2">
-                      <span className="absolute left-0 text-[#46c7c7]">•</span>
-                      Orders are processed within 1-3 business days
-                    </li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold text-xl text-gray-900 mb-3">2. Returns & Exchanges</h3>
-                  <ul className="list-disc pl-6 space-y-2.5 text-gray-700">
-                    <li className="relative pl-2 -indent-2">
-                      <span className="absolute left-0 text-[#46c7c7]">•</span>
-                      Returns are accepted within 7 days of receiving the product
-                    </li>
-                    <li className="relative pl-2 -indent-2">
-                      <span className="absolute left-0 text-[#46c7c7]">•</span>
-                      Items that have been worn, washed, or damaged cannot be returned
-                    </li>
-                    <li className="relative pl-2 -indent-2">
-                      <span className="absolute left-0 text-[#46c7c7]">•</span>
-                      Contact us at <a href="mailto:contact@ashe.tn" className="text-[#46c7c7] hover:text-[#3aabab]">contact@ashe.tn</a>
-                    </li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold text-xl text-gray-900 mb-3">3. Intellectual Property</h3>
-                  <p className="text-gray-700">
-                    Every design, logo, and piece of content is the intellectual property of <strong className="text-[#46c7c7]">ASHE™</strong>, safeguarded by Tunisian Law No. 2001-36 on Copyright Protection.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Privacy Policy */}
-          <section
-            id="privacypolicy"
-            className="group bg-white p-8 border-l-[5px] border-[#46c7c7]"
-          >
-            <div className="flex flex-col mb-6 border-b border-gray-100 pb-4">
-              <h1 className="text-3xl font-bold text-gray-900 mb-1">Privacy Policy</h1>
-              <p className="text-xs text-gray-400 uppercase tracking-wider">Last Updated: 04/02/2025</p>
-            </div>
-
-            <div className="space-y-6 text-base leading-relaxed">
-              <p className="text-gray-700">
-                At <strong className="text-[#46c7c7]">ASHE™</strong>, we deeply value your privacy. In accordance with Tunisian Law No. 2004-63 on Personal Data Protection, we collect and process data only for delivering an exceptional customer experience.
-              </p>
-
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-semibold text-xl text-gray-900 mb-3">1. Data Collected</h3>
-                  <ul className="list-disc pl-6 space-y-2.5 text-gray-700">
-                    <li className="relative pl-2 -indent-2">
-                      <span className="absolute left-0 text-[#46c7c7]">•</span>
-                      Your name, email, and shipping address for processing orders
-                    </li>
-                    <li className="relative pl-2 -indent-2">
-                      <span className="absolute left-0 text-[#46c7c7]">•</span>
-                      Cookies to enhance site performance and personalization
-                    </li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold text-xl text-gray-900 mb-3">2. Cookies</h3>
-                  <ul className="list-disc pl-6 space-y-2.5 text-gray-700">
-                    <li className="relative pl-2 -indent-2">
-                      <span className="absolute left-0 text-[#46c7c7]">•</span>
-                      Remember your cart items
-                    </li>
-                    <li className="relative pl-2 -indent-2">
-                      <span className="absolute left-0 text-[#46c7c7]">•</span>
-                      Analyze traffic via Google Analytics
-                    </li>
-                    <li className="relative pl-2 -indent-2">
-                      <span className="absolute left-0 text-[#46c7c7]">•</span>
-                      Tailor advertisements across social platforms
-                    </li>
-                  </ul>
-                  <p className="mt-4 text-sm text-gray-500 italic">
-                    Note: Disabling cookies might affect site functionality
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold text-xl text-gray-900 mb-3">3. Data Sharing</h3>
-                  <p className="text-gray-700 italic">
-                    Rest assured, we never sell your data.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Shipping Policy */}
-          <section
-            id="shippingpolicy"
-            className="group bg-white p-8 border-l-[5px] border-[#46c7c7]"
-          >
-            <div className="flex flex-col mb-6 border-b border-gray-100 pb-4">
-              <h1 className="text-3xl font-bold text-gray-900 mb-1">Shipping Policy</h1>
-            </div>
-
-            <div className="space-y-6 text-base leading-relaxed">
-              <div>
-                <h3 className="font-semibold text-xl text-gray-900 mb-3">Domestic Shipping (Tunisia)</h3>
-                <ul className="list-disc pl-6 space-y-2.5 text-gray-700">
-                  <li className="relative pl-2 -indent-2">
-                    <span className="absolute left-0 text-[#46c7c7]">•</span>
-                    Free shipping on orders over <strong className="text-[#46c7c7]">200 TND</strong>
-                  </li>
-                  <li className="relative pl-2 -indent-2">
-                    <span className="absolute left-0 text-[#46c7c7]">•</span>
-                    Standard delivery: 3-5 business days (<strong className="text-[#46c7c7]">8 TND</strong>)
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </section>
-        </div>
-        <div className="mt-24 pt-8 border-t border-gray-200 text-center">
+        <main className="max-w-4xl mx-auto space-y-10 mt-20">
+          {policies.map((policy) => (
+            <PolicySection key={policy.id} {...policy} />
+          ))}
+        </main>
+        <footer className="mt-24 pt-8 border-t border-gray-200 text-center">
           <p className="text-sm text-gray-400 tracking-wide">
             © {new Date().getFullYear()} ASHE™. Crafted with passion in Tunisia.
           </p>
-        </div>
+        </footer>
       </div>
     </>
   );

@@ -1,3 +1,4 @@
+'use client';
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
@@ -8,16 +9,24 @@ import { toast } from 'sonner';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useBasket } from '../contexts/BasketContext';
-
-const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
-  suspense: true,
-});import Head from 'next/head';
+import Head from 'next/head';
 
 // Lazy-load CheckoutPopup component
 const CheckoutPopup = lazy(() => import('../components/CheckoutPopup'));
+const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
+  suspense: true,
+});
 
 export default function Basket() {
-  const { getItemQuantity,updateItemQuantity,basketItems,basketCount,loadBasketFromCookies,removeItemFromBasket,clearBasket  } = useBasket();
+  const {
+    getItemQuantity,
+    updateItemQuantity,
+    basketItems,
+    basketCount,
+    loadBasketFromCookies,
+    removeItemFromBasket,
+    clearBasket
+  } = useBasket();
   const [loading, setLoading] = useState(true);
   const [showCheckoutPopup, setShowCheckoutPopup] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
@@ -54,8 +63,6 @@ export default function Basket() {
       toast.error('Error fetching user info:', error);
     }
   };
-
-
 
   // Proceed to checkout
   const proceedToCheckout = () => {
@@ -110,8 +117,13 @@ export default function Basket() {
               {basketCount === 0 ? (
                 <div className="text-center flex items-center flex-col space-y-8">
                   <div className="w-40 mb-6 animate-bounce">
-                    <Image width={96} height={96}  className="w-full h-full object-contain rounded-none"
- src="/basket.svg" alt="Empty Basket" />
+                    <Image
+                      width={96}
+                      height={96}
+                      className="w-full h-full object-contain rounded-none"
+                      src="/basket.svg"
+                      alt="Empty Basket"
+                    />
                   </div>
                   <p className="text-xl text-gray-600 font-medium tracking-wide">
                     Awaiting your selection
@@ -129,30 +141,29 @@ export default function Basket() {
                     {basketItems.map((item, index) => (
                       <div
                         key={
-                          item.id && item.size
-                            ? `${item.id}-${item.size}`
+                          item.id && item.size && item.color
+                            ? `${item.id}-${item.size}-${item.color}`
                             : `basket-item-${index}`
                         }
                         className="group flex items-center p-6 hover:bg-gray-100 transition-all duration-300 animate-fadeIn"
                       >
                         <div className="relative w-24 h-24 flex-shrink-0">
-                        <Image
-                          src={item?.images?.[0] || '/placeholder-art.svg'}
-                          alt={item.name}
-                          width={96} // Explicit width (tailwind w-24 is 96px)
-                          height={96} // Explicit height (tailwind h-24 is 96px)
-                          className="w-full h-full object-contain rounded-none"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            router.push('/products');
-                          }}
-                          onError={(e) => {
-                            e.target.src = '/placeholder-art.svg'; // Fallback if image doesn't load
-                          }}
-                          loading="lazy"
-                        />
-                      </div>
-
+                          <Image
+                            src={item?.images?.[0] || '/placeholder-art.svg'}
+                            alt={item.name}
+                            width={96}
+                            height={96}
+                            className="w-full h-full object-contain rounded-none"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              router.push('/products');
+                            }}
+                            onError={(e) => {
+                              e.target.src = '/placeholder-art.svg'; // Fallback if image doesn't load
+                            }}
+                            loading="lazy"
+                          />
+                        </div>
 
                         <div className="ml-6 flex-1">
                           <div className="flex items-start justify-between">
@@ -161,13 +172,13 @@ export default function Basket() {
                                 {item.name}
                               </h3>
                               <p className="text-gray-600 text-sm">
-                                Size: {item.size}
+                                Size: {item.size}, Color: {item.color}
                               </p>
                             </div>
                             <button
-                              onClick={() => removeItemFromBasket(item.id, item.size)}
+                              onClick={() => removeItemFromBasket(item.id, item.size, item.color)}
                               className="text-gray-400 hover:text-red-600 transition-colors duration-300 p-2"
-                              aria-label="Remove items"
+                              aria-label="Remove item"
                             >
                               <svg
                                 className="w-5 h-5"
@@ -188,8 +199,7 @@ export default function Basket() {
                           {/* Quantity modification controls */}
                           <div className="mt-2 flex items-center space-x-4">
                             <button
-                              onClick={() => updateItemQuantity(item.id, item.size, item.quantity - 1)}
-
+                              onClick={() => updateItemQuantity(item.id, item.size, item.color, item.quantity - 1)}
                               className="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
                             >
                               –
@@ -198,8 +208,7 @@ export default function Basket() {
                               {item.quantity}
                             </span>
                             <button
-                              onClick={() => updateItemQuantity(item.id, item.size, item.quantity + 1)}
-
+                              onClick={() => updateItemQuantity(item.id, item.size, item.color, item.quantity + 1)}
                               className="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
                             >
                               +
@@ -266,7 +275,7 @@ export default function Basket() {
             </Suspense>
 
             {showCheckoutPopup && userInfo && (
-              <Suspense >
+              <Suspense>
                 <CheckoutPopup
                   basketItems={basketItems}
                   userInfo={userInfo}

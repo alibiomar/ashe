@@ -8,10 +8,10 @@ import TextPressure from '../components/TextPressure';
 import Image from 'next/image';
 import ErrorBoundary from '../components/ErrorBoundary';
 import dynamic from 'next/dynamic';
-import { motion,AnimatePresence  } from 'framer-motion';
+import { motion} from 'framer-motion';
 import Carousel from '../components/Carousel';
 import { setupRealTimeActivityListener, updateUserActivity } from '../utils/updateActivity';
-
+import ProductSections from '../components/productSections';
 // Constants
 const SCROLL_THRESHOLD = 300;
 const DEFAULT_USER_NAME = 'Valued User';
@@ -21,7 +21,7 @@ const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
   suspense: true,
 });
 
-const GridDistortion = lazy(() => import('../components/GridDistortion'));
+const ParallaxShowcase = lazy(() => import('../components/ParallaxShowcase'));
 const NewsletterSignup = lazy(() => import('../components/NewsletterSignup'));
 
 // Animation variants
@@ -167,7 +167,7 @@ export default function Home() {
         >
           <HeroSection user={user} firstName={firstName} />
           <ProductSections />
-          <GridDistortionSection />
+          <ParallaxSection /> 
           <TestimonialsSection testimonials={testimonials} />
           <NewsletterSignupSection />
           {showScrollTop && <ScrollToTopButton />}
@@ -313,140 +313,21 @@ const HeroSection = memo(({ user, firstName }) => (
   </section>
 ));
 
-const ProductSections = memo(() => {
-  const [selectedImage, setSelectedImage] = useState('');
-  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
-  const openGallery = (imgUrl) => {
-    setSelectedImage(imgUrl);
-    setIsGalleryOpen(true);
-  };
 
-  return (
-    <>
-      <section className="container mx-auto px-4 mb-32 grid grid-cols-1 md:grid-cols-2 gap-8">
-        {['New Arrivals', 'Featured'].map((section, idx) => {
-          const imageUrl = idx === 0 
-            ? '/placeholder-art.svg' 
-            : 'https://drive.google.com/uc?export=view&id=1Rzbia0nZ79L4HYvCXDqDTnP_0WzJSFu6';
-
-          return (
-            <motion.div
-              key={section}
-              className={`group relative p-8 overflow-hidden ${idx === 0 ? 'bg-white' : 'bg-black text-white'}`}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '0px 0px -100px 0px' }}
-              transition={{ duration: 0.6, delay: idx * 0.1 }}
-            >
-              <button
-                onClick={() => openGallery(imageUrl)}
-                className="relative h-80 mb-8 overflow-hidden w-full p-0 border-none bg-transparent cursor-pointer"
-                aria-label={`Enlarge ${section} products image`}
-              >
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.3 }}
-                  className="relative h-full w-full"
-                >
-                  <Image
-                    src={imageUrl}
-                    alt={`${section} products image`}
-                    fill
-                    style={{ objectFit: "cover" }}
-                    className="transform transition-transform duration-700"
-                  />
-                </motion.div>
-              </button>
-
-              <h2 className="text-4xl font-semibold mb-4">{section}</h2>
-              <p className={`text-lg mb-6 ${idx === 0 ? 'text-gray-600' : 'text-gray-300'}`}>
-                {idx === 0
-                  ? 'Discover our latest seasonal offerings'
-                  : 'Curated selection of signature pieces'}
-              </p>
-              <a
-                href="/products"
-                className="inline-flex items-center gap-2 text-lg font-medium hover:gap-3 transition-all"
-                aria-label={`Explore our ${section.toLowerCase()} collection`}
-              >
-                Explore Collection
-                <span aria-hidden="true" className="text-xl">→</span>
-              </a>
-            </motion.div>
-          );
-        })}
-      </section>
-
-      {/* Gallery Modal */}
-      <AnimatePresence>
-        {isGalleryOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 backdrop-blur-xl"
-            onClick={() => setIsGalleryOpen(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
-              className="relative max-w-6xl w-full max-h-[90vh]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Image
-                src={selectedImage}
-                alt="Enlarged product image"
-                fill
-                style={{ objectFit: 'contain' }}
-                className="rounded-lg shadow-2xl"
-              />
-              <button
-                onClick={() => setIsGalleryOpen(false)}
-                className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
-                aria-label="Close gallery"
-              >
-                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
-  );
-});
-
-const GridDistortionSection = memo(() => (
+const ParallaxSection = memo(() => (
   <ErrorBoundary fallback={<p className="text-center text-red-500">Failed to load visual experience</p>}>
-    <motion.section
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: '0px 0px -200px 0px' }}
-      className="relative h-[80vh] mb-24"
-    >
-      <Suspense fallback={<div className="absolute inset-0 bg-gray-100 animate-pulse" />}>
-        <GridDistortion
-          imageSrc="https://picsum.photos/1920/1080?grayscale"
-          grid={12}
-          mouse={0.14}
-          strength={0.15}
-          relaxation={0.9}
-        />
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <h3 className="text-4xl md:text-6xl font-bold text-white mix-blend-difference">
-            Beyond Fashion
-          </h3>
-        </div>
-      </Suspense>
-    </motion.section>
+    <Suspense fallback={<div className="inset-0 bg-gray-100 animate-pulse" />}>
+      <section id="parallax-section">
+        <ParallaxShowcase />
+      </section>
+    </Suspense>
   </ErrorBoundary>
 ));
 
+
 const TestimonialsSection = memo(({ testimonials }) => (
-  <section className="px-8 mb-48 flex flex-col-reverse md:flex-row justify-around items-center">
+  <section className="px-8 py-16 flex flex-col-reverse md:flex-row justify-around items-center min-h-screen">
     <div className="relative">
       <Carousel
         items={testimonials}

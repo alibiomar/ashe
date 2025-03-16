@@ -2,11 +2,12 @@ import { useState, useRef, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { doc, addDoc, collection, getDoc, updateDoc, increment } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
-import { toast, Toaster } from 'sonner';
+import { toast } from 'sonner';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import Image from 'next/image';
 import citiesData from '../data/cities.json';
+
 
 // PDF generation helper function
 const generateInvoice = (order, userData) => {
@@ -85,10 +86,11 @@ const generateInvoice = (order, userData) => {
 
     // Enhanced Items Table
     yPosition += 60;
-    const headers = [['Product', 'Size', 'Quantity', 'Unit Price', 'Total']];
+    const headers = [['Product', 'Size', 'Color', 'Quantity', 'Unit Price', 'Total']];
     const itemsData = order.items.map(item => [
       { content: `${item.name}`, styles: { fontStyle: 'bold' }},
       item.size,
+      item.color,
       item.quantity,
       { content: `${item.price.toFixed(2)} TND`, styles: { halign: 'right' }},
       { content: `${(item.quantity * item.price).toFixed(2)} TND`, styles: { halign: 'right' }}
@@ -149,9 +151,10 @@ const generateInvoice = (order, userData) => {
       columnStyles: {
         0: { cellWidth: 45, fontStyle: 'bold' },  // Product
         1: { cellWidth: 20, halign: 'center' },   // Size
-        2: { cellWidth: 30, halign: 'center' },   // Quantity
-        3: { cellWidth: 40, halign: 'right' },    // Unit Price
-        4: { cellWidth: 45, halign: 'right' }     // Total
+        2: { cellWidth: 20, halign: 'center' },   // Color
+        3: { cellWidth: 30, halign: 'center' },   // Quantity
+        4: { cellWidth: 40, halign: 'right' },    // Unit Price
+        5: { cellWidth: 45, halign: 'right' }     // Total
       },
       margin: { horizontal: 15 },
       tableLineColor: [200, 200, 200],
@@ -189,6 +192,7 @@ const generateInvoice = (order, userData) => {
     toast.error('Failed to generate invoice. Please try again or contact support.');
   }
 };
+
 
 // FormInput Component
 const FormInput = ({ label, name, value, onChange, type = 'text', required = true, children, ...props }) => (
@@ -404,6 +408,7 @@ export default function CheckoutPopup({ basketItems, onClose, onPlaceOrder }) {
           price: item.price,
           quantity: item.quantity,
           size: item.size,
+          color: item.color, // Include color in the order data
         })),
         totalAmount,
         createdAt: new Date().toISOString(),
@@ -426,25 +431,45 @@ export default function CheckoutPopup({ basketItems, onClose, onPlaceOrder }) {
       }
 
       // Update the stock for each ordered product
-      await Promise.all(
-        basketItems.map(async (item) => {
-          const productRef = doc(db, 'products', item.id);
-          const productDoc = await getDoc(productRef);
+await Promise.all(
+  basketItems.map(async (item) => {
+    const productRef = doc(db, 'products', item.id);
+    const productDoc = await getDoc(productRef);
 
-          if (productDoc.exists()) {
-            const productData = productDoc.data();
-
-            // Check if size exists
-            if (productData.stock && productData.stock[item.size] !== undefined) {
-              await updateDoc(productRef, {
-                [`stock.${item.size}`]: increment(-item.quantity)
-              });
-            } else {
-              toast.warn(`Size ${item.size} not found for product ${item.id}`);
-            }
-          }
-        })
+    if (productDoc.exists()) {
+      const productData = productDoc.data();
+      const colorIndex = productData.colors.findIndex(
+        (color) => color.name === item.color
       );
+
+      if (
+        colorIndex !== -1 &&
+        productData.colors[colorIndex].stock &&
+        productData.colors[colorIndex].stock[item.size] !== undefined
+      ) {
+        // Create a new colors array with updated stock for the matched color
+        const newColors = productData.colors.map((color, idx) => {
+          if (idx === colorIndex) {
+            return {
+              ...color,
+              stock: {
+                ...color.stock,
+                [item.size]: color.stock[item.size] - item.quantity,
+              },
+            };
+          }
+          return color;
+        });
+        await updateDoc(productRef, { colors: newColors });
+      } else {
+        toast.warn(
+          `Size ${item.size} or color ${item.color} not found for product ${item.id}`
+        );
+      }
+    }
+  })
+);
+
 
       // Save order details in state instead of generating the PDF immediately
       setPlacedOrder(orderWithId);
@@ -484,7 +509,6 @@ export default function CheckoutPopup({ basketItems, onClose, onPlaceOrder }) {
 
   return (
     <div className="fixed inset-0 bg-white backdrop-blur-sm flex justify-center items-center z-50 p-4">
-      <Toaster position="top-center" richColors />
       <div ref={popupRef} className="bg-white w-full max-w-6xl h-[90vh] flex flex-col lg:grid lg:grid-cols-2 shadow-xl overflow-hidden">
         {/* Image Section */}
         <div className="relative h-64 lg:h-full overflow-hidden">
@@ -570,7 +594,7 @@ export default function CheckoutPopup({ basketItems, onClose, onPlaceOrder }) {
               </button>
               <button
                 type="submit"
-                className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white  focus:bg-white focus:text-black focus:outline-none"
+                className="w-full py-4 border-2 border-black font-bold uppercase tracking-wide flex items-center justify-center transition-all bg-black text-white focus:bg-white focus:text-black focus:outline-none"
                 disabled={loading}
               >
                 {loading ? (
@@ -593,6 +617,8 @@ CheckoutPopup.propTypes = {
     name: PropTypes.string.isRequired,
     price: PropTypes.number.isRequired,
     quantity: PropTypes.number.isRequired,
+    size: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired,
   })).isRequired,
   onClose: PropTypes.func.isRequired,
   onPlaceOrder: PropTypes.func.isRequired,

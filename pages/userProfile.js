@@ -1,3 +1,4 @@
+'use client';
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getAuth, updatePassword } from "firebase/auth";
@@ -614,6 +615,7 @@ const OrderModal = ({ order, onClose }) => {
               <thead className="bg-light">
                 <tr>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Product</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Color</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Size</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Price</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Qty</th>
@@ -623,6 +625,7 @@ const OrderModal = ({ order, onClose }) => {
                 {items.map((item, idx) => (
                   <tr key={idx}>
                     <td className="px-4 py-3 text-sm text-dark">{item.name}</td>
+                    <td className="px-4 py-3 text-sm text-dark">{item.color}</td>
                     <td className="px-4 py-3 text-sm text-gray-500">{item.size || "-"}</td>
                     <td className="px-4 py-3 text-sm text-dark">{item.price} TND</td>
                     <td className="px-4 py-3 text-sm text-dark">{item.quantity}</td>

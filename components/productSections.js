@@ -1,0 +1,216 @@
+import React, { useState, memo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
+
+const ProductSections = memo(() => {
+  const [selectedSection, setSelectedSection] = useState(null);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+
+  const sections = [
+    {
+      title: "New Arrivals",
+      description: "Discover our latest seasonal offerings",
+      imageUrl: "/placeholder-art.svg",
+      videoUrl: "/showcase/quarterZipFrontShot.webp",
+      bgColor: "bg-black",
+      textColor: "text-white",
+      accentColor: "text-teal-400"
+    },
+    {
+      title: "Curated Essentials",
+      description: "Refined pieces for the confident",
+      imageUrl: "/placeholder-art.svg",
+      videoUrl: "/showcase/quarterZipFrontShot.webp",
+      bgColor: "bg-white",
+      textColor: "text-black",
+      accentColor: "text-teal-600"
+    }
+  ];
+
+  const openGallery = (section) => {
+    setSelectedSection(section);
+    setIsGalleryOpen(true);
+    document.body.classList.add('overflow-hidden');
+  };
+
+  const closeGallery = () => {
+    setIsGalleryOpen(false);
+    setTimeout(() => setSelectedSection(null), 500);
+    document.body.classList.remove('overflow-hidden');
+  };
+
+  return (
+    <>
+      <section className="min-h-screen flex items-center pb-36">
+        <div className="container mx-auto justify-around w-full">
+          <div className="grid md:grid-cols-2 gap-8">
+            {sections.map((section, idx) => (
+              <motion.article
+                key={section.title}
+                initial={{ opacity: 0, y: 40, rotateX: 5 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                viewport={{ once: true, margin: "100px" }}
+                transition={{ 
+                  duration: 0.8, 
+                  ease: [0.22, 1, 0.36, 1],
+                  delay: idx * 0.1 
+                }}
+                whileHover={{ scale: 1.02 }}
+                className="relative group"
+              >
+                <div className={`relative h-[640px] ${section.bgColor} overflow-hidden`}>
+                  <div className="absolute inset-0 p-12 flex flex-col justify-between">
+                    {/* Header Section */}
+                    <header>
+                      <motion.h2 
+                        className={`text-6xl font-bold mb-6 ${section.textColor} tracking-tighter`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                      >
+                        {section.title.split(' ').map((word, i) => (
+                          <motion.span 
+                            key={i} 
+                            className="block leading-none"
+                            initial={{ y: 20 }}
+                            animate={{ y: 0 }}
+                            transition={{ delay: i * 0.1 + 0.2 }}
+                          >
+                            {word}
+                          </motion.span>
+                        ))}
+                      </motion.h2>
+                      <motion.p 
+                        className={`text-lg ${section.textColor} opacity-80 mb-8`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0.8 }}
+                        transition={{ delay: 0.5 }}
+                      >
+                        {section.description}
+                      </motion.p>
+                    </header>
+
+                    {/* Media Container */}
+                    <div className="relative flex-1 border-2 border-white/20 rounded-xl overflow-hidden">
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        className="absolute inset-0 cursor-pointer"
+                        onClick={() => openGallery(section)}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <Image
+                          src={section.imageUrl}
+                          alt={`${section.title} collection`}
+                          fill
+                          className="object-cover transform transition-transform duration-500 group-hover:scale-105"
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          priority
+                        />
+                        <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/20" />
+                      </motion.div>
+                    </div>
+
+                    {/* Footer Section */}
+                    <footer className="mt-12 flex justify-between items-center">
+                      <motion.a
+                        href="/products"
+                        className={`text-lg font-medium ${section.textColor} hover:${section.accentColor} transition-colors duration-300 flex items-center gap-2`}
+                        whileHover={{ x: 5 }}
+                      >
+                        Explore Collection
+                        <motion.span 
+                          className="inline-block"
+                          initial={{ x: 0 }}
+                          animate={{ x: 5 }}
+                          transition={{ 
+                            repeat: Infinity, 
+                            duration: 1.5,
+                            repeatType: 'mirror'
+                          }}
+                        >
+                          →
+                        </motion.span>
+                      </motion.a>
+                      <motion.span 
+                        className={`text-sm ${section.textColor} opacity-70`}
+                        whileHover={{ scale: 1.1 }}
+                      >
+                        {String(idx + 1).padStart(2, '0')}
+                      </motion.span>
+                    </footer>
+                  </div>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Gallery Modal */}
+      <AnimatePresence>
+        {isGalleryOpen && selectedSection && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl"
+            onClick={closeGallery}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative max-w-6xl w-full h-[80vh] bg-white rounded-2xl overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+              transition={{ type: "spring", stiffness: 150, damping: 20 }}
+            >
+              <Image
+                src={selectedSection.videoUrl}
+                alt={`Enlarged view of ${selectedSection.title}`}
+                fill
+                className="object-cover"
+                priority
+              />
+              
+              <motion.div 
+                className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/90 to-transparent"
+                initial={{ y: 100 }}
+                animate={{ y: 0 }}
+              >
+                <h3 className="text-4xl font-bold text-white mb-2">
+                  {selectedSection.title}
+                </h3>
+                <p className="text-lg text-white/80">
+                  {selectedSection.description}
+                </p>
+              </motion.div>
+
+              <motion.button
+                onClick={closeGallery}
+                className="absolute top-6 right-6 text-white hover:text-teal-400 transition-colors p-2"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <svg 
+                  className="w-8 h-8" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M6 18L18 6M6 6l12 12" 
+                  />
+                </svg>
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+});
+
+export default ProductSections;
