@@ -21,7 +21,7 @@ const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
   suspense: true,
 });
 
-const ParallaxShowcase = lazy(() => import('../components/ParallaxShowcase'));
+const Gallery = lazy(() => import('../components/Gallery'));
 const NewsletterSignup = lazy(() => import('../components/NewsletterSignup'));
 
 // Animation variants
@@ -319,7 +319,7 @@ const ParallaxSection = memo(() => (
   <ErrorBoundary fallback={<p className="text-center text-red-500">Failed to load visual experience</p>}>
     <Suspense fallback={<div className="inset-0 bg-gray-100 animate-pulse" />}>
       <section id="parallax-section">
-        <ParallaxShowcase />
+        <Gallery />
       </section>
     </Suspense>
   </ErrorBoundary>
@@ -340,12 +340,12 @@ const TestimonialsSection = memo(({ testimonials }) => (
       />
     </div>
     <motion.h2
-      className="text-6xl font-black text-center mb-16 md:mb-0"
+      className="text-5xl font-black text-center mb-16 md:mb-0 tracking-tight"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
     >
-      Voices of Elegance
+      Voices of Confidence <span className="text-highlight">.</span>
     </motion.h2>
   </section>
 ));

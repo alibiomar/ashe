@@ -19,7 +19,7 @@ const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
 
 export default function Basket() {
   const {
-    getItemQuantity,
+    
     updateItemQuantity,
     basketItems,
     basketCount,
@@ -197,23 +197,26 @@ export default function Basket() {
                           </div>
 
                           {/* Quantity modification controls */}
-                          <div className="mt-2 flex items-center space-x-4">
-                            <button
-                              onClick={() => updateItemQuantity(item.id, item.size, item.color, item.quantity - 1)}
-                              className="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
-                            >
-                              –
-                            </button>
-                            <span className="text-lg font-medium">
-                              {item.quantity}
-                            </span>
-                            <button
-                              onClick={() => updateItemQuantity(item.id, item.size, item.color, item.quantity + 1)}
-                              className="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
-                            >
-                              +
-                            </button>
-                          </div>
+<div className="mt-2 flex items-center space-x-4">
+  <button
+    onClick={() => updateItemQuantity(item.id, item.size, item.color, Math.max(1, item.quantity - 1))}
+    className="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+    disabled={item.quantity <= 1}
+    aria-label="Decrease quantity"
+  >
+    –
+  </button>
+  <span className="text-lg font-medium">
+    {item.quantity}
+  </span>
+  <button
+    onClick={() => updateItemQuantity(item.id, item.size, item.color, item.quantity + 1)}
+    className="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
+    aria-label="Increase quantity"
+  >
+    +
+  </button>
+</div>
 
                           <div className="mt-4 flex items-center justify-between">
                             <div className="flex items-center space-x-4">

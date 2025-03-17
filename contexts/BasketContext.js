@@ -132,7 +132,7 @@ export const BasketProvider = ({ children }) => {
         const availableStock = selectedColorData.stock?.[itemSize] || 0;
         if (newQuantity > availableStock) {
           toast.error(
-            `Only ${availableStock} items available in size ${itemSize} for color ${itemColor}`
+            `No more items available in size ${itemSize} for color ${itemColor}`
           );
           return;
         }
