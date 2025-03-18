@@ -325,7 +325,7 @@ const GallerySection = memo(() => (
 
 
 const TestimonialsSection = memo(({ testimonials }) => (
-  <section className="px-8 py-16 flex flex-col-reverse md:flex-row justify-around items-center min-h-screen">
+  <section className="px-8 py-32 flex flex-col-reverse md:flex-row justify-around items-center">
     <div className="relative">
       <Carousel
         items={testimonials}
