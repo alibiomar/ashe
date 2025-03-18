@@ -167,7 +167,7 @@ export default function Home() {
         >
           <HeroSection user={user} firstName={firstName} />
           <ProductSections />
-          <ParallaxSection /> 
+          <GallerySection /> 
           <TestimonialsSection testimonials={testimonials} />
           <NewsletterSignupSection />
           {showScrollTop && <ScrollToTopButton />}
@@ -315,7 +315,7 @@ const HeroSection = memo(({ user, firstName }) => (
 
 
 
-const ParallaxSection = memo(() => (
+const GallerySection = memo(() => (
   <ErrorBoundary fallback={<p className="text-center text-red-500">Failed to load visual experience</p>}>
     <Suspense fallback={<div className="inset-0 bg-gray-100 animate-pulse" />}>
       <section id="parallax-section">
@@ -340,7 +340,7 @@ const TestimonialsSection = memo(({ testimonials }) => (
       />
     </div>
     <motion.h2
-      className="text-5xl font-black text-center mb-16 md:mb-0 tracking-tight"
+      className="text-5xl font-black text-start mb-16 md:mb-0 tracking-tighter"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
