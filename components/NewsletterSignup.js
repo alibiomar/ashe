@@ -98,8 +98,6 @@ const NewsletterSignup = ({
       await addDoc(collection(db, 'newsletter_signups'), {
         email,
         timestamp: serverTimestamp(),
-        userAgent: window.navigator.userAgent, // Could be hashed for privacy
-        submissionAttempts,
       });
       
       setStatus('success');
