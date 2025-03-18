@@ -6,12 +6,12 @@ import { auth, db } from '../lib/firebase';
 import Layout from '../components/Layout';
 import TextPressure from '../components/TextPressure';
 import Image from 'next/image';
-import ErrorBoundary from '../components/ErrorBoundary';
 import dynamic from 'next/dynamic';
 import { motion} from 'framer-motion';
 import Carousel from '../components/Carousel';
-import { setupRealTimeActivityListener, updateUserActivity } from '../utils/updateActivity';
 import ProductSections from '../components/productSections';
+//import { setupRealTimeActivityListener, updateUserActivity } from '../utils/updateActivity';
+
 // Constants
 const SCROLL_THRESHOLD = 300;
 const DEFAULT_USER_NAME = 'Valued User';
@@ -117,7 +117,7 @@ const useTestimonials = () => {
   return state;
 };
 
-const useActivityTracking = (user) => {
+{/*const useActivityTracking = (user) => {
   useEffect(() => {
     let unsubscribe = () => {};
 
@@ -131,7 +131,7 @@ const useActivityTracking = (user) => {
     initializeActivity();
     return () => unsubscribe();
   }, [user]);
-};
+};*/}
 
 // Component
 export default function Home() {
@@ -139,7 +139,7 @@ export default function Home() {
   const { testimonials, loading, error: testimonialError } = useTestimonials();
   const showScrollTop = useScrollToTop();
 
-  useActivityTracking(user);
+ // useActivityTracking(user);
 
   const error = userError || testimonialError;
 
@@ -316,13 +316,11 @@ const HeroSection = memo(({ user, firstName }) => (
 
 
 const GallerySection = memo(() => (
-  <ErrorBoundary fallback={<p className="text-center text-red-500">Failed to load visual experience</p>}>
     <Suspense fallback={<div className="inset-0 bg-gray-100 animate-pulse" />}>
       <section id="parallax-section">
         <Gallery />
       </section>
     </Suspense>
-  </ErrorBoundary>
 ));
 
 
