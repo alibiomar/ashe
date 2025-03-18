@@ -8,8 +8,7 @@ const ProductSections = memo(() => {
     {
       title: "New Arrivals",
       description: "Discover our latest seasonal offerings",
-      imageUrl: "/placeholder-art.svg",
-      videoUrl: "/showcase/quarterZipFrontShot.webp",
+      imageUrl: "/showcase/2.avif",
       bgColor: "bg-black",
       textColor: "text-white",
       accentColor: "text-teal-400",
@@ -17,8 +16,7 @@ const ProductSections = memo(() => {
     {
       title: "Curated Essentials",
       description: "Refined pieces for the confident",
-      imageUrl: "/placeholder-art.svg",
-      videoUrl: "/showcase/quarterZipFrontShot.webp",
+      imageUrl: "/showcase/13.avif",
       bgColor: "bg-white",
       textColor: "text-black",
       accentColor: "text-teal-400",

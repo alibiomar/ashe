@@ -52,7 +52,6 @@ const ImageCard = ({ image, onClick, isClickable = false }) => {
         src={image.src}
         alt={image.alt}
         loading="lazy"
-        onError={(e) => (e.target.src = '/placeholder-art.svg')}
         onLoad={() => setIsLoaded(true)}
         className={`w-full h-full object-cover transition-transform duration-700 
           ${isHovered ? 'scale-105' : 'scale-100'} 
@@ -169,7 +168,6 @@ const ImageSlider = ({ images, currentIndex, onClose, onPrev, onNext }) => {
           src={currentImage.src} 
           alt={currentImage.alt}
           className={`max-h-[80vh] max-w-full object-contain transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-          onError={(e) => e.target.src = "/placeholder-art.svg"}
           onLoad={() => setIsLoaded(true)}
         />
         
@@ -364,18 +362,23 @@ const Gallery = () => {
     threshold: 0.2,
   });
   
-  // Sample images with natural dimensions and more diverse categories
   const allImages = [
-    { id: 1, src: "/placeholder-art.svg", alt: "Minimal design showcase", caption: "Architecture", year: "2025", width: 800, height: 600 },
-    { id: 2, src: "/placeholder-art.svg", alt: "Modern interior", caption: "Interior", year: "2025", width: 600, height: 600 },
-    { id: 3, src: "/placeholder-art.svg", alt: "Product photography", caption: "Product", year: "2025", width: 600, height: 800 },
-    { id: 4, src: "/placeholder-art.svg", alt: "Landscape photography", caption: "Landscape", year: "2025", width: 900, height: 600 },
-    { id: 5, src: "/placeholder-art.svg", alt: "Portrait photography", caption: "Portrait", year: "2025", width: 600, height: 900 },
-    { id: 6, src: "/placeholder-art.svg", alt: "Urban architecture", caption: "Architecture", year: "2024", width: 800, height: 600 },
-    { id: 7, src: "/placeholder-art.svg", alt: "Minimalist product", caption: "Product", year: "2024", width: 600, height: 800 },
-    { id: 8, src: "/placeholder-art.svg", alt: "Mountain landscape", caption: "Landscape", year: "2023", width: 900, height: 600 },
-    { id: 9, src: "/placeholder-art.svg", alt: "Creative portrait", caption: "Portrait", year: "2023", width: 600, height: 900 },
-    { id: 10, src: "/placeholder-art.svg", alt: "Modern living space", caption: "Interior", year: "2024", width: 800, height: 600 },
+    { id: 1, src: "/showcase/7.avif", width: 800, height: 600 },
+    { id: 2, src: "/showcase/2.avif",  width: 600, height: 600 },
+    { id: 3, src: "/showcase/5.avif",width: 600, height: 800 },
+    { id: 4, src: "/showcase/4.avif", width: 900, height: 600 },
+    { id: 5, src: "/showcase/1.avif",width: 600, height: 900 },
+    { id: 6, src: "/showcase/6.avif",width: 600, height: 800 },
+    { id: 7, src: "/showcase/8.avif", width: 900, height: 600 },
+    { id: 8, src: "/showcase/9.avif", width: 600, height: 900 },
+    { id: 9, src: "/showcase/10.avif",width: 800, height: 600 },
+    { id: 10, src: "/showcase/11.avif",width: 800, height: 600 },
+    { id: 11, src: "/showcase/12.avif",width: 800, height: 600 },
+    { id: 12, src: "/showcase/13.avif",width: 800, height: 600 },
+    { id: 13, src: "/showcase/15.avif",width: 800, height: 600 },
+    { id: 14, src: "/showcase/16.avif",width: 800, height: 600 },
+    { id: 15, src: "/showcase/17.avif",width: 800, height: 600 },
+
   ];
 
   // Only show 5 images in the preview gallery
@@ -413,7 +416,7 @@ const Gallery = () => {
   }, []);
 
   return (
-    <section className="py-24 px-6 bg-black text-white min-h-screen">
+    <section className="py-12 px-6 bg-black text-white min-h-screen">
       <div className="max-w-6xl mx-auto items-center flex flex-col justify-around">
         {/* Header */}
         <div 
@@ -423,7 +426,7 @@ const Gallery = () => {
   `}
 >
 <motion.h2
-          className="text-5xl font-black text-start mb-16 md:mb-0 tracking-tighter relative"
+          className="text-5xl font-black text-start mb-6 md:mb-0 tracking-tighter relative"
           variants={headingVariants}
           initial="hidden"
           animate={isHeaderVisible ? "visible" : "hidden"}
@@ -437,7 +440,7 @@ const Gallery = () => {
                .
             </motion.span>
   </motion.h2>
-  <div className="mt-4 md:mt-0 flex items-center space-x-4 gap-5 justify-around md:justify-end">
+  <div className="flex items-center space-x-4 gap-5 justify-around md:justify-end">
     <div className="text-sm text-highlight">45 MINUTES</div>
     <button 
       onClick={() => setIsFullGalleryOpen(true)}
