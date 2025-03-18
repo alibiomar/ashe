@@ -1,19 +1,44 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {  FaTimes, FaChevronLeft, FaChevronRight} from 'react-icons/fa';
+import { useInView } from 'react-intersection-observer';
+import { motion} from 'framer-motion';
 
 const ImageCard = ({ image, onClick, isClickable = false }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const cardRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div 
-      className={`relative bg-gray-900 overflow-hidden transition-all duration-500 break-inside-avoid mb-4 ${isClickable ? 'cursor-pointer' : ''}`}
-      style={{ aspectRatio: image.width / image.height }}
+    <div
+      ref={cardRef}
+      className={`relative bg-gray-900 overflow-hidden transition-all duration-500 break-inside-avoid mb-4 
+        ${isClickable ? 'cursor-pointer' : ''} 
+        ${isVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-10'}
+      `}
+      style={{ aspectRatio: image.width / image.height, transition: 'opacity 0.6s ease, transform 0.6s ease' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={isClickable ? () => onClick(image) : undefined}
     >
-      {/* Loading skeleton */}
       {!isLoaded && (
         <div className="absolute inset-0 bg-gray-800 animate-pulse flex items-center justify-center">
           <svg className="w-10 h-10 text-gray-600 animate-spin" viewBox="0 0 24 24">
@@ -22,16 +47,17 @@ const ImageCard = ({ image, onClick, isClickable = false }) => {
           </svg>
         </div>
       )}
-      
-      <img 
-        src={image.src} 
+
+      <img
+        src={image.src}
         alt={image.alt}
         loading="lazy"
-        onError={(e) => e.target.src = "/placeholder-art.svg"}
+        onError={(e) => (e.target.src = '/placeholder-art.svg')}
         onLoad={() => setIsLoaded(true)}
-        className={`w-full h-full object-cover transition-transform duration-700 ${isHovered ? 'scale-105' : 'scale-100'} ${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
+        className={`w-full h-full object-cover transition-transform duration-700 
+          ${isHovered ? 'scale-105' : 'scale-100'} 
+          ${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
       />
-
     </div>
   );
 };
@@ -333,6 +359,10 @@ const Gallery = () => {
   const [isFullGalleryOpen, setIsFullGalleryOpen] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const [allImagesLoaded, setAllImagesLoaded] = useState(false);
+  const { ref: headerRef, inView: isHeaderVisible } = useInView({
+    triggerOnce: true,
+    threshold: 0.2,
+  });
   
   // Sample images with natural dimensions and more diverse categories
   const allImages = [
@@ -350,7 +380,17 @@ const Gallery = () => {
 
   // Only show 5 images in the preview gallery
   const previewImages = allImages.slice(0, 5);
-
+  const headingVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        duration: 0.8, 
+        ease: [0.25, 0.1, 0.25, 1] 
+      }
+    }
+  };
   // Track loading of initial preview images
   const handleImageLoad = () => {
     setImagesLoaded(prev => {
@@ -376,20 +416,38 @@ const Gallery = () => {
     <section className="py-24 px-6 bg-black text-white min-h-screen">
       <div className="max-w-6xl mx-auto items-center flex flex-col justify-around">
         {/* Header */}
-        <div className="flex flex-col md:flex-row w-full  justify-between items-center mb-16">
-          <h2 className="md:text-5xl text-6xl text-start font-bold tracking-tighter">
-            Frames of Elegance <span className="text-highlight">.</span>
-          </h2>
-          <div className="mt-4 md:mt-0 flex items-center space-x-4 gap-5 justify-around md:justify-end">
-            <div className="text-sm text-highlight">45 MINUTES</div>
-            <button 
-              onClick={() => setIsFullGalleryOpen(true)}
-              className="bg-highlight text-black px-4 py-2 hover:bg-light transition-colors"
+        <div 
+  ref={headerRef} 
+  className={`flex flex-col md:flex-row w-full justify-between items-center mb-16 transition-all duration-700 
+    ${isHeaderVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}
+  `}
+>
+<motion.h2
+          className="text-5xl font-black text-start mb-16 md:mb-0 tracking-tighter relative"
+          variants={headingVariants}
+          initial="hidden"
+          animate={isHeaderVisible ? "visible" : "hidden"}
+        >
+    Frames of Elegance <motion.span 
+              className="text-highlight absolute ml-2 "
+              initial={{ scale: 0 }}
+              animate={isHeaderVisible ? { scale: 1.2, rotate: 10 } : { scale: 0 }}
+              transition={{ delay: 0.6, type: "spring", stiffness: 300, damping: 10 }}
             >
-              View Full Gallery
-            </button>
-          </div>
-        </div>
+               .
+            </motion.span>
+  </motion.h2>
+  <div className="mt-4 md:mt-0 flex items-center space-x-4 gap-5 justify-around md:justify-end">
+    <div className="text-sm text-highlight">45 MINUTES</div>
+    <button 
+      onClick={() => setIsFullGalleryOpen(true)}
+      className="bg-highlight text-black px-4 py-2 hover:bg-light transition-colors"
+    >
+      View Gallery
+    </button>
+  </div>
+</div>
+
 
         {/* Loading indicator for initial gallery load */}
         {!allImagesLoaded && (

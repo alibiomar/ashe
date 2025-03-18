@@ -104,7 +104,7 @@ export default function About() {
     {/* Main Heading */}
     <h1 className="text-6xl md:text-8xl font-extrabold leading-none tracking-tight">
       <span className="block">Born from Legacy</span>
-      <span className="text-gray-400">crafted for eternity</span>
+      <span className="text-highlight">crafted for eternity</span>
     </h1>
 
     {/* Description */}
@@ -129,7 +129,7 @@ export default function About() {
                 >
                   <div className="text-5xl md:text-6xl font-black">
                     <p className="mb-4">Be Distinct</p>
-                    <div className="h-1 w-24 bg-black" />
+                    <div className="h-1 w-24 bg-highlight" />
                   </div>
                   <p className="text-lg text-gray-600 leading-relaxed">
                   At Ashe, we believe in timeless fashion inspired by an inherited legacy, crafted for those who appreciate the finer things in life. Every piece echoes the elegance of "old money," redefined through a modern lens.
@@ -210,7 +210,7 @@ export default function About() {
                         },
                       }}
                     >
-                      <div className="text-5xl mb-6">{value.symbol}</div>
+                      <div className="text-5xl mb-6 text-highlight">{value.symbol}</div>
                       <h3 className="text-3xl font-medium mb-4">{value.title}</h3>
                       <p className="text-gray-400">{value.desc}</p>
                     </motion.div>
@@ -246,7 +246,7 @@ export default function About() {
                 >
                   <h2 className="text-5xl md:text-6xl font-black">
                     <span className="block mb-4">The ASHE</span>
-                    <span className="text-gray-400">CREED</span>
+                    <span className="text-highlight">CREED</span>
                   </h2>
                   <div className="space-y-6">
                     <p className="text-lg text-gray-600 leading-relaxed">
@@ -264,21 +264,86 @@ export default function About() {
             {/* Community Connection Section */}
             <section className="py-32 px-8 bg-gradient-to-b from-white to-gray-100">
               <div className="max-w-6xl mx-auto text-center">
-                <motion.div
-                  className="text-4xl md:text-6xl font-extrabold mb-16 tracking-tight"
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
-                  }}
-                >
-                  <span className="block">Wear Your Story</span>
-                  <span className="text-gray-500 block mt-2">
-                    Be Bold. Be ASHE.
-                  </span>
-                </motion.div>
+              <motion.div
+  className="text-4xl md:text-6xl font-extrabold mb-16 tracking-tight"
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true }}
+  variants={{
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
+  }}
+>
+  {/* First text appears */}
+  <motion.span 
+    className="block"
+    variants={{
+      hidden: { opacity: 0, y: 20 },
+      visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
+    }}
+  >
+    Wear Your Story
+  </motion.span>
+  
+  {/* Tagline container with staggered children */}
+  <motion.span 
+    className="text-gray-500 block mt-2"
+    variants={{
+      hidden: { opacity: 0 },
+      visible: { 
+        opacity: 1, 
+        transition: { 
+          delayChildren: 0.2,
+          staggerChildren: 0.2
+        } 
+      },
+    }}
+  >
+    {/* "Be Bold" appears first */}
+    <motion.span className='text-highlight'
+      variants={{
+        hidden: { opacity: 0, y: 10 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+      }}
+    >
+      Be Bold
+    </motion.span>
+    
+    {/* Adding a space */}
+    <motion.span className='text-highlight' variants={{
+        hidden: { opacity: 0, scale: 0 },
+        visible: { 
+          opacity: 1, 
+          scale: [0, 1.5, 1],
+          transition: { duration: 0.6, ease: 'easeOut' } 
+        },
+      }}>. </motion.span>
+    
+    {/* "Be ASHE" appears next */}
+    <motion.span className='text-highlight'
+      variants={{
+        hidden: { opacity: 0, y: 10 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+      }}
+    >
+      Be ASHE
+    </motion.span>
+    
+    {/* Animated period at the end */}
+    <motion.span className='text-highlight'
+      variants={{
+        hidden: { opacity: 0, scale: 0 },
+        visible: { 
+          opacity: 1, 
+          scale: [0, 1.5, 1],
+          transition: { duration: 0.6, ease: 'easeOut' } 
+        },
+      }}
+    >
+      .
+    </motion.span>
+  </motion.span>
+</motion.div>
 
                 <motion.div
                   className="grid md:grid-cols-3 gap-8 mb-16"
@@ -302,9 +367,9 @@ export default function About() {
                       }}
                     >
                       <div className="text-3xl mb-4 ">{[
-          <FaRegEdit className="w-8 h-8" />,  // Define - Edit icon
-          <BiBrain className="w-8 h-8" />,  // Empower - Up arrow
-          <SiStylelint className="w-8 h-8" />  // Transform - Exchange
+          <FaRegEdit className="w-8 h-8" />,  
+          <BiBrain className="w-8 h-8" />,  
+          <SiStylelint className="w-8 h-8" /> 
         ][index]}</div>
                       <h3 className="text-xl font-bold mb-2">{item}</h3>
                       <p className="text-gray-600 text-sm">
@@ -363,8 +428,8 @@ export default function About() {
 >
   <div className="flex flex-col sm:flex-row items-center gap-2">
     <span className="text-sm">Join</span>
-    <div className="text-2xl font-bold text-black">
-      <AnimatedNumber value={+800} duration={2} />
+    <div className="text-2xl font-bold text-highlight">
+      <AnimatedNumber  value={+800} duration={2} />
     </div>
     <span className="text-sm">fashion trailblazers</span>
   </div>

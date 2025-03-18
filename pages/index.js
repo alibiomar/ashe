@@ -11,7 +11,7 @@ import { motion} from 'framer-motion';
 import Carousel from '../components/Carousel';
 import ProductSections from '../components/productSections';
 //import { setupRealTimeActivityListener, updateUserActivity } from '../utils/updateActivity';
-
+import { useInView } from 'react-intersection-observer';
 // Constants
 const SCROLL_THRESHOLD = 300;
 const DEFAULT_USER_NAME = 'Valued User';
@@ -324,29 +324,122 @@ const GallerySection = memo(() => (
 ));
 
 
-const TestimonialsSection = memo(({ testimonials }) => (
-  <section className="px-8 py-32 flex flex-col-reverse md:flex-row justify-around items-center">
-    <div className="relative">
-      <Carousel
-        items={testimonials}
-        baseWidth={360}
-        autoplay={true}
-        autoplayDelay={3000}
-        pauseOnHover={true}
-        loop={true}
-        round={true}
-      />
-    </div>
-    <motion.h2
-      className="text-5xl font-black text-start mb-16 md:mb-0 tracking-tighter"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+const TestimonialsSection = memo(({ testimonials }) => {
+  const { ref: testimonialsRef, inView: isTestimonialsVisible } = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+    rootMargin: '0px 0px -100px 0px',
+  });
+
+  // Animation variants for heading
+  const headingVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        duration: 0.6, 
+        ease: [0.25, 0.1, 0.25, 1] 
+      }
+    }
+  };
+
+  // Animation variants for the carousel container
+  const carouselContainerVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: { 
+      opacity: 1, 
+      scale: 1,
+      transition: { 
+        delay: 0.3,
+        duration: 0.7, 
+        ease: [0.17, 0.67, 0.83, 0.67] 
+      }
+    }
+  };
+
+  // Animation for decorative elements
+  const decorElements = {
+    hidden: { opacity: 0, scale: 0 },
+    visible: (i) => ({
+      opacity: 1,
+      scale: 1,
+      transition: {
+        delay: 0.4 + (i * 0.1),
+        duration: 0.5,
+        type: "spring",
+        stiffness: 200,
+        damping: 10
+      }
+    })
+  };
+
+  return (
+    <section
+      ref={testimonialsRef}
+      className="px-8 py-32 flex flex-col-reverse md:flex-row justify-around gap-11 md:gap-0 items-center relative overflow-hidden"
     >
-      Voices of Confidence <span className="text-highlight">.</span>
-    </motion.h2>
-  </section>
-));
+
+      {/* Carousel with testimonials */}
+      <motion.div
+        className="relative "
+        variants={carouselContainerVariants}
+        initial="hidden"
+        animate={isTestimonialsVisible ? "visible" : "hidden"}
+      >
+        <Carousel
+          items={testimonials}
+          baseWidth={360}
+          autoplay={true}
+          autoplayDelay={3000}
+          pauseOnHover={true}
+          loop={true}
+          round={true}
+          className="shadow-lg"
+        />
+      </motion.div>
+      
+      {/* Section heading with emphasis */}
+      <div className="w-full md:w-1/3 md:pr-8">
+        <motion.h2
+          className="text-5xl font-black text-start  tracking-tighter relative"
+          variants={headingVariants}
+          initial="hidden"
+          animate={isTestimonialsVisible ? "visible" : "hidden"}
+        >
+          Voices of 
+          <motion.span
+            className="relative inline-block"
+            initial={{ opacity: 0 }}
+            animate={isTestimonialsVisible ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ delay: 0.6, duration: 0.4 }}
+          >
+            Confidence
+            <motion.span 
+              className="text-highlight absolute -right-6"
+              initial={{ scale: 0 }}
+              animate={isTestimonialsVisible ? { scale: 1.2, rotate: 10 } : { scale: 0 }}
+              transition={{ delay: 0.8, type: "spring", stiffness: 300, damping: 10 }}
+            >
+              .
+            </motion.span>
+          </motion.span>
+        </motion.h2>
+        
+        {/* Optional subtitle with staggered character animation */}
+        <motion.p 
+          className="text-gray-600 mt-4 max-w-md"
+          initial={{ opacity: 0 }}
+          animate={isTestimonialsVisible ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ delay: 0.7, duration: 0.5 }}
+        >
+          Real stories from people who trust our service
+        </motion.p>
+      </div>
+    </section>
+  );
+});
+
 
 const NewsletterSignupSection = memo(() => (
   <motion.section
