@@ -8,7 +8,7 @@ const ProductSections = memo(() => {
     {
       title: "New Arrivals",
       description: "Discover our latest seasonal offerings",
-      imageUrl: "/showcase/2.avif",
+      imageUrl: "/showcase/7.avif",
       bgColor: "bg-black",
       textColor: "text-white",
       accentColor: "text-teal-400",
@@ -16,7 +16,7 @@ const ProductSections = memo(() => {
     {
       title: "Curated Essentials",
       description: "Refined pieces for the confident",
-      imageUrl: "/showcase/13.avif",
+      imageUrl: "/showcase/16.avif",
       bgColor: "bg-white",
       textColor: "text-black",
       accentColor: "text-teal-400",

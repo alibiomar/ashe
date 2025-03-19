@@ -232,7 +232,7 @@ export default function About() {
 >
   <div className="text-3xl font-semibold italic leading-relaxed tracking-wide text-shadow-lg">
     "We don't sell clothes.<br />
-    We’re shaping <br />
+    We are shaping <br />
     a mindset."
   </div>
 </motion.div>
@@ -265,7 +265,7 @@ export default function About() {
             <section className="py-32 px-8 bg-gradient-to-b from-white to-gray-100">
               <div className="max-w-6xl mx-auto text-center">
               <motion.div
-  className="text-4xl md:text-6xl font-extrabold mb-16 tracking-tight"
+  className="text-3xl md:text-6xl font-extrabold mb-16 tracking-tight"
   initial="hidden"
   whileInView="visible"
   viewport={{ once: true }}

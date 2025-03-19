@@ -26,14 +26,6 @@
   display: none; /* Hides scrollbar in Safari and Chrome */
 }
 
-.swiper-button-next,
-.swiper-button-prev {
-  color: #46c7c7 !important; /* Ensures navigation buttons are #46c7c7 */
-}
-
-.swiper-pagination-bullet {
-  background-color: #46c7c7 !important; /* Ensures pagination bullets are #46c7c7 */
-}
 body.overflow-hidden {
   overflow: hidden !important;
 }
@@ -53,42 +45,6 @@ h1, h2, h3, h4 {
   max-width: 1200px; /* Grid alignment */
 }
 
-.card {
-  @apply bg-white border border-gray-300 rounded-none shadow-md; /* Simplified borders with shadow */
-}
-
-.card-img {
-  @apply w-full h-64 object-cover;
-}
-
-.card-body {
-  @apply p-6; /* Generous padding */
-}
-
-.card-title {
-  @apply text-xl font-bold mb-2;
-}
-
-.card-text {
-  @apply text-gray-700 text-sm leading-relaxed;
-}
-
-.navbar {
-  @apply flex justify-between items-center p-4;
-}
-
-.footer {
-  @apply bg-gray-100 text-black py-12 flex justify-between items-center;
-}
-
-.footer-links {
-  @apply flex space-x-6;
-}
-
-.footer-link {
-  @apply text-gray-600 hover:text-black;
-}
-
 .loader-container {
   display: flex;
   justify-content: center;
@@ -96,28 +52,6 @@ h1, h2, h3, h4 {
   height: 100vh; /* Full screen height */
   background-color: #fff; /* Optional background */
 }
-
-
-.wave {
-  animation-name: wave-animation;  /* Refers to the name of your @keyframes element below */
-  animation-duration: 2.5s;        /* Change to speed up or slow down */
-  animation-iteration-count: infinite;  /* Never stop waving :) */
-  transform-origin: 70% 70%;       /* Pivot around the bottom-left palm */
-  display: inline-block;
-}
-
-@keyframes wave-animation {
-    0% { transform: rotate( 0.0deg) }
-   10% { transform: rotate(14.0deg) }  /* The following five values can be played with to make the waving more or less extreme */
-   20% { transform: rotate(-8.0deg) }
-   30% { transform: rotate(14.0deg) }
-   40% { transform: rotate(-4.0deg) }
-   50% { transform: rotate(10.0deg) }
-   60% { transform: rotate( 0.0deg) }  /* Reset for the last half to pause */
-  100% { transform: rotate( 0.0deg) }
-}
-
-
 
 @keyframes fade-in {
   from { opacity: 0; }
@@ -198,3 +132,4 @@ h1, h2, h3, h4 {
 @keyframes l23-2 {
   100% {top:-0.1px}
 }
+

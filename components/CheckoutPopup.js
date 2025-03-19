@@ -103,7 +103,7 @@ const generateInvoice = (order, userData) => {
 
     // Add the shipping row
     itemsData.push([
-      { content: 'Shipping', colSpan: 4, styles: { halign: 'right' }},
+      { content: 'Shipping', colSpan:5, styles: { halign: 'right' }},
       { content: `${shippingFee.toFixed(2)} TND`, styles: { halign: 'right' }}
     ]);
 
@@ -111,7 +111,7 @@ const generateInvoice = (order, userData) => {
     itemsData.push([
       {
         content: 'TOTAL',
-        colSpan: 4,
+        colSpan: 5,
         styles: {
           fontStyle: 'bold',
           halign: 'right',
@@ -149,12 +149,12 @@ const generateInvoice = (order, userData) => {
         fillColor: [250, 250, 250]
       },
       columnStyles: {
-        0: { cellWidth: 45, fontStyle: 'bold' },  // Product
-        1: { cellWidth: 20, halign: 'center' },   // Size
-        2: { cellWidth: 20, halign: 'center' },   // Color
+        0: { cellWidth: 40, fontStyle: 'bold' },  // Product
+        1: { cellWidth: 25, halign: 'center' },   // Size
+        2: { cellWidth: 25, halign: 'center' },   // Color
         3: { cellWidth: 30, halign: 'center' },   // Quantity
-        4: { cellWidth: 40, halign: 'right' },    // Unit Price
-        5: { cellWidth: 45, halign: 'right' }     // Total
+        4: { cellWidth: 30, halign: 'right' },    // Unit Price
+        5: { cellWidth: 30, halign: 'right' }     // Total
       },
       margin: { horizontal: 15 },
       tableLineColor: [200, 200, 200],
