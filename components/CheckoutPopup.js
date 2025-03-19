@@ -98,7 +98,7 @@ const generateInvoice = (order, userData) => {
 
     // Calculate total amount
     const totalAmount = order.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
-    const shippingFee = 8.00;  // Shipping fee in TND
+    const shippingFee = totalAmount > 200 ? 0 : 8.00; // Free shipping over 200 TND
     const grandTotal = totalAmount + shippingFee;
 
     // Add the shipping row
