@@ -358,21 +358,7 @@ const TestimonialsSection = memo(({ testimonials }) => {
     }
   };
 
-  // Animation for decorative elements
-  const decorElements = {
-    hidden: { opacity: 0, scale: 0 },
-    visible: (i) => ({
-      opacity: 1,
-      scale: 1,
-      transition: {
-        delay: 0.4 + (i * 0.1),
-        duration: 0.5,
-        type: "spring",
-        stiffness: 200,
-        damping: 10
-      }
-    })
-  };
+
 
   return (
     <section

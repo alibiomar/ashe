@@ -155,7 +155,7 @@ export default function About() {
                       “My grandmother’s hands showed me that true elegance is found in the details.”
                     </blockquote>
                     <p className="mt-2 sm:mt-4 text-center text-sm sm:text-base md:text-lg font-light drop-shadow">
-                      - Omar Alibi, Founder
+                      - Omar Alibi, Founder of ASHE
                     </p>
                   </div>
                 </motion.div>

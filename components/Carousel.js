@@ -96,13 +96,13 @@ export default function Carousel({
         {carouselItems.map((item, index) => {
           const rotateY = useTransform(x, [-trackItemOffset * (index + 1), -trackItemOffset * index, -trackItemOffset * (index - 1)], [90, 0, -90], { clamp: false });
           return (
-            <motion.div key={index} className={`relative shrink-0 flex flex-col ${round ? "items-center justify-center text-center bg-[#060606] border-0" : "items-start justify-between bg-[#222] border border-[#222] rounded-[12px]"} overflow-hidden cursor-grab active:cursor-grabbing`} style={{ width: itemWidth, height: round ? itemWidth : "100%", rotateY, ...(round && { borderRadius: "50%" }) }} transition={effectiveTransition}>
+            <motion.div key={index} className={`relative shrink-0 flex flex-col ${round ? "items-center justify-center text-center bg-[#060606] border-0" : "items-center justify-center bg-[#222] border border-[#222] rounded-[12px]"} overflow-hidden cursor-grab active:cursor-grabbing`} style={{ width: itemWidth, height: round ? itemWidth : "100%", rotateY, ...(round && { borderRadius: "50%" }) }} transition={effectiveTransition}>
               <div className={`${round ? "p-0 m-0" : "mb-4 p-5"}`}>
                 <span className="flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[#060606]">
                   <MdGppGood className="h-[24px] w-[24px] text-white" />
                 </span>
               </div>
-              <div className="p-5">
+              <div className="p-5 flex flex-col gap-2 items-center justify-center"> 
                 <div className="mb-1 font-black text-lg text-white">{item.name}</div>
                 <p className="text-sm text-white">{item.review}</p>
                 <div className="flex items-center mt-2">
