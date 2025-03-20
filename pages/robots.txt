@@ -8,6 +8,8 @@ Disallow: /api/
 Disallow: /api/send-email
 Disallow: /api/send-order-email
 Disallow: /api/update-activity
+Disallow: /api/upload-avatar
+Disallow: /api/serve-image
 
 # Crawl-delay: 10
 # Add crawl delay if needed for server load management
