@@ -26,12 +26,6 @@ const config = withPWA({
   async headers() {
     return [
       {
-        source: '/sitemap.xml',
-        headers: [
-          { key: 'Cache-Control', value: 'public, max-age=86400, s-maxage=86400' }
-        ]
-      },
-      {
         source: '/:path*',
         headers: [
           {
@@ -41,6 +35,8 @@ const config = withPWA({
               "connect-src 'self' https://drive.google.com/ https://picsum.photos/ https://fonts.gstatic.com/ https://fonts.googleapis.com/ https://auth.ashe.tn/auth/verify-email https://auth.ashe.tn/auth/send-password-reset https://auth.ashe.tn https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://apis.google.com",
               "script-src 'self' 'unsafe-eval' https://www.gstatic.com https://apis.google.com https://ashe.tn",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://ashe.tn",
+              "style-src-elem 'self' 'unsafe-inline' https://ashe.tn",  
+              "script-src-elem 'self' 'unsafe-eval' https://ashe.tn",   
               "img-src 'self' data: blob: https://ashe.tn https://res.cloudinary.com/ https://*.googleusercontent.com https://drive.google.com/ https://firebasestorage.googleapis.com https://picsum.photos https://fastly.picsum.photos",
               "frame-src 'self' https://securetoken.googleapis.com https://ashe-comm.firebaseapp.com",
               "form-action 'self'",
@@ -73,6 +69,7 @@ const config = withPWA({
       }
     ]
   },
+  
   
   devIndicators: {
     buildActivity: false,
