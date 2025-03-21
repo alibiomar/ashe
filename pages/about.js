@@ -36,17 +36,8 @@ const staggerContainer = {
 };
 
 export default function About() {
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const [showScrollTop, setShowScrollTop] = useState(false);
-
-  useEffect(() => {
-    // Simulate a loading delay
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,9 +47,7 @@ export default function About() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+
 
   return (
     <>
@@ -75,7 +64,7 @@ export default function About() {
         
         <div className="min-h-screen bg-white relative">
           {/* Heritage Header */}
-          <header className="relative min-h-screen flex items-center justify-center p-8 -mt-14 overflow-hidden">
+          <header className="relative min-h-screen flex items-center justify-center p-8 overflow-hidden">
   {/* Background Image Container */}
   <div
     className="absolute inset-0 w-full hero-image-container bg-cover bg-center opacity-25"

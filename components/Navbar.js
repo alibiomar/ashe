@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence,useScroll } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
@@ -39,7 +39,18 @@ export default function Navbar({ onHeightChange }) {
   const [isNavbarVisible, setIsNavbarVisible] = useState(true);
   const navRef = useRef(null);
   const { basketCount } = useBasket();
+  const { scrollY } = useScroll();
 
+  const [navBackground, setNavBackground] = useState('bg-black/80');
+  useEffect(() => {
+    return scrollY.onChange((latest) => {
+      if (latest > 100) {
+        setNavBackground('bg-black/95 backdrop-blur-xl');
+      } else {
+        setNavBackground('bg-black/80 backdrop-blur-lg');
+      }
+    });
+  }, []);
   // Function to handle user icon click
   const handleUserIconClick = () => {
     if (router.pathname === '/userProfile') {
@@ -150,16 +161,17 @@ export default function Navbar({ onHeightChange }) {
     <>
       <nav
         ref={navRef}
-        className={`fixed top-0 left-0 right-0 transition-transform duration-300 ${
+        className={`fixed top-0 left-0 right-0 transition-all duration-300 ${navBackground} z-50 ${
           isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
-        } bg-black/80 backdrop-blur-lg z-50`}
+        }`}
         aria-label="Main Navigation"
       >
         <motion.div
           initial={false}
           animate={{
             y: isNavbarVisible ? 0 : -20,
-            opacity: isNavbarVisible ? 1 : 0,
+            opacity: isNavbarVisible ? 1 : 0.8,
+            scale: isNavbarVisible ? 1 : 0.98,
           }}
           className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
         >

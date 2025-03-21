@@ -191,7 +191,7 @@ export default function ContactForm() {
       </Head>
 
       <Layout>
-        <div className="min-h-screen flex flex-col items-center justify-center bg-neutral-50 pt-20">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-neutral-50 pt-10">
           <div className="w-full max-w-2xl mx-4 bg-white p-8 md:p-12 rounded-none border border-neutral-200">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-neutral-900 mb-8 tracking-tight">
               Contact Us
