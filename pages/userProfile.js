@@ -180,11 +180,15 @@ const UserProfile = () => {
   const handleLogout = async () => {
     try {
       await auth.signOut();
-      router.push("/");
+      toast.success('Successfully logged out');
+      setTimeout(() => {
+        router.push("/");
+      }, 500); 
     } catch (error) {
       toast.error("Error logging out");
     }
   };
+  
 
   return (
     <Layout>

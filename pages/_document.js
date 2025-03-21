@@ -15,7 +15,8 @@ export default class MyDocument extends Document {
           <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
           <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
           <meta name="mobile-web-app-capable" content="yes" />
-          
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+
           {/* Favicons */}
           <link rel="icon" type="image/x-icon" href="/favicon.ico" />
           <link rel="apple-touch-icon" sizes="192x192" href="/logo192.png" />
@@ -50,10 +51,26 @@ export default class MyDocument extends Document {
           <link rel="preconnect" href="https://ashe.tn" />
           <link rel="dns-prefetch" href="https://ashe.tn" />
           <meta httpEquiv="x-dns-prefetch-control" content="on" />
-          
-
+          <link rel="canonical" href="https://ashe.tn" />
+          <meta property="og:locale" content="fr_FR" />
+          <script
+            async
+            src={`https://www.googletagmanager.com/gtag/js?id=G-HBLK404Z6X`}
+          ></script>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-HBLK404Z6X', {
+                  page_path: window.location.pathname,
+                });
+              `,
+            }}
+          />
         </Head>
-        
+
         <body className="font-montserrat antialiased">
           <Main />
           <NextScript />

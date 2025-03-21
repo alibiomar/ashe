@@ -9,7 +9,7 @@ const config = withPWA({
     document: '/offline.html', // Serve offline.html when offline
   },
   publicExcludes: ['!dynamic-css-manifest.json'],
-})({
+})( {
   generateBuildId: async () => {
     return 'build-' + Date.now();
   },
@@ -32,15 +32,14 @@ const config = withPWA({
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "connect-src 'self' https://drive.google.com/ https://picsum.photos/ https://fonts.gstatic.com/ https://fonts.googleapis.com/ https://auth.ashe.tn/auth/verify-email https://auth.ashe.tn/auth/send-password-reset https://auth.ashe.tn https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://apis.google.com",
-              "script-src 'self' 'unsafe-eval' https://www.gstatic.com https://apis.google.com https://ashe.tn",
+              "connect-src 'self' https://drive.google.com/ https://www.googletagmanager.com https://fonts.gstatic.com/ https://fonts.googleapis.com/ https://auth.ashe.tn/auth/verify-email https://auth.ashe.tn/auth/send-password-reset https://auth.ashe.tn https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://apis.google.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://apis.google.com https://ashe.tn https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com",
+              "script-src-elem 'self' 'unsafe-inline' https://ashe.tn https://www.googletagmanager.com https://www.google-analytics.com https://apis.google.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://ashe.tn",
-              "style-src-elem 'self' 'unsafe-inline' https://ashe.tn",  
-              "script-src-elem 'self' 'unsafe-eval' https://ashe.tn",   
               "img-src 'self' data: blob: https://ashe.tn https://res.cloudinary.com/ https://*.googleusercontent.com https://drive.google.com/ https://firebasestorage.googleapis.com https://picsum.photos https://fastly.picsum.photos",
               "frame-src 'self' https://securetoken.googleapis.com https://ashe-comm.firebaseapp.com",
               "form-action 'self'",
-              "font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com/  data:",
+              "font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com/ data:",
               "media-src 'self' https://*.firebaseio.com"
             ].join('; ')
           },
@@ -67,10 +66,9 @@ const config = withPWA({
           }
         ]
       }
-    ]
-  },
-  
-  
+    ];
+  },  
+
   devIndicators: {
     buildActivity: false,
   },
