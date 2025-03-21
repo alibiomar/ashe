@@ -77,14 +77,14 @@ export default function About() {
 
   {/* Content Section */}
   <motion.div
-    className="max-w-7xl mx-auto text-center"
+    className="max-w-7xl mx-auto mt-20 text-center"
     initial="hidden"
     animate="visible"
     variants={fadeIn}
   >
     {/* Section Divider & Subheading */}
-    <div className="mb-10">
-      <div className="h-px bg-black/20 w-32 mx-auto mb-6" />
+    <div className="mb-8">
+      <div className="h-px bg-black/20 w-32 mx-auto mb-3" />
       <h4 className="text-sm md:text-base uppercase tracking-widest text-gray-600">
         An Inherited Story
       </h4>

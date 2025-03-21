@@ -91,11 +91,13 @@ export default function Navbar({ onHeightChange }) {
   // Handle user logout
   const handleLogout = useCallback(async () => {
     try {
+              setTimeout(() => {
+                toast.success('Successfully logged out');
+              }, 500);
       await signOut(auth);
       setUser(null);
       setUserData(null);
-      toast.success('Successfully logged out');
-      router.push('/'); // Redirect to login page after logout
+      router.push('/');
     } catch (error) {
       toast.error('Error logging out');
     }
