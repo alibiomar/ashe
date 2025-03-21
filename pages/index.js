@@ -356,14 +356,55 @@ const TestimonialsSection = memo(({ testimonials }) => {
     }
   };
 
-
+  // Check if testimonials is empty or undefined
+  if (!testimonials || testimonials.length === 0) {
+    return (
+        <section 
+            className="relative py-24 px-4 sm:px-6 lg:px-8"
+            role="alert"
+            aria-live="polite"
+            aria-atomic="true"
+        >
+            <div className="max-w-3xl mx-auto">
+                <div className="flex flex-col items-center text-center bg-white p-8 shadow-lg shadow-red-100/50 border border-red-100">
+                    <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mb-6">
+                        <svg 
+                            className="w-10 h-10 text-red-600"
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                        >
+                            <path 
+                                strokeLinecap="round" 
+                                strokeLinejoin="round" 
+                                strokeWidth={1.5}
+                                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                            />
+                        </svg>
+                    </div>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-3 tracking-tight">
+                        Unable to Load Testimonials
+                    </h2>
+                    <p className="text-gray-600 text-lg mb-8 max-w-md">
+                        We're having trouble loading testimonials. Please check your connection and try again.
+                    </p>
+                    <p className="text-sm text-gray-500 mt-6">
+                        Error code: 404-TESTIMONIALS • Last attempted: {new Date().toLocaleTimeString()}
+                    </p>
+                </div>
+                
+                {/* Error boundary decoration */}
+                <div className="absolute inset-0 -z-10 bg-gradient-to-b from-red-50/20 to-transparent" />
+            </div>
+        </section>
+    );
+}
 
   return (
     <section
       ref={testimonialsRef}
       className="px-8 py-32 flex flex-col-reverse md:flex-row justify-around gap-11 md:gap-0 items-center relative overflow-hidden"
     >
-
       {/* Carousel with testimonials */}
       <motion.div
         className="relative "
@@ -382,7 +423,7 @@ const TestimonialsSection = memo(({ testimonials }) => {
           className="shadow-lg"
         />
       </motion.div>
-      
+
       {/* Section heading with emphasis */}
       <div className="w-full md:w-1/3 md:pr-8">
         <motion.h2
@@ -409,7 +450,7 @@ const TestimonialsSection = memo(({ testimonials }) => {
             </motion.span>
           </motion.span>
         </motion.h2>
-        
+
         {/* Optional subtitle with staggered character animation */}
         <motion.p 
           className="text-gray-600 mt-4 max-w-md"
@@ -423,6 +464,7 @@ const TestimonialsSection = memo(({ testimonials }) => {
     </section>
   );
 });
+
 
 
 const NewsletterSignupSection = memo(() => (

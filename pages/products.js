@@ -22,6 +22,7 @@ export default function Products() {
     const [lastVisible, setLastVisible] = useState(null);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
+    const [error, setError] = useState(null); // New error state
 
     // Use basket context
     const { getItemQuantity, addItemToBasket } = useBasket();
@@ -56,6 +57,7 @@ export default function Products() {
             setHasMore(productsSnapshot.docs.length === PRODUCTS_PER_PAGE);
         } catch (error) {
             setLoading(false);
+            setError("Failed to load more products. Please try again later.");
         }
     }, [loading, hasMore, lastVisible]);
 
@@ -84,7 +86,8 @@ export default function Products() {
 
                 setHasMore(productsSnapshot.docs.length === PRODUCTS_PER_PAGE);
             } catch (error) {
-                console.error("Error fetching products:", error);
+                setError("Failed to load products. Please check your internet connection.");
+
             }
             setLoading(false);
         };
@@ -105,6 +108,73 @@ export default function Products() {
 
     if (loading && products.length === 0) {
         return <LoadingScreen />;
+    }
+    if (error) {
+        return (
+            <Layout>
+                <Head>
+                    <title>Products | ASHE™</title>
+                    <meta name="description" content="Browse our collection of products." />
+                </Head>
+                <main className="container mx-auto px-4 mb-24">
+                    <div className="text-center text-red-500 font-bold text-xl">
+                        <p>{error}</p>
+                    </div>
+                </main>
+                <Toaster position="bottom-center" richColors />
+            </Layout>
+        );
+    }
+
+    // Display fallback message if products list is empty
+    if (!products || products.length === 0) {
+        return (
+            <Layout>
+                <Head>
+                    <title>Products | ASHE™</title>
+                    <meta name="description" content="Browse our collection of products." />
+                </Head>
+                <main 
+            className="relative py-24 px-4 sm:px-6 lg:px-8"
+            role="alert"
+            aria-live="polite"
+            aria-atomic="true"
+        >
+            <div className="max-w-3xl mx-auto">
+                <div className="flex flex-col items-center text-center bg-white  p-8 shadow-lg shadow-red-100/50 border border-red-100">
+                    <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mb-6">
+                        <svg 
+                            className="w-10 h-10 text-red-600"
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                        >
+                            <path 
+                                strokeLinecap="round" 
+                                strokeLinejoin="round" 
+                                strokeWidth={1.5}
+                                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                            />
+                        </svg>
+                    </div>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-3 tracking-tight">
+                        Unable to Load Products
+                    </h2>
+                    <p className="text-gray-600 text-lg mb-8 max-w-md">
+                        We're having trouble loading products. Please check your connection and try again.
+                    </p>
+                    <p className="text-sm text-gray-500 mt-6">
+                        Error code: 404-PRODUCTS • Last attempted: {new Date().toLocaleTimeString()}
+                    </p>
+                </div>
+                
+                {/* Error boundary decoration */}
+                <div className="absolute inset-0 -z-10 bg-gradient-to-b from-red-50/20 to-transparent" />
+            </div>
+        </main>
+                <Toaster position="bottom-center" richColors />
+            </Layout>
+        );
     }
 
     return (
