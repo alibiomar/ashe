@@ -10,10 +10,9 @@ export default class MyDocument extends Document {
           <link rel="manifest" href="/manifest.json" />
           <meta name="application-name" content="ASHE™" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
-          <meta name="apple-mobile-web-app-status-bar-style" content="default" />
           <meta name="apple-mobile-web-app-title" content="ASHE™" />
-          <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-          <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/> 
+          <meta name="theme-color" content="#000000"/>
           <meta name="mobile-web-app-capable" content="yes" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
 
