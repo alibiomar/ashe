@@ -14,7 +14,7 @@ const config = withPWA({
     return 'build-' + Date.now();
   },
 
-  assetPrefix: process.env.NODE_ENV === 'production' ? 'https://www.ashe.tn' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? 'https://ashe.tn' : '',
   async rewrites() {
     return [
       {

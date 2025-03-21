@@ -33,10 +33,10 @@ export default class MyDocument extends Document {
           {/* Open Graph */}
           <meta property="og:type" content="website" />
           <meta property="og:site_name" content="ASHE™" />
-          <meta property="og:url" content="https://www.ashe.tn" />
+          <meta property="og:url" content="https://ashe.tn" />
           <meta property="og:title" content="ASHE™ - Be Distinct" />
           <meta property="og:description" content="Shop the latest in fashion with ASHE™. Find high-quality clothing for every style." />
-          <meta property="og:image" content="https://www.ashe.tn/og-image.jpg" />
+          <meta property="og:image" content="https://ashe.tn/og-image.jpg" />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
           
@@ -44,11 +44,11 @@ export default class MyDocument extends Document {
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:title" content="ASHE™ - Be Distinct" />
           <meta name="twitter:description" content="Shop the latest in fashion with ASHE™. Find high-quality clothing for every style." />
-          <meta name="twitter:image" content="https://www.ashe.tn/og-image.jpg" />
+          <meta name="twitter:image" content="https://ashe.tn/og-image.jpg" />
           
           {/* Performance Optimizations */}
-          <link rel="preconnect" href="https://www.ashe.tn" />
-          <link rel="dns-prefetch" href="https://www.ashe.tn" />
+          <link rel="preconnect" href="https://ashe.tn" />
+          <link rel="dns-prefetch" href="https://ashe.tn" />
           <meta httpEquiv="x-dns-prefetch-control" content="on" />
           
 
