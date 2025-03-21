@@ -126,7 +126,7 @@ export default function Signup() {
         <meta name="description" content="Sign up for an account" />
       </Head>
       <div className="min-h-screen flex flex-col items-center justify-center">
-        <Toaster position="bottom-center" />
+        <Toaster position="bottom-center" richColors />
 
         <div className="w-full max-w-3xl mx-auto  bg-white shadow-lg overflow-hidden">
           {/* Image section for mobile */}

@@ -317,9 +317,7 @@ const HeroSection = memo(({ user, firstName }) => (
 
 const GallerySection = memo(() => (
     <Suspense fallback={<div className="inset-0 bg-gray-100 animate-pulse" />}>
-      <section id="parallax-section">
         <Gallery />
-      </section>
     </Suspense>
 ));
 

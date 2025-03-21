@@ -69,7 +69,7 @@ const ImageCard = ({ image, onClick, isClickable = false }) => {
         alt={image.alt}
         loading="lazy"
         onLoad={() => setIsLoaded(true)}
-        className={`w-full h-full object-cover transition-transform duration-700 
+        className={`w-full h-full object-cover transition-transform duration-700  rounded-lg
           ${isHovered ? 'scale-105' : 'scale-100'} 
           ${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
       />
@@ -357,6 +357,11 @@ const Gallery = () => {
   const [isFullGalleryOpen, setIsFullGalleryOpen] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const [allImagesLoaded, setAllImagesLoaded] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const sliderRef = useRef(null);
+  
   const { ref: headerRef, inView: isHeaderVisible } = useInView({
     triggerOnce: true,
     threshold: 0.2,
@@ -380,36 +385,62 @@ const Gallery = () => {
 
   const previewImages = useMemo(() => allImages.slice(0, 4), [allImages]);
 
-  const headingVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] },
-    },
+  // Touch handling for mobile slider
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX);
+    setTouchEnd(e.targetTouches[0].clientX);
   };
 
+  const handleTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const diff = touchStart - touchEnd;
+    const swipeThreshold = 50;
+
+    if (diff > swipeThreshold) {
+      setCurrentIndex(prev => Math.min(prev + 1, previewImages.length - 1));
+    } else if (diff < -swipeThreshold) {
+      setCurrentIndex(prev => Math.max(prev - 1, 0));
+    }
+    setTouchStart(0);
+    setTouchEnd(0);
+  };
+
+  // Image loading handler
   const handleImageLoad = useCallback(() => {
-    setImagesLoaded((prev) => {
+    setImagesLoaded(prev => {
       const newCount = prev + 1;
-      if (newCount >= previewImages.length) {
-        setAllImagesLoaded(true);
-      }
+      if (newCount === previewImages.length) setAllImagesLoaded(true);
       return newCount;
     });
   }, [previewImages.length]);
 
+  // Preload images
   useEffect(() => {
-    previewImages.forEach((image) => {
+    const abortController = new AbortController();
+    
+    previewImages.forEach(image => {
       const img = new Image();
       img.src = image.src;
       img.onload = handleImageLoad;
       img.onerror = handleImageLoad;
     });
+
+    return () => abortController.abort();
   }, [previewImages, handleImageLoad]);
 
+  // Animation variants
+  const headingVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }
+    }
+  };
   return (
-    <section className="py-12 px-6 bg-black text-white min-h-screen">
+    <section className="pt-12 pb-0 px-6 md:pb-12 bg-black text-white min-h-screen">
       <div className="max-w-6xl mx-auto flex flex-col items-center justify-around">
         <header
           ref={headerRef}
@@ -444,58 +475,48 @@ const Gallery = () => {
           </div>
         </header>
 
-        {!allImagesLoaded && (
-          <div className="flex flex-col justify-center items-center py-16" role="status" aria-live="polite">
-            <svg className="w-12 h-12 text-white animate-spin" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              />
-            </svg>
-            <p className="mt-2 text-gray-300">Loading gallery...</p>
-            <p className="text-sm text-gray-500">
-              {imagesLoaded} of {previewImages.length} images
-            </p>
-          </div>
-        )}
-
         {allImagesLoaded && (
           <>
             {/* Mobile Slider */}
-            <div className="relative md:hidden w-full overflow-x-auto mb-4 hide-scrollbar">
-              <div className="flex flex-nowrap items-center gap-4">
-                {previewImages.map((image, index) => (
-                  <div
-                    key={image.id}
-                    className="flex-shrink-0 w-[85vw] opacity-0 animate-fadeIn"
-                    style={{ animationDelay: `${index * 150}ms`, animationFillMode: "forwards" }}
-                  >
-                    <ImageCard image={image} onClick={() => {}} isClickable={false} />
-                  </div>
-                ))}
+            <div className="relative md:hidden w-full overflow-hidden mb-4">
+              <div
+                ref={sliderRef}
+                className="flex  items-center transition-transform duration-300 ease-out"
+                style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                {previewImages.map((image) => (
+  <div key={image.id} className="w-full h-full flex-shrink-0 p-2">
+    <ImageCard image={image} />
+  </div>
+))}
+
               </div>
-            </div>
-            {/* Swipe Indicator */}
-            <div className="md:hidden flex flex-col items-center pointer-events-none">
-              <span className="sr-only">Swipe to view more content</span>
-              <div className="flex items-center space-x-1">
-                <FaChevronRight
-                  className="text-xl text-gray-400"
-                  style={{ animation: 'swipe 1.5s infinite' }}
-                />
-                <FaChevronRight
-                  className="text-xl text-gray-400"
-                  style={{ animation: 'swipe 1.5s infinite 0.3s' }}
-                />
-                <FaChevronRight
-                  className="text-xl text-gray-400"
-                  style={{ animation: 'swipe 1.5s infinite 0.6s' }}
-                />
-              </div>
-              <p className="mt-1 text-xs text-gray-400">Swipe</p>
-            </div>
+
+              {/* Navigation Dots */}
+              <div className="absolute bottom-8 left-0 right-0 flex justify-center items-center z-20 pointer-events-auto">
+  <div className="relative -translate-y-1 bg-black/30 backdrop-blur-sm px-4 py-2.5 rounded-full flex items-center space-x-3 shadow-lg">
+    {previewImages.map((_, idx) => (
+      <button
+        key={idx}
+        onClick={() => setCurrentIndex(idx)}
+        aria-label={`Go to slide ${idx + 1}`}
+        className={`relative h-2.5 rounded-full transition-all duration-300 ease-out transform ${
+          idx === currentIndex 
+            ? 'w-10 bg-white scale-100' 
+            : 'w-2.5 bg-white/50 hover:bg-white/70 hover:scale-110'
+        }`}
+      >
+        {idx === currentIndex && (
+          <span className="absolute inset-0 rounded-full animate-pulse bg-white/30 -z-10" />
+        )}
+      </button>
+    ))}
+  </div>
+</div>
+      </div>
 
             {/* Desktop Masonry */}
             <div className="hidden md:block columns-1 sm:columns-2 md:columns-3 gap-4">
