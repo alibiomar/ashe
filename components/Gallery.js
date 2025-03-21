@@ -440,7 +440,7 @@ const Gallery = () => {
     }
   };
   return (
-    <section className="pt-12 pb-0 px-6 md:pb-12 bg-black text-white min-h-screen">
+    <section className="pt-12 pb-0 px-6 md:pb-12 bg-black text-white min-h-screen md:min-h-[60vh] flex items-center justify-around">
       <div className="max-w-6xl mx-auto flex flex-col items-center justify-around">
         <header
           ref={headerRef}
