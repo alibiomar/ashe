@@ -371,8 +371,8 @@ const Gallery = () => {
     () => [
       { id: 1, src: "/showcase/1.avif", width: 600, height: 900, alt: "Gallery image 1" },
       { id: 2, src: "/showcase/2.avif", width: 600, height: 600, alt: "Gallery image 2" },
-      { id: 3, src: "/showcase/7.avif", width: 800, height: 600, alt: "Gallery image 3" },
-      { id: 4, src: "/showcase/8.avif", width: 600, height: 900, alt: "Gallery image 4" },
+      { id: 3, src: "/showcase/20.avif", width: 800, height: 600, alt: "Gallery image 3" },
+      { id: 4, src: "/showcase/19.avif", width: 600, height: 900, alt: "Gallery image 4" },
       { id: 5, src: "/showcase/5.avif", width: 800, height: 600, alt: "Gallery image 5" },
       { id: 6, src: "/showcase/9.avif", width: 600, height: 900, alt: "Gallery image 6" },
       { id: 7, src: "/showcase/15.avif", width: 800, height: 600, alt: "Gallery image 7" },
