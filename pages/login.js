@@ -199,13 +199,31 @@ export default function Login() {
 
             {/* Login form */}
             <div className="p-8 relative">
-              <button
-                className="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-xl font-bold"
-                onClick={() => router.push('/')}
-                aria-label="Close"
-              >
-                &times;
-              </button>
+            <button
+  className="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-xl font-bold"
+  onClick={() => {
+    // Check if there's a logged-in user with unverified email
+    const currentUser = auth.currentUser;
+    if (currentUser && !currentUser.emailVerified) {
+      // Log them out first
+      auth.signOut()
+        .then(() => {
+          // Then redirect to home page
+          router.push('/');
+        })
+        .catch(error => {
+
+          router.push('/login');
+        });
+    } else {
+      // If no user or email is verified, just redirect
+      router.push('/');
+    }
+  }}
+  aria-label="Close"
+>
+  &times;
+</button>
 
               <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 

@@ -156,12 +156,30 @@ export default function Signup() {
             <div className="p-8 relative ">
               <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
               <button
-                className="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-xl font-bold"
-                onClick={() => router.push('/')}
-                aria-label="Close"
-              >
-                &times;
-              </button>
+  className="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-xl font-bold"
+  onClick={() => {
+    // Check if there's a logged-in user with unverified email
+    const currentUser = auth.currentUser;
+    if (currentUser && !currentUser.emailVerified) {
+      // Log them out first
+      signOut(auth)
+        .then(() => {
+          // Then redirect to home page
+          router.push('/');
+        })
+        .catch(error => {
+
+          router.push('/signup');
+        });
+    } else {
+      // If no user or email is verified, just redirect
+      router.push('/');
+    }
+  }}
+  aria-label="Close"
+>
+  &times;
+</button>
               <form onSubmit={handleSignup} className="grid gap-4" encType="application/x-www-form-urlencoded">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
