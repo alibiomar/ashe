@@ -25,7 +25,6 @@ export default class MyDocument extends Document {
           <meta name="msapplication-TileColor" content="#000000" />
           
           {/* SEO & Social */}
-          <meta name="description" content="Shop the latest in fashion with ASHE™. Find high-quality clothing for every style." />
           <meta name="keywords" content="fashion, online store, brand, old money, tunisia, clothes, ASHE, clothing, style" />
           <meta name="author" content="ASHE™" />
           <meta name="robots" content="index, follow" />
