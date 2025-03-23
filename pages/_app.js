@@ -6,13 +6,18 @@ import '../styles/globals.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
+
 const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
   suspense: true,
 });
 
 function AppContent({ Component, pageProps }) {
-  const { loading } = useAuth(); 
+  const { loading } = useAuth();
   const router = useRouter();
+
+  // Force the canonical URL to always use non-www ashe.tn
+  const canonicalURL = `https://ashe.tn${router.asPath.split("?")[0]}`;
 
   useEffect(() => {
     // Track page views on initial load
@@ -30,15 +35,21 @@ function AppContent({ Component, pageProps }) {
       router.events.off('routeChangeComplete', handleRouteChange);
     };
   }, [router]);
+
   if (loading) {
     return <LoadingSpinner />;
   }
 
   return (
-    <div translate="yes">
-      <Component {...pageProps} />
-      <AcceptCookiesPopup />
-    </div>
+    <>
+      <Head>
+        <link rel="canonical" href={canonicalURL} />
+      </Head>
+      <div translate="yes">
+        <Component {...pageProps} />
+        <AcceptCookiesPopup />
+      </div>
+    </>
   );
 }
 

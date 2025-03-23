@@ -167,6 +167,17 @@ const config = withPWA({
     ];
   },
 
+  async redirects() {
+      return [
+        {
+          source: "/:path*", 
+          has: [{ type: "host", value: "www.ashe.tn" }],
+          destination: "https://ashe.tn/:path*", 
+          permanent: true, 
+        },
+      ];
+    },
+
   devIndicators: {
     buildActivity: false,
   },

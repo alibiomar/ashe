@@ -50,7 +50,6 @@ export default class MyDocument extends Document {
           <link rel="preconnect" href="https://ashe.tn" />
           <link rel="dns-prefetch" href="https://ashe.tn" />
           <meta httpEquiv="x-dns-prefetch-control" content="on" />
-          <link rel="canonical" href="https://ashe.tn" />
           <meta property="og:locale" content="fr_FR" />
 
           {/* Google Analytics with Consent Mode */}
