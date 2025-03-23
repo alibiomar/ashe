@@ -41,6 +41,17 @@ export default function AcceptCookiesPopup() {
   const handleAcceptCookies = () => {
     localStorage.setItem('cookiesAccepted', 'true');
     setAccepted(true);
+    window.dispatchEvent(new Event('cookie-consent-accepted'));
+
+    // Enable Google Analytics and Ad Storage after consent is granted
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('consent', 'update', {
+        'ad_storage': 'granted',
+        'analytics_storage': 'granted',
+        'ad_user_data': 'granted',
+        'ad_personalization': 'granted',
+      });
+    }
   };
 
   // When the user clicks on the Terms link, temporarily hide the popup and navigate.

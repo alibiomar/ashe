@@ -11,7 +11,7 @@ export default class MyDocument extends Document {
           <meta name="application-name" content="ASHE™" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-title" content="ASHE™" />
-          <meta name="apple-mobile-web-app-status-bar-style" content="black"/> 
+          <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
           <meta name="theme-color" content="#000000"/>
           <meta name="mobile-web-app-capable" content="yes" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -52,18 +52,32 @@ export default class MyDocument extends Document {
           <meta httpEquiv="x-dns-prefetch-control" content="on" />
           <link rel="canonical" href="https://ashe.tn" />
           <meta property="og:locale" content="fr_FR" />
-          <script
-            async
-            src={`https://www.googletagmanager.com/gtag/js?id=G-HBLK404Z6X`}
-          ></script>
+
+          {/* Google Analytics with Consent Mode */}
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=G-HBLK404Z6X`}></script>
           <script
             dangerouslySetInnerHTML={{
               __html: `
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
-                gtag('config', 'G-HBLK404Z6X', {
-                  page_path: window.location.pathname,
+
+                // Default consent state is 'denied' for all cookies
+                gtag('consent', 'default', {
+                  'analytics_storage': 'denied',
+                  'ad_storage': 'denied',
+                  'ad_user_data': 'denied',
+                  'ad_personalization': 'denied',
+                });
+
+                // Optionally, the user can update the consent status upon accepting cookies
+                window.addEventListener('cookie-consent-accepted', function() {
+                  gtag('consent', 'update', {
+                    'analytics_storage': 'granted',
+                    'ad_storage': 'granted',
+                  'ad_user_data': 'granted',
+                  'ad_personalization': 'granted',
+                  });
                 });
               `,
             }}
