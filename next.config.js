@@ -35,8 +35,8 @@ const config = withPWA({
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "connect-src 'self' https://stats.g.doubleclick.net/ https://www.google-analytics.com https://www.googletagmanager.com https://analytics.google.com https://www.google.com/ads/ga-audiences https://*.googleapis.com https://identitytoolkit.googleapis.com https://apis.google.com https://ashe.tn/_next/",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://apis.google.com https://ashe.tn https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://auth.ashe.tn",
+              "connect-src 'self' https://stats.g.doubleclick.net/ https://www.google-analytics.com https://www.googletagmanager.com https://analytics.google.com https://www.google.com/ads/ga-audiences https://*.googleapis.com https://identitytoolkit.googleapis.com https://apis.google.com https://ashe.tn/_next/ https://auth.ashe.tn/auth/verify-email https://auth.ashe.tn/auth/send-password-reset",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://auth.ashe.tn/auth/send-password-reset https://auth.ashe.tn/auth/verify-email https://www.gstatic.com https://apis.google.com https://ashe.tn https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://auth.ashe.tn",
               "script-src-elem 'self' 'unsafe-inline' https://ashe.tn https://www.googletagmanager.com https://www.google-analytics.com https://apis.google.com https://auth.ashe.tn",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://ashe.tn",
               "img-src 'self' data: blob: https://www.google.tn/ https://ashe.tn https://www.ashe.tn https://res.cloudinary.com https://*.googleusercontent.com https://drive.google.com https://firebasestorage.googleapis.com https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com/ads/ga-audiences",
