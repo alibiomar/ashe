@@ -50,4 +50,6 @@ export async function getServerSideProps({ res }) {
   }
 }
 
-export default SiteMap;
+export default function Sitemap() {
+  return null;
+}

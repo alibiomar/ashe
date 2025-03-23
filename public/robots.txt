@@ -1,0 +1,54 @@
+# ===========================
+# 🚀 Global Rules for All Crawlers
+# ===========================
+User-agent: *
+Allow: /
+Disallow: /userProfile/
+Disallow: /login/
+Disallow: /signup/
+Disallow: /basket/
+Disallow: /checkout/
+Disallow: /api/
+Disallow: /api/send-email
+Disallow: /api/send-order-email
+Disallow: /api/upload-avatar
+Disallow: /api/serve-image
+Disallow: /no-index/
+
+# ===========================
+# 🎯 Specific Rules for Search Engines
+# ===========================
+
+# ✅ Googlebot
+User-agent: Googlebot
+Disallow: /no-google/
+Disallow: /test/
+
+# ✅ Googlebot-Image
+User-agent: Googlebot-Image
+Allow: /images/
+Allow: /products/
+Disallow: /uploads/
+
+# ✅ Bingbot
+User-agent: Bingbot
+Crawl-delay: 5
+
+
+# ✅ Yahoo (Slurp)
+User-agent: Slurp
+Crawl-delay: 5
+
+
+# ===========================
+# 🗺️ Sitemap
+# ===========================
+Sitemap: https://ashe.tn/sitemap.xml
+
+# ===========================
+# 📝 Comments & Notes
+# ===========================
+# - Crawl-delay is ignored by Google; adjust in Search Console if needed.
+# - Disallowed sensitive/private pages to avoid accidental indexing.
+# - Ensure the sitemap is updated regularly for better crawling efficiency.
+# - Last updated: 2025-03-23
