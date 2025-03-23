@@ -95,7 +95,7 @@ const ProductSections = memo(() => {
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 100vw, 50vw"
-                        priority
+                        loading="lazy"
                       />
                       <div className="absolute inset-0 bg-black/0" />
                     </motion.div>

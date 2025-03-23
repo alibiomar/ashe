@@ -6,15 +6,16 @@ const config = withPWA({
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
   fallbacks: {
-    document: '/offline.html', // Serve offline.html when offline
+    document: '/offline.html',
   },
   publicExcludes: ['!dynamic-css-manifest.json'],
-})( {
+})({
   generateBuildId: async () => {
     return 'build-' + Date.now();
   },
 
   assetPrefix: process.env.NODE_ENV === 'production' ? 'https://ashe.tn' : '',
+
   async rewrites() {
     return [
       {
@@ -23,8 +24,10 @@ const config = withPWA({
       },
     ];
   },
+
   async headers() {
     return [
+      // 🌍 Global Security Headers
       {
         source: '/:path*',
         headers: [
@@ -32,28 +35,28 @@ const config = withPWA({
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "connect-src 'self' https://drive.google.com/ https://www.googletagmanager.com https://fonts.gstatic.com/ https://fonts.googleapis.com/ https://auth.ashe.tn/auth/verify-email  https://auth.ashe.tn/auth/send-password-reset https://*.ashe.tn/ https://auth.ashe.tn https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://apis.google.com",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://apis.google.com https://ashe.tn https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com  https://auth.ashe.tn/auth/verify-email https://auth.ashe.tn/auth/send-password-reset https://auth.ashe.tn",
+              "connect-src 'self' https://drive.google.com https://www.googletagmanager.com https://fonts.gstatic.com https://fonts.googleapis.com https://auth.ashe.tn/auth/verify-email https://auth.ashe.tn/auth/send-password-reset https://*.ashe.tn https://auth.ashe.tn https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://apis.google.com https://ashe.tn/_next/",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://apis.google.com https://ashe.tn https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://auth.ashe.tn/auth/verify-email https://auth.ashe.tn/auth/send-password-reset https://auth.ashe.tn",
               "script-src-elem 'self' 'unsafe-inline' https://ashe.tn https://www.googletagmanager.com https://www.google-analytics.com https://apis.google.com https://auth.ashe.tn/auth/verify-email https://auth.ashe.tn/auth/send-password-reset https://auth.ashe.tn",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://ashe.tn",
-              "img-src 'self' data: blob: https://ashe.tn https://res.cloudinary.com/ https://*.googleusercontent.com https://drive.google.com/ https://firebasestorage.googleapis.com https://picsum.photos https://fastly.picsum.photos",
+              "img-src 'self' data: blob: https://ashe.tn https://www.ashe.tn https://res.cloudinary.com https://*.googleusercontent.com https://drive.google.com https://firebasestorage.googleapis.com https://picsum.photos https://fastly.picsum.photos",
               "frame-src 'self' https://securetoken.googleapis.com https://ashe-comm.firebaseapp.com",
               "form-action 'self'",
-              "font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com/ data:",
-              "media-src 'self' https://*.firebaseio.com"
-            ].join('; ')
+              "font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://ashe.tn https://www.ashe.tn https://ashe.tn/_next/static/media/ https://ashe.tn/fonts/ data:",
+              "media-src 'self' https://*.firebaseio.com",
+            ].join('; '),
           },
           {
             key: 'X-Frame-Options',
-            value: 'DENY'
+            value: 'DENY',
           },
           {
             key: 'X-Content-Type-Options',
-            value: 'nosniff'
+            value: 'nosniff',
           },
           {
             key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin'
+            value: 'strict-origin-when-cross-origin',
           },
           {
             key: 'Permissions-Policy',
@@ -61,13 +64,108 @@ const config = withPWA({
               'accelerometer=()',
               'geolocation=()',
               'microphone=()',
-              'camera=()'
-            ].join(', ')
-          }
-        ]
-      }
+              'camera=()',
+            ].join(', '),
+          },
+        ],
+      },
+
+      // 🏗️ CORS for ALL Next.js static files including fonts and build files
+      {
+        source: '/_next/static/:path*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: 'https://www.ashe.tn',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Origin, X-Requested-With, Content-Type, Accept',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, OPTIONS',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+
+      // 🏗️ CORS for build manifest files specifically
+      {
+        source: '/_next/static/build-:buildId/:path*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: 'https://www.ashe.tn',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Origin, X-Requested-With, Content-Type, Accept',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, OPTIONS',
+          },
+        ],
+      },
+
+      // 🏗️ CORS for Fonts in /_next/static/media/ (keeping your original but more specific)
+      {
+        source: '/_next/static/media/:file*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: 'https://www.ashe.tn', // More specific than wildcard
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Origin, X-Requested-With, Content-Type, Accept',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, OPTIONS',
+          },
+        ],
+      },
+
+      // 🏗️ CORS for /fonts
+      {
+        source: '/fonts/:all*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: 'https://www.ashe.tn', // Restricted to your domain
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Origin, X-Requested-With, Content-Type, Accept',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, OPTIONS',
+          },
+        ],
+      },
+
+      // 🏗️ CORS for Dynamic CSS Manifest
+      {
+        source: '/_next/dynamic-css-manifest.json',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: 'https://www.ashe.tn',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, OPTIONS',
+          },
+        ],
+      },
     ];
-  },  
+  },
 
   devIndicators: {
     buildActivity: false,
@@ -76,11 +174,11 @@ const config = withPWA({
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "**", 
+        protocol: 'https',
+        hostname: '**',
       },
     ],
-  },  
+  },
 
   poweredByHeader: false,
   reactStrictMode: true,
