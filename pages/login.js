@@ -21,6 +21,9 @@ export default function Login() {
   const [invalidCredentials, setInvalidCredentials] = useState(false); 
   const { query } = useRouter();
   const { status } = query;
+// Add this to your state declarations at the top
+const [resetCooldown, setResetCooldown] = useState(0); // Cooldown for password reset
+const [resettingPassword, setResettingPassword] = useState(false); // Loading state for reset
 
   useEffect(() => {
     if (status === 'emailVerified') {
@@ -123,27 +126,55 @@ export default function Login() {
     }
   };
 
-  const handlePasswordReset = async () => {
-    if (!email) {
-      toast.error('Enter your email to reset password');
-      return;
-    }
-
-    try {
-      const response = await fetch('https://auth.ashe.tn/auth/send-password-reset', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+// Add this useEffect to handle the cooldown timer for password reset
+useEffect(() => {
+  let resetTimer;
+  if (resetCooldown > 0) {
+    resetTimer = setInterval(() => {
+      setResetCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(resetTimer);
+          return 0;
+        }
+        return prev - 1;
       });
+    }, 1000);
+  }
+  return () => resetTimer && clearInterval(resetTimer);
+}, [resetCooldown]);
 
-      if (!response.ok) throw new Error('Password reset failed');
+// Enhanced handlePasswordReset function
+const handlePasswordReset = async () => {
+  if (resetCooldown > 0) {
+    toast.error(`Please wait ${resetCooldown} seconds before trying again.`);
+    return;
+  }
+  
+  if (!email) {
+    toast.error('Enter your email to reset password');
+    return;
+  }
 
-      setPasswordResetEmailSent(true);
-      toast.success('Password reset email sent.');
-    } catch (err) {
-      toast.error(err.message || 'Failed to send reset email');
-    }
-  };
+  try {
+    setResettingPassword(true);
+    const response = await fetch('https://auth.ashe.tn/auth/send-password-reset', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+
+    if (!response.ok) throw new Error('Password reset failed');
+
+    setPasswordResetEmailSent(true);
+    toast.success('Password reset email sent.');
+    // Set a 30-second cooldown to prevent multiple requests
+    setResetCooldown(30);
+  } catch (err) {
+    toast.error(err.message || 'Failed to send reset email');
+  } finally {
+    setResettingPassword(false);
+  }
+};
 
   // Triggered when user clicks on "Resend verification"
   const resendVerification = async () => {
@@ -268,13 +299,14 @@ export default function Login() {
 
               {invalidCredentials && (
                 <div className="mt-4 text-center">
-                  <button
-                    onClick={handlePasswordReset}
-                    className={`text-black hover:underline ${!email ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    disabled={!email || passwordResetEmailSent}
-                  >
-                    Forgot Password?
-                  </button>
+<button
+  onClick={handlePasswordReset}
+  className={`text-black hover:underline ${(!email || resettingPassword) ? 'opacity-50 cursor-not-allowed' : ''}`}
+  disabled={!email || resettingPassword}
+>
+  {resettingPassword ? 'Sending...' : 'Forgot Password?'}
+  {resetCooldown > 0 && ` (${resetCooldown}s)`}
+</button>
                 </div>
               )}
 
