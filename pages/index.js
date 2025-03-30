@@ -163,7 +163,7 @@ export default function Home() {
           initial="hidden"
           animate="visible"
           variants={containerVariants}
-          className="overflow-hidden"
+          className="overflow-hidden "
         >
           <HeroSection user={user} firstName={firstName} />
           <ProductSections />
@@ -231,9 +231,9 @@ const AnimatedArrow = memo(() => (
 ));
 
 const HeroSection = memo(({ user, firstName }) => (
-  <section className="relative w-full h-screen mb-32 overflow-hidden bg-black">
+  <section className="sticky top-0 left-0 right-0 w-full h-screen mb-32 overflow-hidden bg-black">
     <motion.div
-      className="absolute inset-0"
+      className="absolute  inset-0"
       initial={{ scale: 2.5, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ duration: 2.5, ease: [0.22, 1, 0.36, 1] }}

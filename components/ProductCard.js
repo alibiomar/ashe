@@ -86,6 +86,12 @@ export default function ProductCard({ product, onAddToBasket, getItemQuantity })
     onAddToBasket({ ...product, size: selectedSize, color: selectedColor, images: selectedColorData.images });
   }, [selectedSize, selectedColor, product, getItemQuantity, onAddToBasket]);
 
+  // Calculate discount percentage if original price exists
+  const calculateDiscountPercentage = (originalPrice, currentPrice) => {
+    if (!originalPrice || originalPrice <= currentPrice) return null;
+    return Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
+  };
+
   if (!product) {
     return (
       <div className="w-full flex flex-col md:flex-row bg-white border-2 border-black p-6 gap-6">
@@ -94,7 +100,8 @@ export default function ProductCard({ product, onAddToBasket, getItemQuantity })
     );
   }
 
-  const { name, price, colors = [], description, sizes } = product;
+  const { name, price, originalPrice, colors = [], description, sizes } = product;
+  const discountPercentage = calculateDiscountPercentage(originalPrice, price);
   const selectedColorData = colors.find(color => color.name === selectedColor) || colors[0];
 
   // Ensure selectedColorData and its images are defined
@@ -109,6 +116,13 @@ export default function ProductCard({ product, onAddToBasket, getItemQuantity })
       {/* Main Image Slider */}
       <div className="w-full md:w-[35%] relative">
         <div className="relative">
+          {/* Discount Badge */}
+          {discountPercentage && (
+            <div className="absolute top-4 left-4 z-10 bg-red-500 text-white px-2 py-1 rounded-md font-bold text-sm">
+              -{discountPercentage}%
+            </div>
+          )}
+          
           {images.length > 0 ? (
             <Swiper
               onSwiper={(swiper) => (mainSwiperRef.current = swiper)}
@@ -161,10 +175,27 @@ export default function ProductCard({ product, onAddToBasket, getItemQuantity })
           {name || 'Product Name'}
         </h2>
 
+        {/* Enhanced Price Display */}
         <div className="flex items-center justify-between mb-4">
-          <p className="text-2xl font-bold text-[#46c7c7]">
-            {price?.toFixed(2)} TND
-          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            {originalPrice && originalPrice > price ? (
+              <>
+                <p className="text-2xl font-bold text-[#46c7c7]">
+                  {price?.toFixed(2)} TND
+                </p>
+                <p className="text-lg font-medium text-gray-500 line-through">
+                  {originalPrice?.toFixed(2)} TND
+                </p>
+                <span className="px-2 py-1 bg-red-100 text-red-600 text-sm font-bold rounded">
+                  SAVE {(originalPrice - price).toFixed(2)} TND
+                </span>
+              </>
+            ) : (
+              <p className="text-2xl font-bold text-[#46c7c7]">
+                {price?.toFixed(2)} TND
+              </p>
+            )}
+          </div>
           {selectedSize && (
             <span
               className={`px-3 py-1 text-xs font-black uppercase text-white ${
@@ -326,19 +357,19 @@ export default function ProductCard({ product, onAddToBasket, getItemQuantity })
                 ))}
               </Swiper>
               <button
-  className="absolute left-4 top-1/2 transform -translate-y-1/2 z-50 p-2 bg-gray-400 text-white rounded-full transition hover:scale-110 md:left-24"
-  onClick={() => modalSwiperRef.current?.slidePrev()}
-  aria-label="Previous image"
->
-  <FaChevronLeft />
-</button>
-<button
-  className="absolute right-4 top-1/2 transform -translate-y-1/2 z-50 p-2 bg-gray-400 text-white rounded-full transition hover:scale-110 md:right-24"
-  onClick={() => modalSwiperRef.current?.slideNext()}
-  aria-label="Next image"
->
-  <FaChevronRight />
-</button>
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 z-50 p-2 bg-gray-400 text-white rounded-full transition hover:scale-110 md:left-24"
+                onClick={() => modalSwiperRef.current?.slidePrev()}
+                aria-label="Previous image"
+              >
+                <FaChevronLeft />
+              </button>
+              <button
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 z-50 p-2 bg-gray-400 text-white rounded-full transition hover:scale-110 md:right-24"
+                onClick={() => modalSwiperRef.current?.slideNext()}
+                aria-label="Next image"
+              >
+                <FaChevronRight />
+              </button>
 
               <button
                 className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-50 p-2 bg-gray-400 text-white rounded-full transition hover:scale-110"

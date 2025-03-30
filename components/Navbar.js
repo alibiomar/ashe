@@ -161,13 +161,14 @@ export default function Navbar({ onHeightChange }) {
   
   return (
     <>
-      <nav
-        ref={navRef}
-        className={`fixed top-0 left-0 right-0 transition-all duration-300 ${navBackground} z-50 ${
-          isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
-        }`}
-        aria-label="Main Navigation"
-      >
+<nav
+  ref={navRef}
+  className={`fixed left-0 right-0 transition-all duration-300 ${navBackground} z-40 ${
+    isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
+  }`}
+
+  aria-label="Main Navigation"
+>
         <motion.div
           initial={false}
           animate={{
