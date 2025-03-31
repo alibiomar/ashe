@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { motion, AnimatePresence,useScroll } from 'framer-motion';
+import { motion, AnimatePresence, useScroll } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
@@ -50,7 +50,8 @@ export default function Navbar({ onHeightChange }) {
         setNavBackground('bg-black/80 backdrop-blur-lg');
       }
     });
-  }, []);
+  }, [scrollY]);
+  
   // Function to handle user icon click
   const handleUserIconClick = () => {
     if (router.pathname === '/userProfile') {
@@ -71,6 +72,9 @@ export default function Navbar({ onHeightChange }) {
   // Add scroll listener for navbar effect
   useEffect(() => {
     const handleScroll = () => {
+      // Don't update scroll state if menu is open
+      if (isMenuOpen) return;
+      
       const currentScrollY = window.scrollY;
 
       setIsScrolled(currentScrollY > 50);
@@ -86,14 +90,14 @@ export default function Navbar({ onHeightChange }) {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  }, [lastScrollY, isMenuOpen]);
 
   // Handle user logout
   const handleLogout = useCallback(async () => {
     try {
-              setTimeout(() => {
-                toast.success('Successfully logged out');
-              }, 500);
+      setTimeout(() => {
+        toast.success('Successfully logged out');
+      }, 500);
       await signOut(auth);
       setUser(null);
       setUserData(null);
@@ -149,32 +153,44 @@ export default function Navbar({ onHeightChange }) {
   // Disable scrolling when the mobile menu is open
   useEffect(() => {
     if (isMenuOpen) {
-      document.body.classList.add('no-scroll');
+      // More robust way to prevent scrolling
+      document.body.style.overflow = 'hidden';
+      document.body.style.height = '100%';
+      document.documentElement.style.overflow = 'hidden';
+      document.documentElement.style.height = '100%';
+      
+      // Ensure navbar is visible when menu is open
+      setIsNavbarVisible(true);
     } else {
-      document.body.classList.remove('no-scroll');
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+      document.documentElement.style.overflow = '';
+      document.documentElement.style.height = '';
     }
 
     return () => {
-      document.body.classList.remove('no-scroll');
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+      document.documentElement.style.overflow = '';
+      document.documentElement.style.height = '';
     };
   }, [isMenuOpen]);
   
   return (
     <>
-<nav
-  ref={navRef}
-  className={`fixed left-0 right-0 transition-all duration-300 ${navBackground} z-40 ${
-    isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
-  }`}
-
-  aria-label="Main Navigation"
->
+      <nav
+        ref={navRef}
+        className={`fixed left-0 right-0 transition-all duration-300 ${navBackground} z-50 ${
+          isMenuOpen || isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
+        }`}
+        aria-label="Main Navigation"
+      >
         <motion.div
           initial={false}
           animate={{
-            y: isNavbarVisible ? 0 : -20,
-            opacity: isNavbarVisible ? 1 : 0.8,
-            scale: isNavbarVisible ? 1 : 0.98,
+            y: isMenuOpen || isNavbarVisible ? 0 : -20,
+            opacity: isMenuOpen || isNavbarVisible ? 1 : 0.8,
+            scale: isMenuOpen || isNavbarVisible ? 1 : 0.98,
           }}
           className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
         >
@@ -310,7 +326,7 @@ export default function Navbar({ onHeightChange }) {
               <motion.button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 whileHover={{ scale: 1.05 }}
-                className="lg:hidden p-2 text-gray-300 hover:text-teal-400"
+                className={`lg:hidden p-2 text-gray-300 hover:text-teal-400 ${isMenuOpen ? 'z-50' : ''}`}
                 aria-label="Toggle Menu"
               >
                 {isMenuOpen ? <FaTimes className="h-6 w-6" /> : <FaBars className="h-6 w-6" />}
@@ -389,7 +405,7 @@ export default function Navbar({ onHeightChange }) {
                   <div className="flex flex-col space-y-5 items-start">
                     <div
                       onClick={handleLogout}
-                      className="flex items-center justify-center space-x-3 text-[#46c7c7] hover:text-white-400 py-2"
+                      className="flex items-center justify-center space-x-3 text-[#46c7c7] hover:text-white-400 py-2 cursor-pointer"
                     >
                       <FaSignInAlt className="h-5 w-5" />
                       <span className="text-lg">Logout</span>

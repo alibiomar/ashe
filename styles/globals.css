@@ -88,11 +88,6 @@ h1, h2, h3, h4 {
   animation: pulse 1s infinite ease-in-out;
 }
 
-.no-scroll {
-  overflow: hidden;
-  height: 100vh;
-}
-
 /* HTML: <div class="loader"></div> */
 .loading {
   width: 50px;
