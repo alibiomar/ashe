@@ -4,12 +4,12 @@ import Footer from './Footer';
 import { Toaster } from 'sonner';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import { FaTimes } from 'react-icons/fa';
+//import { FaTimes } from 'react-icons/fa';
 
 export default function Layout({ children }) {
   const router = useRouter();
   const [navbarHeight, setNavbarHeight] = useState(0);
-  const [showAnnouncement, setShowAnnouncement] = useState(true);
+ {/* const [showAnnouncement, setShowAnnouncement] = useState(true);
   const [timeRemaining, setTimeRemaining] = useState({
     days: 0,
     hours: 0,
@@ -65,11 +65,10 @@ export default function Layout({ children }) {
   const announcementText = isExpired 
     ? ` Eid Savings! Enjoy 15% off — Time's up! #EidMubarak` 
     : ` Eid Savings! Enjoy 15% off — Ends in: ${formatTimeUnit(timeRemaining.days)}d ${formatTimeUnit(timeRemaining.hours)}h ${formatTimeUnit(timeRemaining.minutes)}m ${formatTimeUnit(timeRemaining.seconds)}s! #EidMubarak`;
-
+*/}
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full bg-white antialiased">
-      {/* Announcement Banner - positioned absolutely at the top */}
-      <AnimatePresence>
+      {/*       <AnimatePresence>
         {showAnnouncement && (
           <motion.div
             initial={{opacity: 0 }}
@@ -105,15 +104,16 @@ export default function Layout({ children }) {
             </div>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence>*/}
 
-      {/* Main layout structure */}
-      <div 
+
+      {/*       <div 
         className="flex flex-col w-full" 
         style={{ 
           paddingTop: showAnnouncement ? '2.5rem' : '0' // Add padding when announcement is visible
         }}
-      >
+      > */}
+
         <Navbar onHeightChange={setNavbarHeight} />
         <Toaster position="bottom-center" richColors />
     
@@ -146,6 +146,6 @@ export default function Layout({ children }) {
     
         <Footer />
       </div>
-    </div>
+    //</div>
   );
 }

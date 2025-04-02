@@ -180,7 +180,7 @@ export default function Navbar({ onHeightChange }) {
     <>
       <nav
         ref={navRef}
-        className={`fixed left-0 right-0 transition-all duration-300 ${navBackground} z-50 ${
+        className={`fixed top-0 left-0 right-0 transition-all duration-300 ${navBackground} z-50 ${
           isMenuOpen || isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
         }`}
         aria-label="Main Navigation"
