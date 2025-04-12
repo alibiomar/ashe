@@ -1,14 +1,14 @@
-import dynamic from 'next/dynamic';
-import { AuthProvider, useAuth } from '../contexts/AuthContext';
-import { BasketProvider } from '../contexts/BasketContext';
-import AcceptCookiesPopup from '../components/AcceptCookiesPopup';
-import '../styles/globals.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
+import dynamic from "next/dynamic";
+import { AuthProvider, useAuth } from "../contexts/AuthContext";
+import { BasketProvider } from "../contexts/BasketContext";
+import AcceptCookiesPopup from "../components/AcceptCookiesPopup";
+import "../styles/globals.css";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import Head from "next/head";
 
-const LoadingSpinner = dynamic(() => import('../components/LoadingScreen'), {
+const LoadingSpinner = dynamic(() => import("../components/LoadingScreen"), {
   suspense: true,
 });
 
@@ -20,20 +20,15 @@ function AppContent({ Component, pageProps }) {
   const canonicalURL = `https://ashe.tn${router.asPath.split("?")[0]}`;
 
   useEffect(() => {
-    // Track page views on initial load
+    // Track page views on initial load and route changes
     const handleRouteChange = (url) => {
-      window.gtag('config', 'G-HBLK404Z6X', {
+      window.gtag("config", "G-HBLK404Z6X", {
         page_path: url,
       });
     };
 
-    // Listen for route changes
-    router.events.on('routeChangeComplete', handleRouteChange);
-
-    // Cleanup the event listener on unmount
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteChange);
-    };
+    router.events.on("routeChangeComplete", handleRouteChange);
+    return () => router.events.off("routeChangeComplete", handleRouteChange);
   }, [router]);
 
   if (loading) {
@@ -43,6 +38,7 @@ function AppContent({ Component, pageProps }) {
   return (
     <>
       <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="canonical" href={canonicalURL} />
       </Head>
       <div translate="yes">

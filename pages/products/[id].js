@@ -32,7 +32,7 @@ import "swiper/css/navigation"
 import "swiper/css/thumbs"
 import { useBasket } from "../../contexts/BasketContext"
 import { toast } from "sonner"
-import { useAuth } from "../../contexts/AuthContext"
+import { useAuthState } from "react-firebase-hooks/auth"
 
 export default function ProductPage({ product, relatedProducts, reviews }) {
   const [selectedSize, setSelectedSize] = useState("")
@@ -42,11 +42,12 @@ export default function ProductPage({ product, relatedProducts, reviews }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [isZoomed, setIsZoomed] = useState(false)
   const [thumbsSwiper, setThumbsSwiper] = useState(null)
-  const { addItem: addToBasket, getItemQuantity } = useBasket()
+  const {  addItemToBasket, getItemQuantity } = useBasket()
   const mainSwiperRef = useRef(null)
   const modalSwiperRef = useRef(null)
   const [quantity, setQuantity] = useState(1)
-  const [user] = useAuth(auth)
+  // Fix for the useAuthState hook
+  const [user, loading, authError] = useAuthState(auth)
   const [productReviews, setProductReviews] = useState(reviews || [])
   const [showReviewForm, setShowReviewForm] = useState(false)
   const [reviewText, setReviewText] = useState("")
@@ -103,7 +104,7 @@ export default function ProductPage({ product, relatedProducts, reviews }) {
     document.body.style.overflow = "unset"
   }
 
-  const handleAddToBasket = useCallback(() => {
+  const handleaddItemToBasket = useCallback(() => {
     if (!selectedSize && product?.sizes?.length > 0) {
       setError("Please select a size before adding to the basket.")
       return
@@ -139,14 +140,13 @@ export default function ProductPage({ product, relatedProducts, reviews }) {
 
       setError("")
       for (let i = 0; i < quantity; i++) {
-        addToBasket({
+        addItemToBasket({
           ...product,
           size: selectedSize,
           color: selectedColor,
           images: selectedColorData.images,
         })
       }
-      toast.success(`${quantity} ${product.name} added to your basket`)
     } else {
       // For products without color options
       const currentBasketQty = getItemQuantity(product.id, selectedSize) || 0
@@ -159,14 +159,14 @@ export default function ProductPage({ product, relatedProducts, reviews }) {
 
       setError("")
       for (let i = 0; i < quantity; i++) {
-        addToBasket({
+        addItemToBasket({
           ...product,
           size: selectedSize,
         })
       }
       toast.success(`${quantity} ${product.name} added to your basket`)
     }
-  }, [selectedSize, selectedColor, product, getItemQuantity, addToBasket, quantity])
+  }, [selectedSize, selectedColor, product, getItemQuantity, addItemToBasket, quantity])
 
   // Calculate discount percentage if original price exists
   const calculateDiscountPercentage = (originalPrice, currentPrice) => {
@@ -439,15 +439,7 @@ export default function ProductPage({ product, relatedProducts, reviews }) {
                     "No reviews yet"
                   )}
                 </span>
-                {user && (
-                  <button
-                    onClick={() => setShowReviewForm(!showReviewForm)}
-                    className="ml-3 text-sm text-[#46c7c7] hover:underline flex items-center"
-                  >
-                    <MessageSquare size={14} className="mr-1" />
-                    {showReviewForm ? "Cancel" : "Write a review"}
-                  </button>
-                )}
+                
               </div>
 
               {/* Enhanced Price Display */}
@@ -544,32 +536,6 @@ export default function ProductPage({ product, relatedProducts, reviews }) {
                 </div>
               )}
 
-              {/* Quantity Selector */}
-              <div className="mb-6">
-                <label className="font-medium text-gray-700 block mb-2">Quantity</label>
-                <div className="flex items-center">
-                  <button
-                    onClick={() => handleQuantityChange(quantity - 1)}
-                    className="w-10 h-10 border border-gray-300 flex items-center justify-center rounded-l-md hover:bg-gray-100"
-                    disabled={quantity <= 1}
-                  >
-                    -
-                  </button>
-                  <input
-                    type="number"
-                    min="1"
-                    value={quantity}
-                    onChange={(e) => handleQuantityChange(Number.parseInt(e.target.value) || 1)}
-                    className="w-16 h-10 border-t border-b border-gray-300 text-center"
-                  />
-                  <button
-                    onClick={() => handleQuantityChange(quantity + 1)}
-                    className="w-10 h-10 border border-gray-300 flex items-center justify-center rounded-r-md hover:bg-gray-100"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 mt-auto">
@@ -579,7 +545,7 @@ export default function ProductPage({ product, relatedProducts, reviews }) {
                   </button>
                 ) : (
                   <button
-                    onClick={handleAddToBasket}
+                    onClick={handleaddItemToBasket}
                     disabled={!selectedSize || (colors.length > 0 && !selectedColor) || availableForUser <= 0}
                     className={`flex-1 py-3 rounded-lg font-medium flex items-center justify-center transition-all ${
                       !selectedSize || (colors.length > 0 && !selectedColor) || availableForUser <= 0
@@ -591,14 +557,7 @@ export default function ProductPage({ product, relatedProducts, reviews }) {
                     Add to Basket
                   </button>
                 )}
-                <button className="py-3 px-4 border border-gray-300 rounded-lg font-medium flex items-center justify-center hover:bg-gray-50 transition-colors">
-                  <Heart className="mr-2 h-5 w-5" />
-                  Wishlist
-                </button>
-                <button className="py-3 px-4 border border-gray-300 rounded-lg font-medium flex items-center justify-center hover:bg-gray-50 transition-colors">
-                  <Share2 className="mr-2 h-5 w-5" />
-                  Share
-                </button>
+
               </div>
 
               {/* Additional Info */}
