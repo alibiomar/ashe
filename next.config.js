@@ -178,10 +178,6 @@ const config = withPWA({
       ];
     },
 
-  devIndicators: {
-    buildActivity: false,
-  },
-
   images: {
     remotePatterns: [
       {
